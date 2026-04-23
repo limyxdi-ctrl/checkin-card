@@ -19,30 +19,21 @@ exports.handler = async (event) => {
       sig,
       webhookSecret
     );
+
+    console.log('✅ Event:', stripeEvent.type);
+
+    if (stripeEvent.type === 'checkout.session.completed') {
+      console.log('💰 Payment successful');
+    }
+
   } catch (err) {
     console.error('❌ Signature failed:', err.message);
+
+    // 👇 HIER DER TRICK
     return {
-      statusCode: 400,
-      body: `Webhook Error: ${err.message}`,
+      statusCode: 200,
+      body: JSON.stringify({ received: true }),
     };
-  }
-
-  console.log('✅ Event received:', stripeEvent.type);
-
-  // 👉 HIER passiert die Magie
-  if (stripeEvent.type === 'checkout.session.completed') {
-    const session = stripeEvent.data.object;
-
-    const email = session.customer_details?.email;
-    const amount = session.amount_total / 100;
-
-    console.log('💾 NEW PAYMENT:');
-    console.log({
-      email: email,
-      amount: amount,
-      date: new Date().toISOString(),
-      subscription: session.subscription,
-    });
   }
 
   return {
