@@ -1,18 +1,17 @@
 const Stripe = require("stripe");
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 exports.config = {
   bodyParser: false,
 };
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
 exports.handler = async (event) => {
-  // 👉 Header (beide Varianten abfangen)
   const sig =
-    event.headers["Stripe-Signature"] ||
-    event.headers["stripe-signature"];
+    event.headers["stripe-signature"] ||
+    event.headers["Stripe-Signature"];
 
-  // 👉 RAW BODY (WICHTIG – darf NICHT verändert werden)
+  // 🔥 RAW BODY FIX
   const rawBody = event.isBase64Encoded
     ? Buffer.from(event.body, "base64")
     : Buffer.from(event.body, "utf8");
@@ -33,15 +32,17 @@ exports.handler = async (event) => {
     };
   }
 
-  // 👉 Debug
-  console.log("✅ Event received:", stripeEvent.type);
+  console.log("✅ Event:", stripeEvent.type);
 
-  // 👉 Beispiel-Handling
+  // 👉 DEIN EVENT
   if (stripeEvent.type === "checkout.session.completed") {
-    console.log("💰 Payment successful");
+    console.log("💰 Checkout erfolgreich!");
   }
 
-  // 👉 Wichtig: Stripe erwartet 200!
+  if (stripeEvent.type === "invoice.paid") {
+    console.log("💳 Rechnung bezahlt!");
+  }
+
   return {
     statusCode: 200,
     body: "ok",
