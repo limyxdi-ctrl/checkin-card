@@ -7,10 +7,8 @@ exports.handler = async (event) => {
     event.headers["stripe-signature"] ||
     event.headers["Stripe-Signature"];
 
-  // 🔥 WICHTIG: RAW BODY RICHTIG LESEN
-  const rawBody = event.isBase64Encoded
-    ? Buffer.from(event.body, "base64")
-    : Buffer.from(event.body, "utf8");
+  // 🔥 CRITICAL FIX: RAW STRING, NICHT Buffer!
+  const rawBody = event.body;
 
   let stripeEvent;
 
@@ -32,10 +30,6 @@ exports.handler = async (event) => {
 
   if (stripeEvent.type === "checkout.session.completed") {
     console.log("💰 Payment successful!");
-  }
-
-  if (stripeEvent.type === "invoice.paid") {
-    console.log("🧾 Invoice paid!");
   }
 
   return {
