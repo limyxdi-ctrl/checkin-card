@@ -12,7 +12,7 @@ exports.handler = async (event) => {
     event.headers["Stripe-Signature"] ||
     event.headers["stripe-signature"];
 
-  // 👉 RAW BODY (wichtig für Stripe!)
+  // 👉 RAW BODY (WICHTIG – darf NICHT verändert werden)
   const rawBody = event.isBase64Encoded
     ? Buffer.from(event.body, "base64")
     : Buffer.from(event.body, "utf8");
@@ -36,12 +36,12 @@ exports.handler = async (event) => {
   // 👉 Debug
   console.log("✅ Event received:", stripeEvent.type);
 
-  // 👉 Beispiel: Zahlung erfolgreich
+  // 👉 Beispiel-Handling
   if (stripeEvent.type === "checkout.session.completed") {
     console.log("💰 Payment successful");
   }
 
-  // 👉 Wichtig: Immer 200 zurückgeben
+  // 👉 Wichtig: Stripe erwartet 200!
   return {
     statusCode: 200,
     body: "ok",
