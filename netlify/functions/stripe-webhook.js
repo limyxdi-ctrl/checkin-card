@@ -4,16 +4,22 @@ exports.handler = async (event) => {
   try {
     const body = JSON.parse(event.body);
 
-    console.log("✅ Event type:", body.type);
+    console.log("📩 Event:", body.type);
 
+    // 👇 HIER passiert alles Wichtige
     if (body.type === "checkout.session.completed") {
-      console.log("💰 PAYMENT SUCCESS");
+      const session = body.data.object;
+
+      console.log("💰 Zahlung erfolgreich!");
+      console.log("📧 Email:", session.customer_details.email);
+      console.log("💵 Betrag:", session.amount_total / 100, "EUR");
     }
 
     return {
       statusCode: 200,
       body: JSON.stringify({ received: true }),
     };
+
   } catch (err) {
     console.error("❌ Error:", err.message);
 
