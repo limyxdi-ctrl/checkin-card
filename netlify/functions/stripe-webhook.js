@@ -3,37 +3,46 @@ const Stripe = require("stripe");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
-  const sig =
-    event.headers["stripe-signature"] ||
-    event.headers["Stripe-Signature"];
+  console.log("=== DEBUG START ===");
 
-  // 🔥 CRITICAL FIX: RAW STRING, NICHT Buffer!
-  const rawBody = event.body;
+  console.log("Headers:", event.headers);
+  console.log("IsBase64:", event.isBase64Encoded);
+  console.log("Body (raw):", event.body);
 
-  let stripeEvent;
+  const sig = event.headers["stripe-signature"];
+
+  console.log("Signature:", sig);
+
+  let rawBody;
+
+  if (event.isBase64Encoded) {
+    rawBody = Buffer.from(event.body, "base64");
+  } else {
+    rawBody = event.body;
+  }
+
+  console.log("RawBody used:", rawBody);
 
   try {
-    stripeEvent = stripe.webhooks.constructEvent(
+    const stripeEvent = stripe.webhooks.constructEvent(
       rawBody,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
+
+    console.log("✅ SUCCESS:", stripeEvent.type);
+
+    return {
+      statusCode: 200,
+      body: "ok",
+    };
+
   } catch (err) {
-    console.error("❌ Signature failed:", err.message);
+    console.error("❌ ERROR:", err.message);
+
     return {
       statusCode: 400,
-      body: `Webhook Error: ${err.message}`,
+      body: err.message,
     };
   }
-
-  console.log("✅ Event:", stripeEvent.type);
-
-  if (stripeEvent.type === "checkout.session.completed") {
-    console.log("💰 Payment successful!");
-  }
-
-  return {
-    statusCode: 200,
-    body: "ok",
-  };
 };
