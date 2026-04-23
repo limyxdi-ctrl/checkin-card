@@ -10,17 +10,24 @@ exports.handler = async (event) => {
   let stripeEvent;
 
   try {
-    const body = event.isBase64Encoded
+    const rawBody = event.isBase64Encoded
       ? Buffer.from(event.body, 'base64')
-      : Buffer.from(event.body, 'utf8');
+      : Buffer.from(event.body);
 
     stripeEvent = stripe.webhooks.constructEvent(
-      body,
+      rawBody,
       sig,
       webhookSecret
     );
   } catch (err) {
     console.error('❌ Signature failed:', err.message);
+
+    // 👇 DEBUG (WICHTIG!)
+    console.log("BODY:", event.body);
+    console.log("BASE64:", event.isBase64Encoded);
+    console.log("SIG:", sig);
+    console.log("SECRET:", webhookSecret?.substring(0, 10));
+
     return {
       statusCode: 400,
       body: `Webhook Error: ${err.message}`,
@@ -28,10 +35,6 @@ exports.handler = async (event) => {
   }
 
   console.log('✅ Event:', stripeEvent.type);
-
-  if (stripeEvent.type === 'checkout.session.completed') {
-    console.log('💰 Payment successful');
-  }
 
   return {
     statusCode: 200,
