@@ -7,11 +7,15 @@ exports.config = {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
-  const sig = event.headers["stripe-signature"];
+  // 👉 Header (beide Varianten abfangen)
+  const sig =
+    event.headers["Stripe-Signature"] ||
+    event.headers["stripe-signature"];
 
+  // 👉 RAW BODY (wichtig für Stripe!)
   const rawBody = event.isBase64Encoded
-    ? Buffer.from(event.body, "base64").toString("utf8")
-    : event.body;
+    ? Buffer.from(event.body, "base64")
+    : Buffer.from(event.body, "utf8");
 
   let stripeEvent;
 
@@ -29,12 +33,15 @@ exports.handler = async (event) => {
     };
   }
 
-  console.log("✅ Event:", stripeEvent.type);
+  // 👉 Debug
+  console.log("✅ Event received:", stripeEvent.type);
 
+  // 👉 Beispiel: Zahlung erfolgreich
   if (stripeEvent.type === "checkout.session.completed") {
     console.log("💰 Payment successful");
   }
 
+  // 👉 Wichtig: Immer 200 zurückgeben
   return {
     statusCode: 200,
     body: "ok",
