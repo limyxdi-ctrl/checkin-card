@@ -1,8 +1,12 @@
-import Stripe from "stripe";
+const Stripe = require("stripe");
+
+exports.config = {
+  bodyParser: false,
+};
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-export async function handler(event) {
+exports.handler = async (event) => {
   const sig = event.headers["stripe-signature"];
 
   let stripeEvent;
@@ -31,4 +35,4 @@ export async function handler(event) {
     statusCode: 200,
     body: "ok",
   };
-}
+};
