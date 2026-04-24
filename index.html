@@ -1441,8 +1441,25 @@
 
         <!-- Logo Upload -->
         <div class="field">
-          <label><span data-lang="en" class="active">Logo URL (optional)</span><span data-lang="de">Logo-URL (optional)</span><span data-lang="es">URL del logo (opcional)</span></label>
-          <input type="url" id="s-logo-url" placeholder="Paste your logo URL (optional)">
+          <label>🖼️ <span data-lang="en" class="active">Hotel Logo (optional)</span><span data-lang="de">Hotel-Logo (optional)</span><span data-lang="es">Logo del hotel (opcional)</span></label>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <label for="s-logo-file" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--accent);color:#fff;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:inherit">
+                📁 <span data-lang="en" class="active">Upload logo</span><span data-lang="de">Logo hochladen</span><span data-lang="es">Subir logo</span>
+              </label>
+              <input type="file" id="s-logo-file" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display:none" onchange="handleLogoUpload(this)">
+              <span id="s-logo-filename" style="font-size:0.8rem;color:var(--text2)"></span>
+            </div>
+            <div id="s-logo-preview-wrap" style="display:none;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;text-align:center">
+              <img id="s-logo-preview" src="" alt="Logo preview" style="max-height:70px;max-width:180px;object-fit:contain;border-radius:6px">
+              <div style="margin-top:6px">
+                <button onclick="clearLogoUpload()" style="font-size:0.75rem;color:#EF4444;background:none;border:none;cursor:pointer;font-family:inherit">
+                  🗑 <span data-lang="en" class="active">Remove</span><span data-lang="de">Entfernen</span><span data-lang="es">Eliminar</span>
+                </button>
+              </div>
+            </div>
+            <input type="url" id="s-logo-url" placeholder="… or paste a logo URL" style="font-size:0.82rem">
+          </div>
         </div>
 
         <!-- Breakfast -->
@@ -2964,6 +2981,71 @@
   // ═══════════════════════════════════════════════════════════
   // EXPIRY / STORAGE
   // ═══════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════
+  // LOGO UPLOAD
+  // ═══════════════════════════════════════════════════════════
+  async function handleLogoUpload(input){
+    const file = input.files[0];
+    if(!file) return;
+    const maxSize = 2 * 1024 * 1024; // 2MB
+    if(file.size > maxSize){
+      alert('Image too large. Please use a file under 2MB.');
+      input.value = '';
+      return;
+    }
+    // Show preview immediately
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const preview = document.getElementById('s-logo-preview');
+      const previewWrap = document.getElementById('s-logo-preview-wrap');
+      const filename = document.getElementById('s-logo-filename');
+      if(preview) preview.src = e.target.result;
+      if(previewWrap) previewWrap.style.display = 'block';
+      if(filename) filename.textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+    // Upload to Supabase Storage
+    try {
+      const ext = file.name.split('.').pop();
+      const fileName = 'logo_' + Date.now() + '_' + Math.random().toString(36).substr(2,6) + '.' + ext;
+      const res = await fetch(SB_URL + '/storage/v1/object/Logos/' + fileName, {
+        method: 'POST',
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': 'Bearer ' + SB_KEY,
+          'Content-Type': file.type,
+          'x-upsert': 'true'
+        },
+        body: file
+      });
+      if(res.ok){
+        const publicUrl = SB_URL + '/storage/v1/object/public/Logos/' + fileName;
+        const urlInput = document.getElementById('s-logo-url');
+        if(urlInput) urlInput.value = publicUrl;
+        console.log('✅ Logo uploaded:', publicUrl);
+      } else {
+        const err = await res.text();
+        console.error('❌ Logo upload failed:', err);
+        alert('Upload failed. Please try pasting a URL instead.');
+      }
+    } catch(e) {
+      console.error('❌ Logo upload error:', e);
+    }
+  }
+
+  function clearLogoUpload(){
+    const preview = document.getElementById('s-logo-preview');
+    const previewWrap = document.getElementById('s-logo-preview-wrap');
+    const filename = document.getElementById('s-logo-filename');
+    const urlInput = document.getElementById('s-logo-url');
+    const fileInput = document.getElementById('s-logo-file');
+    if(preview) preview.src = '';
+    if(previewWrap) previewWrap.style.display = 'none';
+    if(filename) filename.textContent = '';
+    if(urlInput) urlInput.value = '';
+    if(fileInput) fileInput.value = '';
+  }
+
   function checkExpiry(){
     return false; // expiry removed
   }
