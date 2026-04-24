@@ -1538,8 +1538,9 @@
 
   </div><!-- /setup-inner -->
 
-  <!-- Save Bar -->
-  <div class="sticky-save-bar" style="padding:24px 16px 40px;max-width:420px;margin:0 auto">
+  <!-- Sticky Save Bar -->
+  </div>
+  <div class="sticky-save-bar">
     <p style="text-align:center;font-size:0.8rem;color:#6B7280;line-height:1.6;margin-bottom:12px;padding:10px 14px;background:rgba(31,58,138,0.04);border-radius:8px">
       <span data-lang="en" class="active">You will receive a personal link by email — no account, no password. You can edit everything later.</span>
       <span data-lang="de">Du bekommst einen persönlichen Link per E-Mail – kein Konto, kein Passwort, du kannst alles später bearbeiten.</span>
@@ -3251,10 +3252,12 @@
       if(emailEl) emailEl.focus();
       return;
     }
+    // Save email to session and localStorage
     sessionStorage.setItem('cic_email_entered', email);
     localStorage.setItem('cic_host_email', email);
     window._hostEmail = email;
     if(!localStorage.getItem('cic_created_at')) localStorage.setItem('cic_created_at', new Date().toISOString());
+    // Submit to Netlify Forms
     var params = new URLSearchParams();
     params.append('form-name', 'email-gate');
     params.append('email', email);
@@ -3269,6 +3272,7 @@
     }).catch(function(err){
       console.error('❌ Netlify email-gate error:', err);
     });
+    // Remove modal and scroll to form
     var modal=document.getElementById('email-gate-modal');
     if(modal) modal.remove();
     document.getElementById('hero-section').scrollIntoView({behavior:'smooth'});
