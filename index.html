@@ -1441,24 +1441,35 @@
 
         <!-- Logo Upload -->
         <div class="field">
-          <label>🖼️ <span data-lang="en" class="active">Hotel Logo (optional)</span><span data-lang="de">Hotel-Logo (optional)</span><span data-lang="es">Logo del hotel (opcional)</span></label>
+          <label style="font-weight:700;font-size:0.95rem">🖼️ <span data-lang="en" class="active">Logo of your hotel</span><span data-lang="de">Logo deines Hotels</span><span data-lang="es">Logo de tu hotel</span> <span style="font-weight:400;color:var(--text2);font-size:0.8rem">(<span data-lang="en" class="active">optional</span><span data-lang="de">optional</span><span data-lang="es">opcional</span>)</span></label>
+          <p style="font-size:0.8rem;color:var(--text2);margin:2px 0 10px;line-height:1.5">
+            <span data-lang="en" class="active">A logo makes your guest page look professional and personalized.</span>
+            <span data-lang="de">Ein Logo macht deine Gästeseite professionell und persönlich.</span>
+            <span data-lang="es">Un logo hace que tu página de huéspedes sea más profesional y personalizada.</span>
+          </p>
           <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;align-items:center;gap:10px">
-              <label for="s-logo-file" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--accent);color:#fff;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:inherit">
-                📁 <span data-lang="en" class="active">Upload logo</span><span data-lang="de">Logo hochladen</span><span data-lang="es">Subir logo</span>
-              </label>
-              <input type="file" id="s-logo-file" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display:none" onchange="handleLogoUpload(this)">
-              <span id="s-logo-filename" style="font-size:0.8rem;color:var(--text2)"></span>
+            <!-- Upload area -->
+            <label for="s-logo-file" id="s-logo-dropzone" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;border:2px dashed var(--accent);border-radius:12px;cursor:pointer;background:#F8FAFF;transition:background 0.15s">
+              <span style="font-size:2rem">📁</span>
+              <span style="font-size:0.88rem;font-weight:600;color:var(--accent)">
+                <span data-lang="en" class="active">Click to upload your logo</span>
+                <span data-lang="de">Logo hochladen — hier klicken</span>
+                <span data-lang="es">Haz clic para subir tu logo</span>
+              </span>
+              <span style="font-size:0.75rem;color:var(--text2)">JPG, PNG, WebP — max. 2MB</span>
+            </label>
+            <input type="file" id="s-logo-file" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display:none" onchange="handleLogoUpload(this)">
+            <!-- Preview -->
+            <div id="s-logo-preview-wrap" style="display:none;padding:14px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;text-align:center">
+              <img id="s-logo-preview" src="" alt="Logo preview" style="max-height:80px;max-width:200px;object-fit:contain;border-radius:8px;margin-bottom:8px">
+              <div style="font-size:0.78rem;color:#166534;margin-bottom:6px">✅ <span data-lang="en" class="active">Logo uploaded successfully!</span><span data-lang="de">Logo erfolgreich hochgeladen!</span><span data-lang="es">¡Logo subido con éxito!</span></div>
+              <button onclick="clearLogoUpload()" style="font-size:0.75rem;color:#EF4444;background:none;border:1px solid #EF4444;border-radius:6px;padding:3px 10px;cursor:pointer;font-family:inherit">
+                🗑 <span data-lang="en" class="active">Remove and upload another</span><span data-lang="de">Entfernen und neu hochladen</span><span data-lang="es">Eliminar y subir otro</span>
+              </button>
             </div>
-            <div id="s-logo-preview-wrap" style="display:none;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;text-align:center">
-              <img id="s-logo-preview" src="" alt="Logo preview" style="max-height:70px;max-width:180px;object-fit:contain;border-radius:6px">
-              <div style="margin-top:6px">
-                <button onclick="clearLogoUpload()" style="font-size:0.75rem;color:#EF4444;background:none;border:none;cursor:pointer;font-family:inherit">
-                  🗑 <span data-lang="en" class="active">Remove</span><span data-lang="de">Entfernen</span><span data-lang="es">Eliminar</span>
-                </button>
-              </div>
-            </div>
-            <input type="url" id="s-logo-url" placeholder="… or paste a logo URL" style="font-size:0.82rem">
+            <!-- URL fallback -->
+            <div style="text-align:center;font-size:0.75rem;color:var(--text2)">— <span data-lang="en" class="active">or paste a URL</span><span data-lang="de">oder URL einfügen</span><span data-lang="es">o pega una URL</span> —</div>
+            <input type="url" id="s-logo-url" placeholder="https://yourhotel.com/logo.png" style="font-size:0.82rem">
           </div>
         </div>
 
