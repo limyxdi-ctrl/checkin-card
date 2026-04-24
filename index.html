@@ -3003,9 +3003,8 @@
         body: file
       });
       if(res.ok){
-        const url = SB_URL + '/storage/v1/object/public/Logos/' + fileName;
         var u = document.getElementById('s-logo-url');
-        if(u) u.value = url;
+        if(u) u.value = SB_URL + '/storage/v1/object/public/Logos/' + fileName;
       } else { alert('Upload failed. Please paste a URL instead.'); }
     } catch(e) { console.error('Logo upload error:', e); }
   }
