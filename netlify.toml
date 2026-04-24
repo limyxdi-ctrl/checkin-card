@@ -1,7 +1,1 @@
-[build]
-  publish = "."
-  command = "echo done"
 
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
