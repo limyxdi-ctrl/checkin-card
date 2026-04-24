@@ -1040,7 +1040,7 @@
           <li>✅ <span data-lang="en" class="active">Cancel anytime · No long-term commitment</span><span data-lang="de">Jederzeit kündbar · Keine langfristige Bindung</span><span data-lang="es">Cancela cuando quieras · Sin compromiso</span></li>
         </ul>
 
-        <button onclick="showStripeModal('yearly')" class="pricing-cta-founding" style="margin-bottom:10px">
+        <button onclick="showEmailGateModal()" class="pricing-cta-founding" style="margin-bottom:10px">
           <span data-lang="en" class="active">Start free — no credit card required</span>
           <span data-lang="de">Kostenlos starten — keine Kreditkarte nötig</span>
           <span data-lang="es">Empieza gratis — sin tarjeta de crédito</span>
@@ -1891,7 +1891,7 @@
       <span data-lang="de">Wir speichern nur deine E-Mail und Unterkunftsdaten — keine Gäste- oder Buchungsdaten.</span>
       <span data-lang="es">Solo guardamos tu email e info de la propiedad — nunca datos de huéspedes o reservas.</span>
     </div>
-    <div style="text-align:center;padding:16px 0 24px">
+    <div style="text-align:center;padding:20px 0 24px;border-top:1px solid var(--border);margin-top:16px">
     <p style="font-size:0.8rem;color:#9CA3AF;margin-bottom:10px">
       <span data-lang="en" class="active">You can cancel your subscription at any time:</span>
       <span data-lang="de">Du kannst dein Abo jederzeit kündigen:</span>
@@ -3258,12 +3258,21 @@
     localStorage.setItem('cic_host_email', email);
     window._hostEmail = email;
     if(!localStorage.getItem('cic_created_at')) localStorage.setItem('cic_created_at', new Date().toISOString());
-    // Submit to Netlify Forms
+    // Submit to Netlify Forms (bot-field included as required by honeypot setup)
+    var params = new URLSearchParams();
+    params.append('form-name', 'email-gate');
+    params.append('email', email);
+    params.append('language', lang);
+    params.append('bot-field', '');
     fetch('/', {
       method: 'POST',
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: 'form-name=email-gate&email=' + encodeURIComponent(email) + '&language=' + encodeURIComponent(lang)
-    }).catch(function(){});
+      body: params.toString()
+    }).then(function(res){
+      console.log('✅ Netlify email-gate submitted, status:', res.status);
+    }).catch(function(err){
+      console.error('❌ Netlify email-gate error:', err);
+    });
     // Remove modal and scroll to form
     var modal=document.getElementById('email-gate-modal');
     if(modal) modal.remove();
