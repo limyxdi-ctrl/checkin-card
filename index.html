@@ -1171,6 +1171,31 @@
         </div>
         <input type="hidden" id="s-property-type" value="apartment">
       </div>
+      <!-- Logo Upload - shown inline when Hotel is selected -->
+      <div id="logo-upload-inline" class="field" style="display:none;margin-top:10px;padding:14px;background:#F8FAFF;border:1px solid #C7D7FF;border-radius:12px">
+        <label style="font-weight:700;font-size:0.93rem;margin-bottom:6px;display:block">🖼️ <span data-lang="en" class="active">Hotel Logo</span><span data-lang="de">Hotel-Logo</span><span data-lang="es">Logo del hotel</span> <span style="font-weight:400;color:var(--text2);font-size:0.79rem">(<span data-lang="en" class="active">optional</span><span data-lang="de">optional</span><span data-lang="es">opcional</span>)</span></label>
+        <p style="font-size:0.78rem;color:var(--text2);margin:0 0 10px;line-height:1.5">
+          <span data-lang="en" class="active">Upload your hotel logo — it appears at the top of your guest page.</span>
+          <span data-lang="de">Lade dein Hotel-Logo hoch — es erscheint oben auf deiner Gästeseite.</span>
+          <span data-lang="es">Sube el logo de tu hotel — aparece en la parte superior de tu página de huéspedes.</span>
+        </p>
+        <label for="s-logo-file" id="s-logo-dropzone" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px;border:2px dashed var(--accent);border-radius:10px;cursor:pointer;background:#fff">
+          <span style="font-size:1.8rem">📁</span>
+          <span style="font-size:0.85rem;font-weight:600;color:var(--accent)">
+            <span data-lang="en" class="active">Click to upload (JPG, PNG — max 2MB)</span>
+            <span data-lang="de">Klicken zum Hochladen (JPG, PNG — max 2MB)</span>
+            <span data-lang="es">Clic para subir (JPG, PNG — máx 2MB)</span>
+          </span>
+        </label>
+        <input type="file" id="s-logo-file" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display:none" onchange="handleLogoUpload(this)">
+        <div id="s-logo-preview-wrap" style="display:none;margin-top:10px;padding:10px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;text-align:center">
+          <img id="s-logo-preview" src="" alt="Logo preview" style="max-height:70px;max-width:180px;object-fit:contain;border-radius:6px;margin-bottom:6px">
+          <div style="font-size:0.75rem;color:#166534;margin-bottom:4px">✅ <span data-lang="en" class="active">Uploaded!</span><span data-lang="de">Hochgeladen!</span><span data-lang="es">¡Subido!</span></div>
+          <button onclick="clearLogoUpload()" style="font-size:0.73rem;color:#EF4444;background:none;border:1px solid #EF4444;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit">🗑 <span data-lang="en" class="active">Remove</span><span data-lang="de">Entfernen</span><span data-lang="es">Eliminar</span></button>
+        </div>
+        <div style="text-align:center;font-size:0.73rem;color:var(--text2);margin-top:8px">— <span data-lang="en" class="active">or paste URL</span><span data-lang="de">oder URL einfügen</span><span data-lang="es">o pega URL</span> —</div>
+        <input type="url" id="s-logo-url" placeholder="https://yourhotel.com/logo.png" style="font-size:0.81rem;margin-top:6px">
+      </div>
       <div class="field-row">
         <div class="field">
           <label><span data-lang="en" class="active">Bedrooms</span><span data-lang="de">Schlafzimmer</span><span data-lang="es">Dormitorios</span></label>
@@ -1439,39 +1464,7 @@
           <span data-lang="es">Configuración del hotel</span>
         </div>
 
-        <!-- Logo Upload -->
-        <div class="field">
-          <label style="font-weight:700;font-size:0.95rem">🖼️ <span data-lang="en" class="active">Logo of your hotel</span><span data-lang="de">Logo deines Hotels</span><span data-lang="es">Logo de tu hotel</span> <span style="font-weight:400;color:var(--text2);font-size:0.8rem">(<span data-lang="en" class="active">optional</span><span data-lang="de">optional</span><span data-lang="es">opcional</span>)</span></label>
-          <p style="font-size:0.8rem;color:var(--text2);margin:2px 0 10px;line-height:1.5">
-            <span data-lang="en" class="active">A logo makes your guest page look professional and personalized.</span>
-            <span data-lang="de">Ein Logo macht deine Gästeseite professionell und persönlich.</span>
-            <span data-lang="es">Un logo hace que tu página de huéspedes sea más profesional y personalizada.</span>
-          </p>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <!-- Upload area -->
-            <label for="s-logo-file" id="s-logo-dropzone" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;border:2px dashed var(--accent);border-radius:12px;cursor:pointer;background:#F8FAFF;transition:background 0.15s">
-              <span style="font-size:2rem">📁</span>
-              <span style="font-size:0.88rem;font-weight:600;color:var(--accent)">
-                <span data-lang="en" class="active">Click to upload your logo</span>
-                <span data-lang="de">Logo hochladen — hier klicken</span>
-                <span data-lang="es">Haz clic para subir tu logo</span>
-              </span>
-              <span style="font-size:0.75rem;color:var(--text2)">JPG, PNG, WebP — max. 2MB</span>
-            </label>
-            <input type="file" id="s-logo-file" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display:none" onchange="handleLogoUpload(this)">
-            <!-- Preview -->
-            <div id="s-logo-preview-wrap" style="display:none;padding:14px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;text-align:center">
-              <img id="s-logo-preview" src="" alt="Logo preview" style="max-height:80px;max-width:200px;object-fit:contain;border-radius:8px;margin-bottom:8px">
-              <div style="font-size:0.78rem;color:#166534;margin-bottom:6px">✅ <span data-lang="en" class="active">Logo uploaded successfully!</span><span data-lang="de">Logo erfolgreich hochgeladen!</span><span data-lang="es">¡Logo subido con éxito!</span></div>
-              <button onclick="clearLogoUpload()" style="font-size:0.75rem;color:#EF4444;background:none;border:1px solid #EF4444;border-radius:6px;padding:3px 10px;cursor:pointer;font-family:inherit">
-                🗑 <span data-lang="en" class="active">Remove and upload another</span><span data-lang="de">Entfernen und neu hochladen</span><span data-lang="es">Eliminar y subir otro</span>
-              </button>
-            </div>
-            <!-- URL fallback -->
-            <div style="text-align:center;font-size:0.75rem;color:var(--text2)">— <span data-lang="en" class="active">or paste a URL</span><span data-lang="de">oder URL einfügen</span><span data-lang="es">o pega una URL</span> —</div>
-            <input type="url" id="s-logo-url" placeholder="https://yourhotel.com/logo.png" style="font-size:0.82rem">
-          </div>
-        </div>
+
 
         <!-- Breakfast -->
         <div class="field">
@@ -2490,6 +2483,8 @@
     document.getElementById('s-wifi-name').value=d.wifiName;
     // Hotel fields
     selectPropertyType(d.propertyType||'apartment');
+    var logoInline = document.getElementById('logo-upload-inline');
+    if(logoInline) logoInline.style.display = ((d.propertyType||'apartment') === 'hotel') ? 'block' : 'none';
     var luEl=document.getElementById('s-logo-url');
     if(luEl) luEl.value=d.logoUrl||'';
     var btEl=document.getElementById('s-breakfast-text');
@@ -3144,6 +3139,9 @@
     }
     input.value = type;
     toggleHotelFields(type);
+    // Show/hide inline logo upload
+    var logoInline = document.getElementById('logo-upload-inline');
+    if(logoInline) logoInline.style.display = (type === 'hotel') ? 'block' : 'none';
   }
 
   function toggleHotelFields(type){
