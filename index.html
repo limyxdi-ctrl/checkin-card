@@ -46,7 +46,7 @@
     font-family:'Inter',system-ui,-apple-system,sans-serif;
     background:var(--bg);color:var(--text);
     min-height:100vh;font-size:15px;line-height:1.65;
-    -webkit-font-smoothing:antialiased;overflow-x:hiddened;-moz-osx-font-smoothing:grayscale;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;-moz-osx-font-smoothing:grayscale;
   }
 
   /* ── EXPIRED SCREEN ── */
@@ -63,7 +63,7 @@
   /* ── SETUP OVERLAY ── */
   #setup-overlay{
     display:none;position:fixed;inset:0;z-index:1000;
-    background:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0;
+    background:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 120px;
     box-sizing:border-box;overflow-x:hidden;width:100%;
   }
   #setup-overlay.show{display:block}
@@ -194,11 +194,9 @@
 
   /* ── STICKY SAVE ── */
   .sticky-save-bar{
-    position:static;
-    background:#fff;
-    padding:24px 0 40px;
-    margin-top:16px;
-    border-top:1px solid var(--border);
+    position:sticky;bottom:0;z-index:10;
+    background:linear-gradient(to top,rgba(255,255,255,1) 75%,rgba(255,255,255,0) 100%);
+    padding:18px 0 22px;
   }
   .btn-save{
     width:100%;padding:13px;border-radius:var(--radius-sm);border:none;
@@ -1173,31 +1171,6 @@
         </div>
         <input type="hidden" id="s-property-type" value="apartment">
       </div>
-      <!-- Logo Upload - shown inline when Hotel is selected -->
-      <div id="logo-upload-inline" class="field" style="display:none;margin-top:10px;padding:14px;background:#F8FAFF;border:1px solid #C7D7FF;border-radius:12px">
-        <label style="font-weight:700;font-size:0.93rem;margin-bottom:6px;display:block">🖼️ <span data-lang="en" class="active">Hotel Logo</span><span data-lang="de">Hotel-Logo</span><span data-lang="es">Logo del hotel</span> <span style="font-weight:400;color:var(--text2);font-size:0.79rem">(<span data-lang="en" class="active">optional</span><span data-lang="de">optional</span><span data-lang="es">opcional</span>)</span></label>
-        <p style="font-size:0.78rem;color:var(--text2);margin:0 0 10px;line-height:1.5">
-          <span data-lang="en" class="active">Upload your hotel logo — it appears at the top of your guest page.</span>
-          <span data-lang="de">Lade dein Hotel-Logo hoch — es erscheint oben auf deiner Gästeseite.</span>
-          <span data-lang="es">Sube el logo de tu hotel — aparece en la parte superior de tu página de huéspedes.</span>
-        </p>
-        <label for="s-logo-file" id="s-logo-dropzone" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px;border:2px dashed var(--accent);border-radius:10px;cursor:pointer;background:#fff">
-          <span style="font-size:1.8rem">📁</span>
-          <span style="font-size:0.85rem;font-weight:600;color:var(--accent)">
-            <span data-lang="en" class="active">Click to upload (JPG, PNG — max 2MB)</span>
-            <span data-lang="de">Klicken zum Hochladen (JPG, PNG — max 2MB)</span>
-            <span data-lang="es">Clic para subir (JPG, PNG — máx 2MB)</span>
-          </span>
-        </label>
-        <input type="file" id="s-logo-file" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display:none" onchange="handleLogoUpload(this)">
-        <div id="s-logo-preview-wrap" style="display:none;margin-top:10px;padding:10px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;text-align:center">
-          <img id="s-logo-preview" src="" alt="Logo preview" style="max-height:70px;max-width:180px;object-fit:contain;border-radius:6px;margin-bottom:6px">
-          <div style="font-size:0.75rem;color:#166534;margin-bottom:4px">✅ <span data-lang="en" class="active">Uploaded!</span><span data-lang="de">Hochgeladen!</span><span data-lang="es">¡Subido!</span></div>
-          <button onclick="clearLogoUpload()" style="font-size:0.73rem;color:#EF4444;background:none;border:1px solid #EF4444;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit">🗑 <span data-lang="en" class="active">Remove</span><span data-lang="de">Entfernen</span><span data-lang="es">Eliminar</span></button>
-        </div>
-        <div style="text-align:center;font-size:0.73rem;color:var(--text2);margin-top:8px">— <span data-lang="en" class="active">or paste URL</span><span data-lang="de">oder URL einfügen</span><span data-lang="es">o pega URL</span> —</div>
-        <input type="url" id="s-logo-url" placeholder="https://yourhotel.com/logo.png" style="font-size:0.81rem;margin-top:6px">
-      </div>
       <div class="field-row">
         <div class="field">
           <label><span data-lang="en" class="active">Bedrooms</span><span data-lang="de">Schlafzimmer</span><span data-lang="es">Dormitorios</span></label>
@@ -1466,7 +1439,11 @@
           <span data-lang="es">Configuración del hotel</span>
         </div>
 
-
+        <!-- Logo Upload -->
+        <div class="field">
+          <label><span data-lang="en" class="active">Logo URL (optional)</span><span data-lang="de">Logo-URL (optional)</span><span data-lang="es">URL del logo (opcional)</span></label>
+          <input type="url" id="s-logo-url" placeholder="Paste your logo URL (optional)">
+        </div>
 
         <!-- Breakfast -->
         <div class="field">
@@ -1559,8 +1536,10 @@
       </div>
     </div>
 
+  </div><!-- /setup-inner -->
+
   <!-- Save Bar -->
-  <div class="sticky-save-bar" style="padding:24px 16px 40px;margin-top:8px;border-top:1px solid var(--border);max-width:420px;margin-left:auto;margin-right:auto">
+  <div class="sticky-save-bar" style="padding:24px 16px 40px;max-width:420px;margin:0 auto">
     <p style="text-align:center;font-size:0.8rem;color:#6B7280;line-height:1.6;margin-bottom:12px;padding:10px 14px;background:rgba(31,58,138,0.04);border-radius:8px">
       <span data-lang="en" class="active">You will receive a personal link by email — no account, no password. You can edit everything later.</span>
       <span data-lang="de">Du bekommst einen persönlichen Link per E-Mail – kein Konto, kein Passwort, du kannst alles später bearbeiten.</span>
@@ -1577,7 +1556,7 @@
       <span data-lang="de">Dauert 30 Sekunden. Kein Setup nötig.</span>
       <span data-lang="es">30 segundos. Sin configuración.</span>
     </p>
-  </div><!-- /setup-inner -->
+  </div>
 
 </div><!-- /setup-overlay -->
 <button class="edit-fab" onclick="openSetup()" title="Settings">⚙️</button>
@@ -1887,7 +1866,28 @@
   </div>
 
   <footer>
-
+    <div class="footer-main">
+      <span data-lang="en" class="active">Have a great stay! 🌞</span>
+      <span data-lang="de">Einen wunderschönen Aufenthalt! 🌞</span>
+      <span data-lang="es">¡Que disfrute su estancia! 🌞</span>
+    </div>
+    <div id="d-footer-name"></div>
+    <svg class="footer-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 138" width="120" height="41" style="display:block;margin:10px auto 0">
+      <defs><linearGradient id="cg4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#3b9eff"/><stop offset="100%" style="stop-color:#0066dd"/></linearGradient></defs>
+      <rect x="10" y="14" width="82" height="88" rx="12" fill="url(#cg4)"/>
+      <rect x="20" y="58" width="62" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
+      <rect x="20" y="68" width="42" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
+      <circle cx="76" cy="30" r="16" fill="white"/>
+      <polyline points="68,30 74,36 85,22" fill="none" stroke="#1a8fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="104" y="68" font-family="Georgia,'Times New Roman',serif" font-size="40" font-weight="700" letter-spacing="-0.5" fill="#ffffff">CheckIn</text>
+      <text x="104" y="100" font-family="Georgia,'Times New Roman',serif" font-size="30" font-weight="400" font-style="italic" letter-spacing="1" fill="#3b9eff">Card</text>
+    </svg>
+    <div style="margin-top:14px;font-size:0.72rem;color:var(--text2);line-height:1.8;text-align:center">
+      <a href="/cdn-cgi/l/email-protection#1a73747c755a79727f7971737437797b687e34797577" style="color:var(--accent);text-decoration:none;font-weight:500"><span class="__cf_email__" data-cfemail="d7beb9b1b897b4bfb2b4bcbeb9fab4b6a5b3f9b4b8ba">[email&#160;protected]</span></a><br>
+      🔒 <span data-lang="en" class="active">We only store your email and property info — never guest or booking data.</span>
+      <span data-lang="de">Wir speichern nur deine E-Mail und Unterkunftsdaten — keine Gäste- oder Buchungsdaten.</span>
+      <span data-lang="es">Solo guardamos tu email e info de la propiedad — nunca datos de huéspedes o reservas.</span>
+    </div>
     <div id="cancel-sub-section" style="text-align:center;padding:20px 0 24px;border-top:1px solid var(--border);margin-top:16px;display:none">
     <p style="font-size:0.8rem;color:#9CA3AF;margin-bottom:10px">
       <span data-lang="en" class="active">You can cancel your subscription at any time:</span>
@@ -2459,8 +2459,6 @@
     document.getElementById('s-wifi-name').value=d.wifiName;
     // Hotel fields
     selectPropertyType(d.propertyType||'apartment');
-    var logoInline = document.getElementById('logo-upload-inline');
-    if(logoInline) logoInline.style.display = ((d.propertyType||'apartment') === 'hotel') ? 'block' : 'none';
     var luEl=document.getElementById('s-logo-url');
     if(luEl) luEl.value=d.logoUrl||'';
     var btEl=document.getElementById('s-breakfast-text');
@@ -2510,7 +2508,7 @@
           <input id="suc-guest-input" readonly value="${guestLink}" style="flex:1;padding:10px 12px;border:2px solid #C7D2FE;border-radius:8px;font-size:0.82rem;background:#F0F4FF;color:var(--text);font-family:monospace;min-width:0">
           <button id="suc-copy-guest" onclick="gatedCopy('suc-guest-input','suc-copy-guest','${t.copied}')" style="flex-shrink:0;padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit;white-space:nowrap">${t.copy}</button>
         </div>
-        <a href="${guestLink}" target="_blank" style="display:flex;align-items:center;justify-content:center;margin-top:8px;padding:11px;background:var(--accent);border-radius:8px;color:#fff;font-weight:600;font-size:0.85rem;text-decoration:none">🔗 ${t.open}</a>
+        <a href="${guestLink}" target="_blank" style="display:flex;align-items:center;justify-content:center;margin-top:8px;padding:11px;background:#F0F4FF;border:1px solid #C7D2FE;border-radius:8px;color:var(--accent);font-weight:600;font-size:0.85rem;text-decoration:none">🔗 ${t.open}</a>
         <div style="margin-top:8px;padding:8px 12px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;font-size:0.78rem;color:#92400E;text-align:center">
           ⏰ <strong>${t.expiry}</strong>
         </div>
@@ -2926,7 +2924,7 @@
       de:`${prefix}<strong>${d.beds}</strong> Schlafzimmer &nbsp;·&nbsp; <strong>${d.sleeps}</strong> Personen`,
       es:`${prefix}<strong>${d.beds}</strong> dormitorios &nbsp;·&nbsp; <strong>${d.sleeps}</strong> personas`
     };
-    var metaEl=document.getElementById('d-meta'); if(metaEl){ var isHotel=(window._aptData||{}).propertyType==='hotel'; metaEl.innerHTML=isHotel?'':(meta[lang]||meta.en); metaEl.style.display=isHotel?'none':''; }
+    document.getElementById('d-meta').innerHTML=meta[lang]||meta.en;
     if(window._aptData) renderEntryCard(window._aptData,lang);
     // Re-render nearby in new language if places are already loaded
     if(window._loadedNearby) renderNearby(window._loadedNearby,lang);
@@ -2963,71 +2961,6 @@
   // ═══════════════════════════════════════════════════════════
   // EXPIRY / STORAGE
   // ═══════════════════════════════════════════════════════════
-  // ═══════════════════════════════════════════════════════════
-  // LOGO UPLOAD
-  // ═══════════════════════════════════════════════════════════
-  async function handleLogoUpload(input){
-    const file = input.files[0];
-    if(!file) return;
-    const maxSize = 2 * 1024 * 1024; // 2MB
-    if(file.size > maxSize){
-      alert('Image too large. Please use a file under 2MB.');
-      input.value = '';
-      return;
-    }
-    // Show preview immediately
-    const reader = new FileReader();
-    reader.onload = function(e){
-      const preview = document.getElementById('s-logo-preview');
-      const previewWrap = document.getElementById('s-logo-preview-wrap');
-      const filename = document.getElementById('s-logo-filename');
-      if(preview) preview.src = e.target.result;
-      if(previewWrap) previewWrap.style.display = 'block';
-      if(filename) filename.textContent = file.name;
-    };
-    reader.readAsDataURL(file);
-    // Upload to Supabase Storage
-    try {
-      const ext = file.name.split('.').pop();
-      const fileName = 'logo_' + Date.now() + '_' + Math.random().toString(36).substr(2,6) + '.' + ext;
-      const res = await fetch(SB_URL + '/storage/v1/object/Logos/' + fileName, {
-        method: 'POST',
-        headers: {
-          'apikey': SB_KEY,
-          'Authorization': 'Bearer ' + SB_KEY,
-          'Content-Type': file.type,
-          'x-upsert': 'true'
-        },
-        body: file
-      });
-      if(res.ok){
-        const publicUrl = SB_URL + '/storage/v1/object/public/Logos/' + fileName;
-        const urlInput = document.getElementById('s-logo-url');
-        if(urlInput) urlInput.value = publicUrl;
-        console.log('✅ Logo uploaded:', publicUrl);
-      } else {
-        const err = await res.text();
-        console.error('❌ Logo upload failed:', err);
-        alert('Upload failed. Please try pasting a URL instead.');
-      }
-    } catch(e) {
-      console.error('❌ Logo upload error:', e);
-    }
-  }
-
-  function clearLogoUpload(){
-    const preview = document.getElementById('s-logo-preview');
-    const previewWrap = document.getElementById('s-logo-preview-wrap');
-    const filename = document.getElementById('s-logo-filename');
-    const urlInput = document.getElementById('s-logo-url');
-    const fileInput = document.getElementById('s-logo-file');
-    if(preview) preview.src = '';
-    if(previewWrap) previewWrap.style.display = 'none';
-    if(filename) filename.textContent = '';
-    if(urlInput) urlInput.value = '';
-    if(fileInput) fileInput.value = '';
-  }
-
   function checkExpiry(){
     return false; // expiry removed
   }
@@ -3047,7 +2980,6 @@
         const data=row?.data||DEFAULTS;
         window._guideId=id;
         window._ownerToken=owner||row?.owner_token||null;
-        // Show cancel subscription button only to owner
         if(owner){ var cs=document.getElementById('cancel-sub-section'); if(cs) cs.style.display='block'; }
         window._existingCreatedAt=data.createdAt||null;
         applyData(data);
@@ -3117,9 +3049,6 @@
     }
     input.value = type;
     toggleHotelFields(type);
-    // Show/hide inline logo upload
-    var logoInline = document.getElementById('logo-upload-inline');
-    if(logoInline) logoInline.style.display = (type === 'hotel') ? 'block' : 'none';
   }
 
   function toggleHotelFields(type){
@@ -3322,12 +3251,10 @@
       if(emailEl) emailEl.focus();
       return;
     }
-    // Save email to session and localStorage
     sessionStorage.setItem('cic_email_entered', email);
     localStorage.setItem('cic_host_email', email);
     window._hostEmail = email;
     if(!localStorage.getItem('cic_created_at')) localStorage.setItem('cic_created_at', new Date().toISOString());
-    // Submit to Netlify Forms (bot-field included as required by honeypot setup)
     var params = new URLSearchParams();
     params.append('form-name', 'email-gate');
     params.append('email', email);
@@ -3342,7 +3269,6 @@
     }).catch(function(err){
       console.error('❌ Netlify email-gate error:', err);
     });
-    // Remove modal and scroll to form
     var modal=document.getElementById('email-gate-modal');
     if(modal) modal.remove();
     document.getElementById('hero-section').scrollIntoView({behavior:'smooth'});
