@@ -839,13 +839,12 @@
 
 
 
-<!-- ── SETUP WIZARD ── -->
 <!-- Hidden Netlify form for email gate submissions -->
-<form name="email-gate" netlify netlify-honeypot="bot-field" hidden>
+<form name="email-gate" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="email-gate">
   <input type="email" name="email">
   <input type="text" name="language">
-  <input type="hidden" name="bot-field">
-  <input type="hidden" name="form-name" value="email-gate">
+  <input type="text" name="bot-field">
 </form>
 
 <div id="setup-overlay">
@@ -3541,5 +3540,16 @@
     }).catch(function(){ alert(text); });
   }
 </script>
+<!-- Netlify Forms — static declaration required for deploy detection -->
+<form name="email-gate" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="email-gate">
+  <input type="email" name="email">
+  <input type="text" name="language">
+  <input type="text" name="bot-field">
+</form>
+<form name="register" method="POST" data-netlify="true" hidden>
+  <input type="hidden" name="form-name" value="register">
+  <input type="email" name="email">
+</form>
 </body>
 </html>
