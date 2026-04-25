@@ -1564,7 +1564,7 @@
 
       <!-- Link Action Buttons -->
       <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
-        <a id="links-open-btn" href="#" target="_blank" style="flex:2;min-width:140px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:13px 16px;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-family:inherit;font-size:0.9rem;font-weight:700;text-decoration:none;cursor:pointer;transition:background 0.15s;letter-spacing:0.01em">
+        <a id="links-open-btn" href="#" target="_blank" style="flex:2;min-width:140px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:13px 16px;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-family:inherit;font-size:0.9rem;font-weight:700;text-decoration:none;cursor:pointer;transition:background 0.15s;letter-spacing:0.01em" onclick="if(this.getAttribute('href')==='#'){event.preventDefault();}">
           🔗 <span data-lang="en" class="active">Open Guide</span><span data-lang="de">Guide öffnen</span><span data-lang="es">Abrir guía</span>
         </a>
         <button onclick="saveLinksToFile()" title="Save links as .txt file" style="flex:1;min-width:52px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:13px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:#fff;color:var(--text);font-family:inherit;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s">
@@ -1573,6 +1573,18 @@
         <button onclick="copyBothLinks(this)" title="Copy both links to clipboard" style="flex:1;min-width:52px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:13px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:#fff;color:var(--text);font-family:inherit;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s">
           📋 <span data-lang="en" class="active">Copy all</span><span data-lang="de">Alle kopieren</span><span data-lang="es">Copiar todo</span>
         </button>
+      </div>
+
+      <!-- Add another property -->
+      <button class="new-guide-btn" onclick="newGuide()" style="margin-top:10px">
+        + <span data-lang="en" class="active">Add another property</span>
+        <span data-lang="de">Weitere Unterkunft hinzufügen</span>
+        <span data-lang="es">Añadir otra propiedad</span>
+      </button>
+      <div style="font-size:0.74rem;color:var(--text2);text-align:center;margin-top:6px;line-height:1.5">
+        <span data-lang="en" class="active">You can manage up to 10+ properties. Each gets its own unique guest link.</span>
+        <span data-lang="de">Du kannst bis zu 10+ Unterkünfte verwalten. Jede erhält ihren eigenen Gäste-Link.</span>
+        <span data-lang="es">Puedes gestionar hasta 10+ propiedades. Cada una tiene su propio enlace único.</span>
       </div>
     </div>
 
@@ -2405,7 +2417,7 @@
     document.getElementById('edit-link-input').value=editLink;
     document.getElementById('links-section').classList.add('show');
     var openBtn=document.getElementById('links-open-btn');
-    if(openBtn) openBtn.href=guestLink;
+    if(openBtn){ openBtn.href=guestLink; openBtn.style.pointerEvents=''; openBtn.style.opacity=''; }
     localStorage.setItem('cic_guest_link',guestLink);
     localStorage.setItem('cic_edit_link',editLink);
   }
