@@ -1574,18 +1574,6 @@
           📋 <span data-lang="en" class="active">Copy all</span><span data-lang="de">Alle kopieren</span><span data-lang="es">Copiar todo</span>
         </button>
       </div>
-
-      <!-- Add another property -->
-      <button class="new-guide-btn" onclick="newGuide()" style="margin-top:10px">
-        + <span data-lang="en" class="active">Add another property</span>
-        <span data-lang="de">Weitere Unterkunft hinzufügen</span>
-        <span data-lang="es">Añadir otra propiedad</span>
-      </button>
-      <div style="font-size:0.74rem;color:var(--text2);text-align:center;margin-top:6px;line-height:1.5">
-        <span data-lang="en" class="active">You can manage up to 10+ properties. Each gets its own unique guest link.</span>
-        <span data-lang="de">Du kannst bis zu 10+ Unterkünfte verwalten. Jede erhält ihren eigenen Gäste-Link.</span>
-        <span data-lang="es">Puedes gestionar hasta 10+ propiedades. Cada una tiene su propio enlace único.</span>
-      </div>
     </div>
 
     <!-- ── MY GUIDES ── -->
@@ -1597,16 +1585,18 @@
         </button>
       </div>
       <div id="my-guides-list"></div>
-      <button class="new-guide-btn" onclick="newGuide()">+
-        <span data-lang="en" class="active">Add another property</span>
-        <span data-lang="de">Weitere Unterkunft hinzufügen</span>
-        <span data-lang="es">Añadir otra propiedad</span>
-      </button>
-      <div style="font-size:0.74rem;color:var(--text2);text-align:center;margin-top:8px;line-height:1.5">
-        <span data-lang="en" class="active">You can manage up to 10+ properties. Each gets its own unique guest link.</span>
-        <span data-lang="de">Du kannst bis zu 10+ Unterkünfte verwalten. Jede erhält ihren eigenen Gäste-Link.</span>
-        <span data-lang="es">Puedes gestionar hasta 10+ propiedades. Cada una tiene su propio enlace único.</span>
-      </div>
+    </div>
+
+    <!-- Add another property — always visible -->
+    <button class="new-guide-btn" onclick="newGuide()" style="margin-top:4px">
+      + <span data-lang="en" class="active">Add another property</span>
+      <span data-lang="de">Weitere Unterkunft hinzufügen</span>
+      <span data-lang="es">Añadir otra propiedad</span>
+    </button>
+    <div style="font-size:0.74rem;color:var(--text2);text-align:center;margin-top:8px;line-height:1.5">
+      <span data-lang="en" class="active">You can manage up to 10+ properties. Each gets its own unique guest link.</span>
+      <span data-lang="de">Du kannst bis zu 10+ Unterkünfte verwalten. Jede erhält ihren eigenen Gäste-Link.</span>
+      <span data-lang="es">Puedes gestionar hasta 10+ propiedades. Cada una tiene su propio enlace único.</span>
     </div>
 
   </div><!-- /setup-inner -->
