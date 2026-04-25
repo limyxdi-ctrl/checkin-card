@@ -1429,6 +1429,39 @@
       </div>
     </div>
 
+    <!-- ── LOGO (all property types) ── -->
+    <div class="setup-section">
+      <div class="setup-section-title">
+        <span style="font-size:1.1rem">🖼️</span>
+        <span data-lang="en" class="active">Your Logo (optional)</span>
+        <span data-lang="de">Dein Logo (optional)</span>
+        <span data-lang="es">Tu Logo (opcional)</span>
+      </div>
+      <div class="field">
+        <label for="s-logo-file-general">
+          <span data-lang="en" class="active">Upload a logo to brand your guest guide</span>
+          <span data-lang="de">Lade ein Logo hoch, um deinen Gäste-Guide zu personalisieren</span>
+          <span data-lang="es">Sube un logo para personalizar tu guía de huéspedes</span>
+        </label>
+        <label for="s-logo-file-general" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;border:2px dashed var(--accent);border-radius:10px;cursor:pointer;background:#F8FAFF;margin-bottom:8px">
+          <span style="font-size:1.6rem">📁</span>
+          <span style="font-size:0.83rem;font-weight:600;color:var(--accent)">
+            <span data-lang="en" class="active">Click to upload (JPG, PNG — max 2MB)</span>
+            <span data-lang="de">Klicken zum Hochladen (JPG, PNG — max 2MB)</span>
+            <span data-lang="es">Clic para subir (JPG, PNG — máx 2MB)</span>
+          </span>
+        </label>
+        <input type="file" id="s-logo-file-general" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display:none" onchange="handleLogoUploadGeneral(this)">
+        <div id="s-logo-preview-wrap-general" style="display:none;margin-bottom:8px;padding:10px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;text-align:center">
+          <img id="s-logo-preview-general" src="" alt="Logo" style="max-height:70px;max-width:180px;object-fit:contain;border-radius:6px;margin-bottom:6px">
+          <div style="font-size:0.75rem;color:#166534;margin-bottom:4px">✅ <span data-lang="en" class="active">Uploaded!</span><span data-lang="de">Hochgeladen!</span><span data-lang="es">¡Subido!</span></div>
+          <button onclick="clearLogoUploadGeneral()" style="font-size:0.73rem;color:#EF4444;background:none;border:1px solid #EF4444;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit">🗑</button>
+        </div>
+        <div style="text-align:center;font-size:0.73rem;color:var(--text2);margin-bottom:6px">— <span data-lang="en" class="active">or paste URL</span><span data-lang="de">oder URL einfügen</span><span data-lang="es">o pega URL</span> —</div>
+        <input type="url" id="s-logo-url-general" placeholder="https://yourproperty.com/logo.png">
+      </div>
+    </div>
+
     <!-- ── HOTEL FIELDS (only visible when Hotel selected) ── -->
     <div id="hotel-fields-section" style="display:none">
       <div class="setup-section">
@@ -1441,8 +1474,23 @@
 
         <!-- Logo Upload -->
         <div class="field">
-          <label><span data-lang="en" class="active">Logo URL (optional)</span><span data-lang="de">Logo-URL (optional)</span><span data-lang="es">URL del logo (opcional)</span></label>
-          <input type="url" id="s-logo-url" placeholder="Paste your logo URL (optional)">
+          <label style="font-weight:700">🖼️ <span data-lang="en" class="active">Hotel Logo (optional)</span><span data-lang="de">Hotel-Logo (optional)</span><span data-lang="es">Logo del hotel (opcional)</span></label>
+          <label for="s-logo-file" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;border:2px dashed var(--accent);border-radius:10px;cursor:pointer;background:#F8FAFF;margin-bottom:8px">
+            <span style="font-size:1.6rem">📁</span>
+            <span style="font-size:0.83rem;font-weight:600;color:var(--accent)">
+              <span data-lang="en" class="active">Click to upload (JPG, PNG — max 2MB)</span>
+              <span data-lang="de">Klicken zum Hochladen (JPG, PNG — max 2MB)</span>
+              <span data-lang="es">Clic para subir (JPG, PNG — máx 2MB)</span>
+            </span>
+          </label>
+          <input type="file" id="s-logo-file" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display:none" onchange="handleLogoUpload(this)">
+          <div id="s-logo-preview-wrap" style="display:none;margin-bottom:8px;padding:10px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;text-align:center">
+            <img id="s-logo-preview" src="" alt="Logo" style="max-height:70px;max-width:180px;object-fit:contain;border-radius:6px;margin-bottom:6px">
+            <div style="font-size:0.75rem;color:#166534;margin-bottom:4px">✅ <span data-lang="en" class="active">Uploaded!</span><span data-lang="de">Hochgeladen!</span><span data-lang="es">¡Subido!</span></div>
+            <button onclick="clearLogoUpload()" style="font-size:0.73rem;color:#EF4444;background:none;border:1px solid #EF4444;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit">🗑</button>
+          </div>
+          <div style="text-align:center;font-size:0.73rem;color:var(--text2);margin-bottom:6px">— <span data-lang="en" class="active">or paste URL</span><span data-lang="de">oder URL einfügen</span><span data-lang="es">o pega URL</span> —</div>
+          <input type="url" id="s-logo-url" placeholder="https://yourhotel.com/logo.png">
         </div>
 
         <!-- Breakfast -->
@@ -1512,6 +1560,19 @@
           <span data-lang="de">⚠️ Nur du! Mit diesem Link kannst du den Guide jederzeit bearbeiten.</span>
           <span data-lang="es">⚠️ ¡Solo tú! Usa este enlace para editar tu guía en cualquier momento.</span>
         </div>
+      </div>
+
+      <!-- Link Action Buttons -->
+      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+        <a id="links-open-btn" href="#" target="_blank" style="flex:2;min-width:140px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:13px 16px;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-family:inherit;font-size:0.9rem;font-weight:700;text-decoration:none;cursor:pointer;transition:background 0.15s;letter-spacing:0.01em">
+          🔗 <span data-lang="en" class="active">Open Guide</span><span data-lang="de">Guide öffnen</span><span data-lang="es">Abrir guía</span>
+        </a>
+        <button onclick="saveLinksToFile()" title="Save links as .txt file" style="flex:1;min-width:52px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:13px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:#fff;color:var(--text);font-family:inherit;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s">
+          💾 <span data-lang="en" class="active">Save</span><span data-lang="de">Speichern</span><span data-lang="es">Guardar</span>
+        </button>
+        <button onclick="copyBothLinks(this)" title="Copy both links to clipboard" style="flex:1;min-width:52px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:13px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:#fff;color:var(--text);font-family:inherit;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s">
+          📋 <span data-lang="en" class="active">Copy all</span><span data-lang="de">Alle kopieren</span><span data-lang="es">Copiar todo</span>
+        </button>
       </div>
     </div>
 
@@ -2343,6 +2404,8 @@
     document.getElementById('guest-link-input').value=guestLink;
     document.getElementById('edit-link-input').value=editLink;
     document.getElementById('links-section').classList.add('show');
+    var openBtn=document.getElementById('links-open-btn');
+    if(openBtn) openBtn.href=guestLink;
     localStorage.setItem('cic_guest_link',guestLink);
     localStorage.setItem('cic_edit_link',editLink);
   }
@@ -2462,6 +2525,8 @@
     selectPropertyType(d.propertyType||'apartment');
     var luEl=document.getElementById('s-logo-url');
     if(luEl) luEl.value=d.logoUrl||'';
+    var luGenEl=document.getElementById('s-logo-url-general');
+    if(luGenEl) luGenEl.value=d.logoUrl||'';
     var btEl=document.getElementById('s-breakfast-text');
     if(btEl) btEl.value=d.breakfastText||'';
     var bpEl=document.getElementById('s-breakfast-price');
@@ -2864,7 +2929,7 @@
       helpText:g('s-helptext'),
       createdAt:window._existingCreatedAt||localStorage.getItem('cic_created_at')||new Date().toISOString(),
       propertyType:(document.getElementById('s-property-type')||{value:'apartment'}).value,
-      logoUrl:g('s-logo-url'),
+      logoUrl:g('s-logo-url-general')||g('s-logo-url'),
       breakfastText:g('s-breakfast-text'),
       breakfastPrice:g('s-breakfast-price'),
       lateCheckoutText:g('s-latecheckout-text'),
@@ -3082,7 +3147,7 @@
     var logoWrap = document.getElementById('d-hotel-logo-wrap');
     var logoImg  = document.getElementById('d-hotel-logo');
     if(logoWrap && logoImg){
-      if(isHotel && d.logoUrl){
+      if(d.logoUrl){
         logoImg.src = d.logoUrl;
         logoWrap.style.display = 'block';
       } else {
@@ -3364,6 +3429,116 @@
   }
 
 
+
+  async function handleLogoUpload(input){
+    const file = input.files[0];
+    if(!file) return;
+    if(file.size > 2097152){ alert('Max 2MB'); input.value=''; return; }
+    const reader = new FileReader();
+    reader.onload = function(e){
+      var p = document.getElementById('s-logo-preview');
+      var w = document.getElementById('s-logo-preview-wrap');
+      if(p) p.src = e.target.result;
+      if(w) w.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+    try {
+      const ext = file.name.split('.').pop();
+      const fileName = 'logo_' + Date.now() + '.' + ext;
+      const res = await fetch(SB_URL + '/storage/v1/object/Logos/' + fileName, {
+        method: 'POST',
+        headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type,'x-upsert':'true'},
+        body: file
+      });
+      if(res.ok){
+        var u = document.getElementById('s-logo-url');
+        if(u) u.value = SB_URL+'/storage/v1/object/public/Logos/'+fileName;
+      } else { alert('Upload failed. Paste a URL instead.'); }
+    } catch(e) { console.error(e); }
+  }
+  function clearLogoUpload(){
+    var p=document.getElementById('s-logo-preview');
+    var w=document.getElementById('s-logo-preview-wrap');
+    var u=document.getElementById('s-logo-url');
+    var f=document.getElementById('s-logo-file');
+    if(p)p.src=''; if(w)w.style.display='none'; if(u)u.value=''; if(f)f.value='';
+  }
+
+  // ── GENERAL LOGO UPLOAD (all property types) ──
+  async function handleLogoUploadGeneral(input){
+    const file = input.files[0];
+    if(!file) return;
+    if(file.size > 2097152){ alert('Max 2MB'); input.value=''; return; }
+    const reader = new FileReader();
+    reader.onload = function(e){
+      var p = document.getElementById('s-logo-preview-general');
+      var w = document.getElementById('s-logo-preview-wrap-general');
+      if(p) p.src = e.target.result;
+      if(w) w.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+    try {
+      const ext = file.name.split('.').pop();
+      const fileName = 'logo_' + Date.now() + '.' + ext;
+      const res = await fetch(SB_URL + '/storage/v1/object/Logos/' + fileName, {
+        method: 'POST',
+        headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type,'x-upsert':'true'},
+        body: file
+      });
+      if(res.ok){
+        var u = document.getElementById('s-logo-url-general');
+        if(u) u.value = SB_URL+'/storage/v1/object/public/Logos/'+fileName;
+        // also sync to hotel logo url if present
+        var uH = document.getElementById('s-logo-url');
+        if(uH && !uH.value) uH.value = SB_URL+'/storage/v1/object/public/Logos/'+fileName;
+      } else { alert('Upload failed. Paste a URL instead.'); }
+    } catch(e) { console.error(e); }
+  }
+  function clearLogoUploadGeneral(){
+    var p=document.getElementById('s-logo-preview-general');
+    var w=document.getElementById('s-logo-preview-wrap-general');
+    var u=document.getElementById('s-logo-url-general');
+    var f=document.getElementById('s-logo-file-general');
+    if(p)p.src=''; if(w)w.style.display='none'; if(u)u.value=''; if(f)f.value='';
+  }
+
+  // ── SAVE / COPY LINKS ──
+  function saveLinksToFile(){
+    var guestLink = document.getElementById('guest-link-input') ? document.getElementById('guest-link-input').value : '';
+    var editLink  = document.getElementById('edit-link-input')  ? document.getElementById('edit-link-input').value  : '';
+    if(!guestLink && !editLink){ alert('No links yet — save your guide first!'); return; }
+    var lang = document.documentElement.lang || 'en';
+    var t = {
+      en: { guest:'Guest Link', edit:'Edit Link (keep private!)', note:'Saved with CheckInCard' },
+      de: { guest:'Gäste-Link', edit:'Bearbeitungs-Link (privat halten!)', note:'Gespeichert mit CheckInCard' },
+      es: { guest:'Enlace de huéspedes', edit:'Enlace de edición (¡mantenlo privado!)', note:'Guardado con CheckInCard' }
+    }[lang] || {};
+    var content = t.guest + ':\n' + guestLink + '\n\n' + t.edit + ':\n' + editLink + '\n\n— ' + t.note + ' —\n';
+    var blob = new Blob([content], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'checkincard-links.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  function copyBothLinks(btn){
+    var guestLink = document.getElementById('guest-link-input') ? document.getElementById('guest-link-input').value : '';
+    var editLink  = document.getElementById('edit-link-input')  ? document.getElementById('edit-link-input').value  : '';
+    if(!guestLink && !editLink){ alert('No links yet — save your guide first!'); return; }
+    var lang = document.documentElement.lang || 'en';
+    var t = {
+      en: { guest:'Guest Link', edit:'Edit Link (keep private!)' },
+      de: { guest:'Gäste-Link', edit:'Bearbeitungs-Link (privat halten!)' },
+      es: { guest:'Enlace de huéspedes', edit:'Enlace de edición (¡mantenlo privado!)' }
+    }[lang] || {};
+    var text = t.guest + ': ' + guestLink + '\n' + t.edit + ': ' + editLink;
+    navigator.clipboard.writeText(text).then(function(){
+      var orig = btn.innerHTML;
+      btn.innerHTML = '✅ <span>Copied!</span>';
+      btn.style.background='#F0FDF4'; btn.style.borderColor='#BBF7D0'; btn.style.color='#166534';
+      setTimeout(function(){ btn.innerHTML=orig; btn.style.background=''; btn.style.borderColor=''; btn.style.color=''; }, 2000);
+    }).catch(function(){ alert(text); });
+  }
 </script>
 </body>
 </html>
