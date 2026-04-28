@@ -1158,7 +1158,11 @@
           <span data-lang="de">Name der Unterkunft</span>
           <span data-lang="es">Nombre de la propiedad</span>
         </label>
-        <input id="s-name" placeholder="e.g. Cozy Apartment Berlin">
+        <input id="s-name"
+          data-placeholder-en="e.g. Cozy Apartment Berlin"
+          data-placeholder-de="z. B. Gemütliches Apartment Berlin"
+          data-placeholder-es="p. ej. Acogedor apartamento en Berlín"
+          placeholder="e.g. Cozy Apartment Berlin">
       </div>
       <div class="field">
         <label><span data-lang="en" class="active">Property type</span><span data-lang="de">Unterkunftstyp</span><span data-lang="es">Tipo de alojamiento</span></label>
@@ -2199,17 +2203,20 @@
   // NEARBY PLACES  (Overpass API — free, no API key)
   // ═══════════════════════════════════════════════════════════
   const PLACE_TYPES = [
-    { key:'supermarket',     emoji:'🛒', tag:'shop=supermarket',               label:{en:'Supermarket',de:'Supermarkt',es:'Supermercado'} },
-    { key:'pharmacy',        emoji:'💊', tag:'amenity=pharmacy',                label:{en:'Pharmacy',   de:'Apotheke',  es:'Farmacia'} },
-    { key:'atm',             emoji:'🏧', tag:'amenity=atm',                     label:{en:'ATM',        de:'Geldautomat',es:'Cajero'} },
-    { key:'bus_stop',        emoji:'🚌', tag:'highway=bus_stop',               label:{en:'Bus stop',   de:'Bushaltestelle',es:'Parada de autobús'} },
-    { key:'train_station',   emoji:'🚆', tag:'railway=station',                label:{en:'Train station',de:'Bahnhof', es:'Estación de tren'} },
-    { key:'subway_station',  emoji:'🚇', tag:'station=subway',                 label:{en:'Metro',      de:'U-Bahn',    es:'Metro'} },
-    { key:'parking',         emoji:'🅿️', tag:'amenity=parking',                label:{en:'Parking',    de:'Parkplatz', es:'Aparcamiento'} },
-    { key:'restaurant',      emoji:'🍽️', tag:'amenity=restaurant',             label:{en:'Restaurant', de:'Restaurant',es:'Restaurante'} },
-    { key:'cafe',            emoji:'☕',  tag:'amenity=cafe',                   label:{en:'Café',       de:'Café',      es:'Café'} },
-    { key:'beach',           emoji:'🏖️', tag:'natural=beach',                  label:{en:'Beach',      de:'Strand',    es:'Playa'} },
-    { key:'hospital',        emoji:'🏥', tag:'amenity=hospital',               label:{en:'Hospital',   de:'Krankenhaus',es:'Hospital'} },
+    { key:'supermarket',     emoji:'🛒', tag:'shop=supermarket',               label:{en:'Supermarket',       de:'Supermarkt',       es:'Supermercado'} },
+    { key:'pharmacy',        emoji:'💊', tag:'amenity=pharmacy',                label:{en:'Pharmacy',          de:'Apotheke',         es:'Farmacia'} },
+    { key:'atm',             emoji:'🏧', tag:'amenity=atm',                     label:{en:'ATM',               de:'Geldautomat',      es:'Cajero'} },
+    { key:'bank',            emoji:'🏦', tag:'amenity=bank',                    label:{en:'Bank',              de:'Bank',             es:'Banco'} },
+    { key:'bus_stop',        emoji:'🚌', tag:'highway=bus_stop',               label:{en:'Bus stop',          de:'Bushaltestelle',   es:'Parada de autobús'} },
+    { key:'train_station',   emoji:'🚆', tag:'railway=station',                label:{en:'Train station',     de:'Bahnhof',          es:'Estación de tren'} },
+    { key:'subway_station',  emoji:'🚇', tag:'station=subway',                 label:{en:'Metro',             de:'U-Bahn',           es:'Metro'} },
+    { key:'parking',         emoji:'🅿️', tag:'amenity=parking',                label:{en:'Parking',           de:'Parkplatz',        es:'Aparcamiento'} },
+    { key:'restaurant',      emoji:'🍽️', tag:'amenity=restaurant',             label:{en:'Restaurant',        de:'Restaurant',       es:'Restaurante'} },
+    { key:'cafe',            emoji:'☕',  tag:'amenity=cafe',                   label:{en:'Café',              de:'Café',             es:'Café'} },
+    { key:'museum',          emoji:'🏛️', tag:'tourism=museum',                  label:{en:'Museum',            de:'Museum',           es:'Museo'} },
+    { key:'church',          emoji:'⛪', tag:'amenity=place_of_worship',        label:{en:'Place of worship',  de:'Kirche',           es:'Iglesia'} },
+    { key:'beach',           emoji:'🏖️', tag:'natural=beach',                  label:{en:'Beach',             de:'Strand',           es:'Playa'} },
+    { key:'hospital',        emoji:'🏥', tag:'amenity=hospital',               label:{en:'Hospital',          de:'Krankenhaus',      es:'Hospital'} },
   ];
 
   function haversineM(lat1,lon1,lat2,lon2){
@@ -2218,7 +2225,7 @@
     return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
   }
 
-  async function fetchNearbyPlaces(lat, lng, radiusM=800) {
+  async function fetchNearbyPlaces(lat, lng, radiusM=1000) {
     // Build Overpass query: one union block per type
     const parts = PLACE_TYPES.map(t => {
       const [k,v] = t.tag.split('=');
@@ -2250,7 +2257,7 @@
         if (seen.has(dedupKey)) continue;
         seen.add(dedupKey);
         results.push({ key:t.key, emoji:t.emoji, label:t.label, name, dist });
-        if (results.length >= 6) break; // cap at 6 places
+        if (results.length >= 8) break; // cap at 8 places
       }
       return results;
     } catch(e) {
@@ -2999,6 +3006,10 @@
       // Clear any extra rows beyond saved rules
       Array.from(existingRows).slice(savedRules.length).forEach(r=>r.querySelector('.rule-input-text').value='');
     }
+    // Re-apply language to rules rows (translates any known defaults to current lang)
+    var currentLang=document.documentElement.lang||localStorage.getItem('preferred-lang')||'en';
+    var currentType=(document.getElementById('s-property-type')||{}).value||'apartment';
+    applyRuleDefaults(currentLang, currentType);
     document.getElementById('s-helptext').value=d.helpText||'';
     const m=d.entryMethod||'keysafe';
     selectEntryMethod(m);
@@ -3331,7 +3342,18 @@
     }
     // Update name placeholder
     var nameInput = document.getElementById('s-name');
-    if(nameInput) nameInput.placeholder = type==='hotel' ? 'e.g. Hotel Sonnenblick' : 'e.g. Cozy Apartment Berlin';
+    var lang = document.documentElement.lang || 'en';
+    var namePlaceholders = {
+      hotel:     {en:'e.g. Hotel Mercur Krone', de:'z. B. Hotel Mercur Krone', es:'p. ej. Hotel Mercur Krone'},
+      apartment: {en:'e.g. Cozy Apartment Berlin', de:'z. B. Gemütliches Apartment Berlin', es:'p. ej. Acogedor apartamento en Berlín'}
+    };
+    if(nameInput){
+      var phs = namePlaceholders[type] || namePlaceholders.apartment;
+      nameInput.placeholder = phs[lang] || phs.en;
+      nameInput.setAttribute('data-placeholder-en', phs.en);
+      nameInput.setAttribute('data-placeholder-de', phs.de);
+      nameInput.setAttribute('data-placeholder-es', phs.es);
+    }
   }
 
   function renderHotelSection(d){
