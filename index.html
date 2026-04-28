@@ -2794,7 +2794,6 @@
           <input id="suc-guest-input" readonly value="${guestLink}" style="flex:1;padding:10px 12px;border:2px solid #C7D2FE;border-radius:8px;font-size:0.82rem;background:#F0F4FF;color:var(--text);font-family:monospace;min-width:0">
           <button id="suc-copy-guest" onclick="gatedCopy('suc-guest-input','suc-copy-guest','${t.copied}')" style="flex-shrink:0;padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit;white-space:nowrap">${t.copy}</button>
         </div>
-        <a href="${guestLink}" target="_blank" style="display:flex;align-items:center;justify-content:center;margin-top:8px;padding:11px;background:#F0F4FF;border:1px solid #C7D2FE;border-radius:8px;color:var(--accent);font-weight:600;font-size:0.85rem;text-decoration:none">🔗 ${t.open}</a>
         <div style="margin-top:8px;padding:8px 12px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;font-size:0.78rem;color:#92400E;text-align:center">
           ⏰ <strong>${t.expiry}</strong>
         </div>
@@ -3447,17 +3446,24 @@
   function renderHotelSection(d){
     var isHotel = d.propertyType === 'hotel';
 
-    // Logo — shown for any property type if URL is present
+    // Logo — always hidden first, shown only after confirmed load
     var logoWrap = document.getElementById('d-hotel-logo-wrap');
     var logoImg  = document.getElementById('d-hotel-logo');
     if(logoWrap && logoImg){
       const url = (d.logoUrl||'').trim();
       logoWrap.style.display = 'none';
+      logoImg.onload = logoImg.onerror = null;
       logoImg.src = '';
       if(url){
         logoImg.onload  = function(){ logoWrap.style.display = 'block'; };
         logoImg.onerror = function(){ logoWrap.style.display = 'none'; logoImg.src=''; };
         logoImg.src = url;
+        // Fallback: if browser served from cache, onload may not fire — check after tick
+        setTimeout(function(){
+          if(logoImg.complete && logoImg.naturalWidth > 0){
+            logoWrap.style.display = 'block';
+          }
+        }, 50);
       }
     }
 
