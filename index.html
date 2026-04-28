@@ -3148,7 +3148,7 @@
       htp.placeholder=htTexts[lang]||htTexts.en;
     }
     // Update default house rules when language changes
-    // Replace fields that still contain any known default text across all languages
+    // For each row: if its value is any known default text, replace with same-position target
     var rulesContainer=document.getElementById('rules-rows');
     if(rulesContainer){
       var hotelDef={
@@ -3161,27 +3161,33 @@
         de:['Rauchen verboten','Ab 22:00 Uhr Ruhe bitte','Klimaanlage beim Verlassen ausschalten','Müll in die Tonnen vor dem Gebäude'],
         es:['Prohibido fumar','Silencio a partir de las 22:00','Apaga el aire acondicionado al salir','Basura en los contenedores fuera del edificio']
       };
-      // Build a flat lookup: text → {type, index}
-      var knownMap={};
+      var hotelEmojis=['🍽️','🏨','🚭','🌙'];
+      var aptEmojis=['🚭','🌙','❄️','🗑️'];
+      // Build set of ALL known default texts (lowercase) → their {defType, pos}
+      var knownSet={};
       ['hotel','apt'].forEach(function(t){
         var def=t==='hotel'?hotelDef:aptDef;
         ['en','de','es'].forEach(function(l){
-          (def[l]||[]).forEach(function(txt,i){ knownMap[txt.toLowerCase().trim()]={type:t,idx:i}; });
+          (def[l]||[]).forEach(function(txt,i){
+            knownSet[txt.toLowerCase().trim()]={t:t,i:i};
+          });
         });
       });
       var propertyType=(document.getElementById('s-property-type')||{}).value||'apartment';
       var targetDef=(propertyType==='hotel'?hotelDef:aptDef)[lang]||(propertyType==='hotel'?hotelDef:aptDef).en;
-      var inputs=rulesContainer.querySelectorAll('.rule-input-text');
-      var hotelEmojis=['🍽️','🏨','🚭','🌙'];
-      var aptEmojis=['🚭','🌙','❄️','🗑️'];
-      var targetEmojis=(propertyType==='hotel'?hotelEmojis:aptEmojis);
-      inputs.forEach(function(input){
-        var val=input.value.trim().toLowerCase();
-        var match=val===''?{idx:Array.from(inputs).indexOf(input)}:knownMap[val];
-        if(match!==undefined && match.idx<targetDef.length){
-          input.value=targetDef[match.idx];
-          var emojiSpan=input.closest('.rule-input-row') && input.closest('.rule-input-row').querySelector('.rule-input-emoji');
-          if(emojiSpan && targetEmojis[match.idx]) emojiSpan.textContent=targetEmojis[match.idx];
+      var targetEmojis=propertyType==='hotel'?hotelEmojis:aptEmojis;
+      var inputs=Array.from(rulesContainer.querySelectorAll('.rule-input-text'));
+      inputs.forEach(function(input,rowIdx){
+        var val=input.value.trim();
+        var match=val===''?{i:rowIdx}:knownSet[val.toLowerCase()];
+        if(match!==undefined){
+          // Use same row position in target (not the stored cross-type index)
+          var pos=rowIdx<targetDef.length?rowIdx:null;
+          if(pos!==null){
+            input.value=targetDef[pos];
+            var emojiSpan=input.closest('.rule-input-row').querySelector('.rule-input-emoji');
+            if(emojiSpan) emojiSpan.textContent=targetEmojis[pos];
+          }
         }
       });
     }
