@@ -3147,53 +3147,72 @@
       };
       htp.placeholder=htTexts[lang]||htTexts.en;
     }
-    // Update default house rules when language changes
-    // For each row: if its value is any known default text, replace with same-position target
-    var rulesContainer=document.getElementById('rules-rows');
-    if(rulesContainer){
-      var hotelDef={
-        en:['Restaurant open Wed–Sun 12:30–18:00','Reception hours 8:00–18:00','No smoking inside','Quiet hours from 22:00'],
-        de:['Restaurant geöffnet Mi–So 12:30–18:00','Rezeption geöffnet 8:00–18:00','Rauchen verboten','Ab 22:00 Uhr bitte keine Geräusche mehr'],
-        es:['Restaurante abierto de miércoles a domingo, 12:30–18:00','Recepción abierta de 8:00 a 18:00','Prohibido fumar','Silencio a partir de las 22:00']
-      };
-      var aptDef={
-        en:['No smoking inside','Quiet hours from 22:00','Turn off AC when leaving','Bins are outside the building'],
-        de:['Rauchen verboten','Ab 22:00 Uhr Ruhe bitte','Klimaanlage beim Verlassen ausschalten','Müll in die Tonnen vor dem Gebäude'],
-        es:['Prohibido fumar','Silencio a partir de las 22:00','Apaga el aire acondicionado al salir','Basura en los contenedores fuera del edificio']
-      };
-      var hotelEmojis=['🍽️','🏨','🚭','🌙'];
-      var aptEmojis=['🚭','🌙','❄️','🗑️'];
-      // Build set of ALL known default texts (lowercase) → their {defType, pos}
-      var knownSet={};
-      ['hotel','apt'].forEach(function(t){
-        var def=t==='hotel'?hotelDef:aptDef;
-        ['en','de','es'].forEach(function(l){
-          (def[l]||[]).forEach(function(txt,i){
-            knownSet[txt.toLowerCase().trim()]={t:t,i:i};
-          });
-        });
-      });
-      var propertyType=(document.getElementById('s-property-type')||{}).value||'apartment';
-      var targetDef=(propertyType==='hotel'?hotelDef:aptDef)[lang]||(propertyType==='hotel'?hotelDef:aptDef).en;
-      var targetEmojis=propertyType==='hotel'?hotelEmojis:aptEmojis;
-      var inputs=Array.from(rulesContainer.querySelectorAll('.rule-input-text'));
-      inputs.forEach(function(input,rowIdx){
-        var val=input.value.trim();
-        var match=val===''?{i:rowIdx}:knownSet[val.toLowerCase()];
-        if(match!==undefined){
-          // Use same row position in target (not the stored cross-type index)
-          var pos=rowIdx<targetDef.length?rowIdx:null;
-          if(pos!==null){
-            input.value=targetDef[pos];
-            var emojiSpan=input.closest('.rule-input-row').querySelector('.rule-input-emoji');
-            if(emojiSpan) emojiSpan.textContent=targetEmojis[pos];
-          }
-        }
-      });
-    }
+    // Update rule defaults for new language
+    var propertyType=(document.getElementById('s-property-type')||{}).value||'apartment';
+    applyRuleDefaults(lang, propertyType);
     // Update localized placeholders on all inputs/textareas with data-placeholder-{lang}
     document.querySelectorAll('input[data-placeholder-'+lang+'], textarea[data-placeholder-'+lang+']').forEach(function(el){
       el.placeholder = el.getAttribute('data-placeholder-'+lang);
+    });
+  }
+
+  // ── SINGLE SOURCE OF TRUTH for rule defaults ──────────────────
+  // Called by both setLang() and selectPropertyType().
+  // Replaces any row whose text matches ANY known default (current or legacy)
+  // with the correct text+emoji for the given lang+type, keyed by row position.
+  function applyRuleDefaults(lang, type){
+    var container=document.getElementById('rules-rows');
+    if(!container) return;
+    var HOTEL={
+      en:['Restaurant open Wed–Sun 12:30–18:00','Reception hours 8:00–18:00','No smoking inside','Quiet hours from 22:00'],
+      de:['Restaurant geöffnet Mi–So 12:30–18:00','Rezeption geöffnet 8:00–18:00','Rauchen verboten','Ab 22:00 Uhr bitte keine Geräusche mehr'],
+      es:['Restaurante abierto de miércoles a domingo, 12:30–18:00','Recepción abierta de 8:00 a 18:00','Prohibido fumar','Silencio a partir de las 22:00']
+    };
+    var APT={
+      en:['No smoking inside','Quiet hours from 22:00','Turn off AC when leaving','Bins are outside the building'],
+      de:['Rauchen verboten','Ab 22:00 Uhr Ruhe bitte','Klimaanlage beim Verlassen ausschalten','Müll in die Tonnen vor dem Gebäude'],
+      es:['Prohibido fumar','Silencio a partir de las 22:00','Apaga el aire acondicionado al salir','Basura en los contenedores fuera del edificio']
+    };
+    var HOTEL_EMOJI=['🍽️','🏨','🚭','🌙'];
+    var APT_EMOJI=['🚭','🌙','❄️','🗑️'];
+    // Legacy strings that may exist in old saved data — map to {type, pos}
+    var LEGACY={
+      'ruhezeiten ab 22:00 uhr':          {t:'apt',p:1},
+      'quiet hours from 22:00 – please respect the neighbours': {t:'apt',p:1},
+      'ruhezeiten ab 22:00 uhr – bitte nachbarn respektieren':  {t:'apt',p:1},
+      'turn off the ac when leaving':      {t:'apt',p:2},
+      'klimaanlage beim verlassen ausschalten': {t:'apt',p:2},
+      'put trash bags in the bins outside the building': {t:'apt',p:3},
+      'müll in die tonnen vor dem gebäude':{t:'apt',p:3},
+      'rauchen in der wohnung ist nicht gestattet.': {t:'apt',p:0},
+      'prohibido fumar dentro del apartamento.':     {t:'apt',p:0},
+      'rezeptionszeiten 8:00–18:00':       {t:'hotel',p:1},
+      'rezeptionszeiten 8:00-18:00':       {t:'hotel',p:1},
+      'horario de recepción 8:00–18:00':   {t:'hotel',p:1},
+      'restaurante abierto mié–dom 12:30–18:00': {t:'hotel',p:0},
+    };
+    // Build full known-set from all current defaults
+    var known={};
+    [HOTEL,APT].forEach(function(def,ti){
+      var t=ti===0?'hotel':'apt';
+      ['en','de','es'].forEach(function(l){
+        (def[l]||[]).forEach(function(txt,p){ known[txt.toLowerCase().trim()]={t:t,p:p}; });
+      });
+    });
+    // Merge legacy
+    Object.keys(LEGACY).forEach(function(k){ if(!known[k]) known[k]=LEGACY[k]; });
+
+    var targetDef=(type==='hotel'?HOTEL:APT)[lang]||(type==='hotel'?HOTEL:APT).en;
+    var targetEmoji=type==='hotel'?HOTEL_EMOJI:APT_EMOJI;
+    var inputs=Array.from(container.querySelectorAll('.rule-input-text'));
+    inputs.forEach(function(input,rowIdx){
+      var val=input.value.trim();
+      var isKnown = val==='' || !!known[val.toLowerCase()];
+      if(isKnown && rowIdx<targetDef.length){
+        input.value=targetDef[rowIdx];
+        var span=input.closest('.rule-input-row').querySelector('.rule-input-emoji');
+        if(span) span.textContent=targetEmoji[rowIdx];
+      }
     });
   }
 
@@ -3288,47 +3307,8 @@
     }
     input.value = type;
     toggleHotelFields(type);
-    // Pre-fill rule rows with type-appropriate defaults (only if currently empty or default values)
     var lang = document.documentElement.lang || 'en';
-    var hotelDefaults = {
-      en:['🍽️ Restaurant open Wed–Sun 12:30–18:00','🏨 Reception hours 8:00–18:00','🚭 No smoking inside','🌙 Quiet hours from 22:00'],
-      de:['🍽️ Restaurant geöffnet Mi–So 12:30–18:00','🏨 Rezeption geöffnet 8:00–18:00','🚭 Rauchen verboten','🌙 Ab 22:00 Uhr bitte keine Geräusche mehr'],
-      es:['🍽️ Restaurante abierto de miércoles a domingo, 12:30–18:00','🏨 Recepción abierta de 8:00 a 18:00','🚭 Prohibido fumar','🌙 Silencio a partir de las 22:00']
-    };
-    var aptDefaults = {
-      en:['🚭 No smoking inside','🌙 Quiet hours from 22:00','❄️ Turn off AC when leaving','🗑️ Bins are outside the building'],
-      de:['🚭 Rauchen verboten','🌙 Ab 22:00 Uhr Ruhe bitte','❄️ Klimaanlage beim Verlassen ausschalten','🗑️ Müll in die Tonnen vor dem Gebäude'],
-      es:['🚭 Prohibido fumar','🌙 Silencio a partir de las 22:00','❄️ Apaga el aire acondicionado al salir','🗑️ Basura en los contenedores fuera del edificio']
-    };
-    var allKnownDefaults = [];
-    ['en','de','es'].forEach(function(l){
-      (hotelDefaults[l]||[]).forEach(function(r){ allKnownDefaults.push(r.replace(/^[\p{Emoji}\s]+/u,'').trim()); });
-      (aptDefaults[l]||[]).forEach(function(r){ allKnownDefaults.push(r.replace(/^[\p{Emoji}\s]+/u,'').trim()); });
-    });
-    var newDefaults = (type === 'hotel' ? hotelDefaults : aptDefaults)[lang] || [];
-    var otherDefaults = (type === 'hotel' ? aptDefaults : hotelDefaults);
-    var rulesRows = document.getElementById('rules-rows');
-    if(rulesRows){
-      var rows = rulesRows.querySelectorAll('.rule-input-row');
-      // Build flat set of all known default texts (without emoji prefix, lowercase)
-      var knownSet = new Set();
-      ['en','de','es'].forEach(function(l){
-        (hotelDefaults[l]||[]).concat(aptDefaults[l]||[]).forEach(function(r){
-          knownSet.add(r.replace(/^[\p{Emoji}\uFE0F\s]+/u,'').trim().toLowerCase());
-        });
-      });
-      rows.forEach(function(row, i){
-        var txt = row.querySelector('.rule-input-text').value.trim();
-        var isKnown = txt==='' || knownSet.has(txt.toLowerCase());
-        if(isKnown && i < newDefaults.length){
-          var parts = (newDefaults[i]||'').match(/^([\p{Emoji}\uFE0F]+)\s*(.*)/u);
-          if(parts){
-            row.querySelector('.rule-input-emoji').textContent = parts[1];
-            row.querySelector('.rule-input-text').value = parts[2];
-          }
-        }
-      });
-    }
+    applyRuleDefaults(lang, type);
   }
 
   function toggleHotelFields(type){
