@@ -1230,13 +1230,13 @@
 
       <!-- Method picker grid -->
       <div class="entry-method-grid">
-        <button type="button" class="entry-method-btn active" data-method="keysafe" onclick="selectEntryMethod('keysafe')">
+        <button type="button" class="entry-method-btn" data-method="keysafe" onclick="selectEntryMethod('keysafe')">
           <span class="em-icon">🔑</span>
           <span data-lang="en" class="active">Key Safe</span>
           <span data-lang="de">Schlüsseltresor</span>
           <span data-lang="es">Caja de llaves</span>
         </button>
-        <button type="button" class="entry-method-btn" data-method="smartlock" onclick="selectEntryMethod('smartlock')">
+        <button type="button" class="entry-method-btn active" data-method="smartlock" onclick="selectEntryMethod('smartlock')">
           <span class="em-icon">🔐</span>
           <span data-lang="en" class="active">Smart Lock</span>
           <span data-lang="de">Smart Lock</span>
@@ -1263,39 +1263,55 @@
       </div>
 
       <!-- KEY SAFE fields -->
-      <div class="entry-fields-panel show" id="ep-keysafe">
+      <div class="entry-fields-panel" id="ep-keysafe">
         <div class="field">
           <label><span data-lang="en" class="active">Key safe code</span><span data-lang="de">Code des Schlüsseltresors</span><span data-lang="es">Código de la caja</span></label>
-          <input id="s-keycode" placeholder="4872" value="" inputmode="numeric" oninput="liveUpdateEntry()">
+          <input id="s-keycode"
+            data-placeholder-en="e.g. 4872"
+            data-placeholder-de="z. B. 4872"
+            data-placeholder-es="p. ej. 4872"
+            placeholder="e.g. 4872" value="" inputmode="numeric" oninput="liveUpdateEntry()">
         </div>
-        <div class="field">
-          <label><span data-lang="en" class="active">Gate code</span><span data-lang="de">Tor-Code</span><span data-lang="es">Código del portón</span></label>
-          <input id="s-gatecode" placeholder="e.g. 1234" value="" inputmode="numeric" oninput="liveUpdateEntry()">
-        </div>
-        <div class="field">
-          <label><span data-lang="en" class="active">Room code</span><span data-lang="de">Zimmer-Code</span><span data-lang="es">Código de la habitación</span></label>
-          <input id="s-roomcode" placeholder="e.g. 5678" value="" inputmode="numeric" oninput="liveUpdateEntry()">
-        </div>
-        <div class="field">
+        <div class="field" style="margin-top:4px">
           <label><span data-lang="en" class="active">Location description</span><span data-lang="de">Standortbeschreibung</span><span data-lang="es">Descripción de la ubicación</span></label>
-          <input id="s-entry-location" placeholder="Next to the main door, left side" value="" oninput="liveUpdateEntry()">
+          <input id="s-entry-location"
+            data-placeholder-en="Next to the main door, left side"
+            data-placeholder-de="Neben der Haupttür, links"
+            data-placeholder-es="Junto a la puerta principal, lado izquierdo"
+            placeholder="Next to the main door, left side" value="" oninput="liveUpdateEntry()">
         </div>
-        <div class="field">
+        <div class="field" style="margin-top:4px">
           <label><span data-lang="en" class="active">Floor / Lift button</span><span data-lang="de">Stockwerk / Aufzugtaste</span><span data-lang="es">Planta / botón del ascensor</span></label>
-          <input id="s-floor" placeholder="e.g. 3" oninput="liveUpdateEntry()">
+          <input id="s-floor"
+            data-placeholder-en="e.g. 3"
+            data-placeholder-de="z. B. 3"
+            data-placeholder-es="p. ej. 3"
+            placeholder="e.g. 3" oninput="liveUpdateEntry()">
         </div>
         <div class="entry-keysafe-notice">⚠️ <span data-lang="en" class="active">In some regions key boxes on public buildings may not be permitted. Please check local regulations.</span><span data-lang="de">In manchen Regionen sind Schlüsseltresore an öffentlichen Gebäuden nicht erlaubt. Bitte lokale Vorschriften prüfen.</span><span data-lang="es">En algunas regiones las cajas de llaves en edificios públicos pueden no estar permitidas. Consulte la normativa local.</span></div>
       </div>
 
       <!-- SMART LOCK fields -->
-      <div class="entry-fields-panel" id="ep-smartlock">
+      <div class="entry-fields-panel show" id="ep-smartlock">
         <div class="field">
-          <label><span data-lang="en" class="active">Door code</span><span data-lang="de">Türcode</span><span data-lang="es">Código de la puerta</span></label>
-          <input id="s-doorcode" placeholder="1234#" inputmode="numeric">
+          <label><span data-lang="en" class="active">Instructions</span><span data-lang="de">Anweisungen</span><span data-lang="es">Instrucciones</span></label>
+          <textarea id="s-smartlock-instructions" oninput="liveUpdateEntry()"></textarea>
         </div>
-        <div class="field">
-          <label><span data-lang="en" class="active">Optional instructions</span><span data-lang="de">Zusätzliche Anweisungen</span><span data-lang="es">Instrucciones adicionales</span></label>
-          <textarea id="s-smartlock-instructions" placeholder="e.g. Hold * then enter code, wait for beep"></textarea>
+        <div class="field" style="margin-top:4px">
+          <label><span data-lang="en" class="active">Gate code</span><span data-lang="de">Torcode</span><span data-lang="es">Código del portón</span></label>
+          <input id="s-gatecode-smartlock"
+            data-placeholder-en="e.g. 1234"
+            data-placeholder-de="z. B. 1234"
+            data-placeholder-es="p. ej. 1234"
+            placeholder="e.g. 1234" value="" inputmode="numeric" oninput="liveUpdateEntry()">
+        </div>
+        <div class="field" style="margin-top:4px">
+          <label><span data-lang="en" class="active">Room code</span><span data-lang="de">Zimmercode</span><span data-lang="es">Código de la habitación</span></label>
+          <input id="s-roomcode-smartlock"
+            data-placeholder-en="e.g. 5678"
+            data-placeholder-de="z. B. 5678"
+            data-placeholder-es="p. ej. 5678"
+            placeholder="e.g. 5678" value="" inputmode="numeric" oninput="liveUpdateEntry()">
         </div>
       </div>
 
@@ -2036,10 +2052,10 @@
     checkin:'15:00', checkout:'11:00',
     address:'', maps:'',
     lat:null, lng:null, city:'', country:'',
-    entryMethod:'keysafe',
+    entryMethod:'smartlock',
     keycode:'', entryLocation:'', floor:'',
     gatecode:'', roomcode:'',
-    doorcode:'', smartlockInstructions:'',
+    doorcode:'', smartlockInstructions:'', smartlockGatecode:'', smartlockRoomcode:'',
     meethostInstructions:'', meethostContact:'',
     receptionName:'', receptionAddress:'', receptionHours:'',
     pickupLocation:'', pickupAddress:'', pickupInstructions:'',
@@ -2199,9 +2215,10 @@
     maps:'https://maps.google.com/?q=Seestraße+12,+10179+Berlin',
     lat:52.5139, lng:13.4142,
     city:'Berlin', country:'Germany',
-    entryMethod:'keysafe',
+    entryMethod:'smartlock',
     keycode:'4827', entryLocation:'Left of the main entrance door', floor:'3',
-    doorcode:'', smartlockInstructions:'',
+    doorcode:'', smartlockInstructions:'Press the bell and wait for the host to buzz you in. Then take the elevator to floor 3.',
+    smartlockGatecode:'1234', smartlockRoomcode:'5678',
     meethostInstructions:'', meethostContact:'',
     receptionName:'', receptionAddress:'', receptionHours:'',
     pickupLocation:'', pickupAddress:'', pickupInstructions:'',
@@ -2271,7 +2288,7 @@
     let html=`<div class="entry-method-badge">${icons[m]} ${labels[m][lang]}</div>`;
 
     if(m==='keysafe'){
-      const loc=d.entryLocation||'',code=d.keycode||'',floor=d.floor||'',gate=d.gatecode||'',room=d.roomcode||'';
+      const loc=d.entryLocation||'',code=d.keycode||'',floor=d.floor||'';
       const step3txt={
         en:`Take the key and press <strong>${escHtml(floor)}</strong> in the lift.`,
         de:`Schlüssel nehmen und im Aufzug Taste <strong>${escHtml(floor)}</strong> drücken.`,
@@ -2280,14 +2297,12 @@
       html+=`<ul class="steps">
         <li class="step"><div class="step-num step-icon">🚶</div>
           <div class="step-text">${{en:'Go to the main entrance of the building.',de:'Gehen Sie zum Haupteingang des Gebäudes.',es:'Diríjase a la entrada principal del edificio.'}[lang]}
-          ${gate ? infoRow('🔢',{en:'Gate code',de:'Tor-Code',es:'Código del portón'}[lang],escHtml(gate),true) : ''}
           </div></li>
         <li class="step"><div class="step-num step-icon">🔑</div>
           <div class="step-text">
             ${loc?`<div style="color:var(--text2);font-size:0.85rem;margin-bottom:6px">📌 ${escHtml(loc)}</div>`:''}
             ${{en:'Open the key safe:',de:'Schlüsseltresor öffnen:',es:'Abra la caja de llaves:'}[lang]}
             ${code ? infoRow('🔢',{en:'Key safe code',de:'Tresor-Code',es:'Código de la caja'}[lang],escHtml(code),true) : ''}
-            ${room ? infoRow('🚪',{en:'Room code',de:'Zimmer-Code',es:'Código de la habitación'}[lang],escHtml(room),true) : ''}
           </div></li>
         ${floor?`<li class="step"><div class="step-num step-icon">🛗</div>
           <div class="step-text">${step3txt[lang]}</div></li>`:''}
@@ -2299,18 +2314,21 @@
       </div>`;
 
     } else if(m==='smartlock'){
-      const code=d.doorcode||'—',instr=d.smartlockInstructions||'';
-      html+=`<ul class="steps">
+      const gate=d.smartlockGatecode||'',room=d.smartlockRoomcode||'',instr=d.smartlockInstructions||'';
+      html+=`${instr?`<div class="entry-note" style="margin-bottom:14px">💡 ${escHtml(instr)}</div>`:''}
+      <ul class="steps">
         <li class="step"><div class="step-num step-icon">🚶</div>
-          <div class="step-text">${{en:'Go to the main entrance of the building.',de:'Gehen Sie zum Haupteingang des Gebäudes.',es:'Diríjase a la entrada principal del edificio.'}[lang]}</div></li>
+          <div class="step-text">${{en:'Go to the main entrance of the building.',de:'Gehen Sie zum Haupteingang des Gebäudes.',es:'Diríjase a la entrada principal del edificio.'}[lang]}
+          ${gate ? infoRow('🔢',{en:'Gate code',de:'Torcode',es:'Código del portón'}[lang],escHtml(gate),true) : ''}
+          </div></li>
         <li class="step"><div class="step-num step-icon">🔐</div>
           <div class="step-text">
-            ${{en:'Enter the code on the keypad:',de:'Code am Tastenfeld eingeben:',es:'Introduzca el código en el teclado:'}[lang]}
-            ${infoRow('🔢',{en:'Door Code',de:'Türcode',es:'Código'}[lang],escHtml(code),true)}
+            ${{en:'Enter your room code on the keypad:',de:'Zimmercode am Tastenfeld eingeben:',es:'Introduzca el código de la habitación en el teclado:'}[lang]}
+            ${room ? infoRow('🚪',{en:'Room code',de:'Zimmercode',es:'Código de la habitación'}[lang],escHtml(room),true) : ''}
           </div></li>
         <li class="step"><div class="step-num step-icon">🚪</div>
           <div class="step-text">${{en:'Wait for the green light / beep and open the door. Welcome! 🎉',de:'Auf grünes Licht / Piepton warten und Tür öffnen. Willkommen! 🎉',es:'Espere la luz verde / pitido y abra la puerta. ¡Bienvenido! 🎉'}[lang]}</div></li>
-      </ul>${instr?`<div class="entry-note">💡 ${escHtml(instr)}</div>`:''}`;
+      </ul>`;
 
     } else if(m==='meethost'){
       const instr=d.meethostInstructions||'',contact=d.meethostContact||'';
@@ -2556,8 +2574,9 @@
     document.getElementById('s-wifi-pass').value=d.wifiPass;
     document.getElementById('s-wa').value=d.wa||'';
     document.getElementById('s-phone').value=d.phone||'';
-    selectEntryMethod('keysafe');
+    selectEntryMethod('smartlock');
     ['s-keycode','s-gatecode','s-roomcode','s-entry-location','s-floor','s-doorcode','s-smartlock-instructions',
+     's-gatecode-smartlock','s-roomcode-smartlock',
      's-meethost-instructions','s-meethost-contact','s-reception-name','s-reception-address',
      's-reception-hours','s-pickup-location','s-pickup-address','s-pickup-instructions'].forEach(id=>{
        const el=document.getElementById(id);if(el) el.value='';
@@ -2895,6 +2914,8 @@
     ef('s-floor',d.floor);
     ef('s-doorcode',d.doorcode);
     ef('s-smartlock-instructions',d.smartlockInstructions);
+    ef('s-gatecode-smartlock',d.smartlockGatecode);
+    ef('s-roomcode-smartlock',d.smartlockRoomcode);
     ef('s-meethost-instructions',d.meethostInstructions);
     ef('s-meethost-contact',d.meethostContact);
     ef('s-reception-name',d.receptionName);
@@ -2931,6 +2952,7 @@
       entryMethod:m,
       keycode:g('s-keycode'), gatecode:g('s-gatecode'), roomcode:g('s-roomcode'), entryLocation:g('s-entry-location'), floor:g('s-floor'),
       doorcode:g('s-doorcode'), smartlockInstructions:g('s-smartlock-instructions'),
+      smartlockGatecode:g('s-gatecode-smartlock'), smartlockRoomcode:g('s-roomcode-smartlock'),
       meethostInstructions:g('s-meethost-instructions'), meethostContact:g('s-meethost-contact'),
       receptionName:g('s-reception-name'), receptionAddress:g('s-reception-address'), receptionHours:g('s-reception-hours'),
       pickupLocation:g('s-pickup-location'), pickupAddress:g('s-pickup-address'), pickupInstructions:g('s-pickup-instructions'),
@@ -3040,6 +3062,10 @@
         }
       });
     }
+    // Update localized placeholders on all inputs with data-placeholder-{lang}
+    document.querySelectorAll('input[data-placeholder-'+lang+']').forEach(function(el){
+      el.placeholder = el.getAttribute('data-placeholder-'+lang);
+    });
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -3477,10 +3503,12 @@
   function liveUpdateEntry(){
     const g=id=>{ const el=document.getElementById(id); return el?el.value.trim():''; };
     const d=Object.assign({}, window._aptData||{}, {
-      entryMethod: window._selectedEntryMethod || 'keysafe',
+      entryMethod: window._selectedEntryMethod || 'smartlock',
       keycode: g('s-keycode'),
       gatecode: g('s-gatecode'),
       roomcode: g('s-roomcode'),
+      smartlockGatecode: g('s-gatecode-smartlock'),
+      smartlockRoomcode: g('s-roomcode-smartlock'),
       entryLocation: g('s-entry-location'),
       floor: g('s-floor'),
       doorcode: g('s-doorcode'),
