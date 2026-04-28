@@ -2337,20 +2337,130 @@
   ];
 
   function loadDemo() {
-    document.getElementById('setup-overlay').classList.remove('show');
-    applyData(DEMO_DATA);
     const lang = document.documentElement.lang || 'en';
-    renderNearby(DEMO_NEARBY, lang);
-    // Show soft lock banner so hosts see the subscribe prompt in demo
-    const slb = document.getElementById('soft-lock-banner');
-    if(slb) slb.style.display = '';
-    // Demo banner
-    let banner = document.getElementById('demo-banner');
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'demo-banner';
-      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:1100;background:#1F3A8A;color:#fff;text-align:center;padding:10px 16px;font-size:0.82rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:12px';
-      banner.innerHTML = '<span>👁 Demo preview — this is what your guests will see</span><button onclick="document.getElementById(\'demo-banner\').remove();openSetup();" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:0.8rem;font-family:inherit">⚙️ Setup my guide</button>';
+    // If no email yet, show email gate first — preview loads after email is confirmed
+    if(!sessionStorage.getItem('cic_email_entered') && !localStorage.getItem('cic_host_email')){
+      showEmailGateAndThenPreview();
+      return;
+    }
+    _showPreviewWithFormData();
+  }
+
+  function showEmailGateAndThenPreview(){
+    const lang=document.documentElement.lang||'en';
+    if(document.getElementById('email-gate-modal')) return;
+    const t={
+      en:{title:'Where should we send your guide link?',body:'Enter your email — we\'ll send you the link after saving. No password, no account.',placeholder:'your@email.com',cta:'Continue — see preview',cancel:'Cancel'},
+      de:{title:'Wohin sollen wir deinen Guide-Link schicken?',body:'Gib deine E-Mail ein — wir schicken dir den Link nach dem Speichern. Kein Passwort, kein Konto.',placeholder:'deine@email.com',cta:'Weiter — Vorschau ansehen',cancel:'Abbrechen'},
+      es:{title:'¿Dónde enviamos tu enlace?',body:'Introduce tu email — te lo enviamos tras guardar. Sin contraseña, sin cuenta.',placeholder:'tu@email.com',cta:'Continuar — ver vista previa',cancel:'Cancelar'}
+    }[lang]||{};
+    const modal=document.createElement('div');
+    modal.id='email-gate-modal';
+    modal.style.cssText='position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;padding:20px';
+    const d=document.createElement('div');
+    d.style.cssText='background:#fff;border-radius:16px;padding:28px 24px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25)';
+    d.innerHTML='<div style="font-size:1.1rem;font-weight:700;color:#111827;margin-bottom:8px">'+t.title+'</div>'
+      +'<div style="font-size:0.83rem;color:#6B7280;line-height:1.6;margin-bottom:18px">'+t.body+'</div>'
+      +'<input id="gate-email-input" type="email" placeholder="'+t.placeholder+'" style="width:100%;padding:12px 14px;border:2px solid #E5E7EB;border-radius:10px;font-size:0.93rem;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px">'
+      +'<div id="gate-email-err" style="color:#EF4444;font-size:0.78rem;margin-bottom:10px;display:none">Please enter a valid email.</div>'
+      +'<button id="gate-cta-btn" style="width:100%;padding:14px;background:linear-gradient(135deg,#1F3A8A,#1E40AF);color:#fff;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;min-height:50px">'+t.cta+'</button>'
+      +'<button id="gate-cancel-btn" style="width:100%;padding:11px;background:#fff;color:#6B7280;border:1px solid #E5E7EB;border-radius:10px;font-size:0.87rem;cursor:pointer;font-family:inherit">'+t.cancel+'</button>'
+      +'<p style="text-align:center;margin-top:12px;font-size:0.75rem;color:#9CA3AF">No credit card · No password · Free to start</p>';
+    modal.appendChild(d);
+    document.body.appendChild(modal);
+    document.getElementById('gate-cta-btn').onclick=function(){
+      var emailEl=document.getElementById('gate-email-input');
+      var errEl=document.getElementById('gate-email-err');
+      var email=emailEl?emailEl.value.trim():'';
+      if(!email||email.indexOf('@')<1||email.indexOf('.')<1){
+        if(emailEl) emailEl.style.borderColor='#EF4444';
+        if(errEl) errEl.style.display='block';
+        if(emailEl) emailEl.focus();
+        return;
+      }
+      sessionStorage.setItem('cic_email_entered', email);
+      localStorage.setItem('cic_host_email', email);
+      window._hostEmail = email;
+      if(!localStorage.getItem('cic_created_at')) localStorage.setItem('cic_created_at', new Date().toISOString());
+      // Submit to Netlify
+      var params=new URLSearchParams();
+      params.append('form-name','email-gate');
+      params.append('email',email);
+      params.append('language',lang);
+      params.append('bot-field','');
+      fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params.toString()}).catch(function(){});
+      modal.remove();
+      _showPreviewWithFormData();
+    };
+    document.getElementById('gate-cancel-btn').onclick=function(){ modal.remove(); };
+    modal.addEventListener('click',function(e){ if(e.target===modal) modal.remove(); });
+    setTimeout(function(){ var el=document.getElementById('gate-email-input'); if(el) el.focus(); },100);
+  }
+
+  function _showPreviewWithFormData(){
+    const lang = document.documentElement.lang || 'en';
+    const g = id => { const el=document.getElementById(id); return el?el.value.trim():''; };
+    const formHasData = !!(g('s-name') || g('s-address') || g('s-wifi-name'));
+    let previewData;
+    if(formHasData){
+      const mapsUrl = g('s-maps') || (g('s-address') ? 'https://maps.google.com/?q='+encodeURIComponent(g('s-address')) : '#');
+      const rules=(()=>{
+        const rows=document.querySelectorAll('.rule-input-row');
+        return Array.from(rows).map(row=>{
+          const emoji=row.querySelector('.rule-input-emoji').textContent.trim();
+          const text=row.querySelector('.rule-input-text').value.trim();
+          return text?emoji+' '+text:'';
+        }).filter(Boolean).join('\n');
+      })();
+      previewData = {
+        _isDemo: true,
+        name: g('s-name')||'—',
+        beds: g('s-beds')||'2', sleeps: g('s-sleeps')||'4',
+        checkin: g('s-checkin')||'15:00', checkout: g('s-checkout')||'11:00',
+        address: g('s-address'), maps: mapsUrl,
+        lat: window._pendingGeo?.lat||null, lng: window._pendingGeo?.lng||null,
+        city: window._pendingGeo?.city||'', country: window._pendingGeo?.country||'',
+        entryMethod: window._selectedEntryMethod||'smartlock',
+        keycode: g('s-keycode'), keysafeInstructions: g('s-keysafe-instructions'),
+        entryLocation: g('s-entry-location'), floor: g('s-floor'),
+        smartlockInstructions: g('s-smartlock-instructions'),
+        smartlockGatecode: g('s-gatecode-smartlock'), smartlockRoomcode: g('s-roomcode-smartlock'),
+        meethostInstructions: g('s-meethost-instructions'), meethostContact: g('s-meethost-contact'),
+        receptionName: g('s-reception-name'), receptionAddress: g('s-reception-address'), receptionHours: g('s-reception-hours'),
+        pickupLocation: g('s-pickup-location'), pickupAddress: g('s-pickup-address'), pickupInstructions: g('s-pickup-instructions'),
+        wifiName: g('s-wifi-name'), wifiPass: g('s-wifi-pass'),
+        wa: g('s-wa'), phone: g('s-phone'),
+        rules: rules,
+        helpText: g('s-helptext'),
+        parkingInfo: g('s-parking-info'), breakfastInfo: g('s-breakfast-info'),
+        propertyType: (document.getElementById('s-property-type')||{}).value||'apartment',
+        logoUrl: g('s-logo-url-general')||g('s-logo-url'),
+        breakfastText: g('s-breakfast-text'), breakfastPrice: g('s-breakfast-price'),
+        lateCheckoutText: g('s-latecheckout-text'), lateCheckoutPrice: g('s-latecheckout-price'),
+        contactLink: g('s-contact-link'),
+      };
+    } else {
+      previewData = DEMO_DATA;
+    }
+    document.getElementById('setup-overlay').classList.remove('show');
+    applyData(previewData);
+    if(formHasData && previewData.lat && previewData.lng){
+      nearbyLoading();
+      fetchNearbyPlaces(previewData.lat, previewData.lng).then(places=>{
+        window._loadedNearby=places;
+        renderNearby(places, lang);
+      });
+    } else {
+      renderNearby(DEMO_NEARBY, lang);
+    }
+    const slb=document.getElementById('soft-lock-banner');
+    if(slb) slb.style.display='';
+    let banner=document.getElementById('demo-banner');
+    if(!banner){
+      banner=document.createElement('div');
+      banner.id='demo-banner';
+      banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:1100;background:#1F3A8A;color:#fff;text-align:center;padding:10px 16px;font-size:0.82rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:12px';
+      banner.innerHTML='<span>👁 Demo preview — this is what your guests will see</span><button onclick="document.getElementById(\'demo-banner\').remove();openSetup();" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:0.8rem;font-family:inherit">⚙️ Setup my guide</button>';
       document.body.prepend(banner);
     }
   }
