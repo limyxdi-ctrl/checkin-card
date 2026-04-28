@@ -2123,7 +2123,7 @@
   }
   async function upsertGuide(id,ownerToken,data){
     const payload={id,owner_token:ownerToken,data};
-    const rows=await sbFetch(`${TABLE}?on_conflict=id&owner_token=eq.${encodeURIComponent(ownerToken)}`,{
+    const rows=await sbFetch(`${TABLE}?on_conflict=id`,{
       method:"POST",
       headers:{"Prefer":"resolution=merge-duplicates,return=representation"},
       body:JSON.stringify(payload)
@@ -2962,10 +2962,9 @@
     const lang=document.documentElement.lang||localStorage.getItem('preferred-lang')||'en';
     renderEntryCard(d,lang);
     renderReservationCard(d);
-    // Nearby: hide for real cards until we fetch
-    if(!d._isDemo){
-      document.getElementById('nearby-card').style.display='none';
-    }
+    // Nearby: hide for real data until fetch completes; show demo nearby immediately
+    const nearbyCard = document.getElementById('nearby-card');
+    if(nearbyCard) nearbyCard.style.display = d._isDemo ? '' : 'none';
     // Demo hints: only visible during demo preview
     const showHints = !!d._isDemo;
     ['demo-hint-entry','demo-hint-rules','demo-hint-entry-sub','demo-hint-rules-sub'].forEach(id=>{
@@ -3097,10 +3096,16 @@
       await upsertGuide(guideId,ownerToken,d);
       window._guideId=guideId;
       window._ownerToken=ownerToken;
+      // Explicitly clear demo flag from live data
+      d._isDemo = false;
+      window._aptData = d;
       saveData(d);
       applyData(d);
       document.getElementById('setup-overlay').classList.remove('show');
-      history.replaceState({},"",`?id=${encodeURIComponent(guideId)}`);
+      // Remove demo banner unconditionally
+      const existingBanner = document.getElementById('demo-banner');
+      if(existingBanner) existingBanner.remove();
+      history.replaceState({},"",`?id=${encodeURIComponent(guideId)}&owner=${encodeURIComponent(ownerToken)}`);
       const guestLink=`${location.origin}${location.pathname}?id=${encodeURIComponent(guideId)}`;
       const editLink=`${location.origin}${location.pathname}?id=${encodeURIComponent(guideId)}&owner=${encodeURIComponent(ownerToken)}`;
       showLinks(guestLink,editLink);
