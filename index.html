@@ -1453,6 +1453,38 @@
       </div>
     </div>
 
+    <!-- ── RESERVIERUNGSINFOS ── -->
+    <div class="setup-section">
+      <div class="setup-section-title">
+        🛎️ <span data-lang="en" class="active">Reservation Information</span>
+        <span data-lang="de">Informationen zur Reservierung</span>
+        <span data-lang="es">Información de tu Reserva</span>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text2);margin-bottom:16px;line-height:1.55">
+        <span data-lang="en" class="active">Optional — shown individually per guest. Leave empty to hide.</span>
+        <span data-lang="de">Optional — wird individuell pro Gast angezeigt. Leer lassen = ausgeblendet.</span>
+        <span data-lang="es">Opcional — se muestra individualmente por huésped. Dejar vacío para ocultar.</span>
+      </div>
+      <div class="field">
+        <label>🅿️ <span data-lang="en" class="active">Parking information</span><span data-lang="de">Parkplatz-Informationen</span><span data-lang="es">Información sobre aparcamiento</span></label>
+        <textarea id="s-parking-info" rows="3"
+          data-placeholder-en="e.g. Free parking available in the hotel car park. Enter via Hauptstraße, barrier code: 1234."
+          data-placeholder-de="z. B. Kostenloser Parkplatz im Hotelparkhaus verfügbar. Einfahrt über Hauptstraße, Schrankencode: 1234."
+          data-placeholder-es="p. ej. Aparcamiento gratuito disponible en el aparcamiento del hotel. Acceso por Calle Mayor, código de barrera: 1234."
+          placeholder="z. B. Kostenloser Parkplatz im Hotelparkhaus verfügbar. Einfahrt über Hauptstraße, Schrankencode: 1234."
+          oninput="liveUpdateReservation()"></textarea>
+      </div>
+      <div class="field" style="margin-top:4px">
+        <label>🍳 <span data-lang="en" class="active">Breakfast information</span><span data-lang="de">Frühstück-Informationen</span><span data-lang="es">Información sobre el desayuno</span></label>
+        <textarea id="s-breakfast-info" rows="3"
+          data-placeholder-en="e.g. Breakfast is included in your reservation. Served in the restaurant Wed–Sun 7:30–10:00."
+          data-placeholder-de="z. B. Frühstück ist in Ihrer Reservierung enthalten. Serviert im Restaurant Mi–So 7:30–10:00."
+          data-placeholder-es="p. ej. El desayuno está incluido en su reserva. Se sirve en el restaurante de miércoles a domingo, 7:30–10:00."
+          placeholder="z. B. Frühstück ist in Ihrer Reservierung enthalten. Serviert im Restaurant Mi–So 7:30–10:00."
+          oninput="liveUpdateReservation()"></textarea>
+      </div>
+    </div>
+
     <!-- ── HILFETEXT ── -->
     <div class="setup-section">
       <div class="setup-section-title">
@@ -1898,6 +1930,28 @@
       </div>
     </div>
 
+    <!-- RESERVATION INFO — hidden if both fields empty -->
+    <div class="card" id="reservation-info-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🛎️</div>
+        <div class="card-title">
+          <span data-lang="en" class="active">Your Reservation</span>
+          <span data-lang="de">Informationen zu deiner Reservierung</span>
+          <span data-lang="es">Tu Reserva</span>
+        </div>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+        <div id="d-parking-block" style="display:none">
+          <div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);font-weight:600;margin-bottom:6px">🅿️ <span data-lang="en" class="active">Parking</span><span data-lang="de">Parkplatz</span><span data-lang="es">Aparcamiento</span></div>
+          <div id="d-parking-text" style="font-size:0.9rem;color:var(--text);line-height:1.65;white-space:pre-line"></div>
+        </div>
+        <div id="d-breakfast-block" style="display:none">
+          <div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);font-weight:600;margin-bottom:6px">🍳 <span data-lang="en" class="active">Breakfast</span><span data-lang="de">Frühstück</span><span data-lang="es">Desayuno</span></div>
+          <div id="d-breakfast-info-text" style="font-size:0.9rem;color:var(--text);line-height:1.65;white-space:pre-line"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- NEARBY — dynamic, hidden until places are loaded -->
     <div class="card" id="nearby-card" style="display:none">
       <div class="card-header">
@@ -2097,6 +2151,7 @@
     meethostInstructions:'', meethostContact:'',
     receptionName:'', receptionAddress:'', receptionHours:'',
     pickupLocation:'', pickupAddress:'', pickupInstructions:'',
+    parkingInfo:'', breakfastInfo:'',
     wifiName:'', wifiPass:'',
     wa:'', phone:'',
     propertyType:'apartment',
@@ -2617,7 +2672,8 @@
     ['s-keycode','s-keysafe-instructions','s-gatecode','s-roomcode','s-entry-location','s-floor','s-doorcode','s-smartlock-instructions',
      's-gatecode-smartlock','s-roomcode-smartlock',
      's-meethost-instructions','s-meethost-contact','s-reception-name','s-reception-address',
-     's-reception-hours','s-pickup-location','s-pickup-address','s-pickup-instructions'].forEach(id=>{
+     's-reception-hours','s-pickup-location','s-pickup-address','s-pickup-instructions',
+     's-parking-info','s-breakfast-info'].forEach(id=>{
        const el=document.getElementById(id);if(el) el.value='';
     });
     document.getElementById('links-section').classList.remove('show');
@@ -2898,6 +2954,7 @@
     renderHotelSection(d);
     const lang=document.documentElement.lang||localStorage.getItem('preferred-lang')||'en';
     renderEntryCard(d,lang);
+    renderReservationCard(d);
     // Nearby: hide for real cards until we fetch
     if(!d._isDemo){
       document.getElementById('nearby-card').style.display='none';
@@ -2964,6 +3021,8 @@
     ef('s-pickup-location',d.pickupLocation);
     ef('s-pickup-address',d.pickupAddress);
     ef('s-pickup-instructions',d.pickupInstructions);
+    ef('s-parking-info',d.parkingInfo);
+    ef('s-breakfast-info',d.breakfastInfo);
     document.getElementById('setup-overlay').classList.add('show');
   }
 
@@ -3008,6 +3067,8 @@
         }).filter(Boolean).join('\n');
       })(),
       helpText:g('s-helptext'),
+      parkingInfo:g('s-parking-info'),
+      breakfastInfo:g('s-breakfast-info'),
       createdAt:window._existingCreatedAt||localStorage.getItem('cic_created_at')||new Date().toISOString(),
       propertyType:(document.getElementById('s-property-type')||{value:'apartment'}).value,
       logoUrl:g('s-logo-url-general')||g('s-logo-url'),
@@ -3092,8 +3153,8 @@
     if(rulesContainer){
       var hotelDef={
         en:['Restaurant open Wed–Sun 12:30–18:00','Reception hours 8:00–18:00','No smoking inside','Quiet hours from 22:00'],
-        de:['Restaurant geöffnet Mi–So 12:30–18:00','Rezeptionszeiten 8:00–18:00','Rauchen verboten','Ab 22:00 Uhr bitte keine Geräusche mehr'],
-        es:['Restaurante abierto mié–dom 12:30–18:00','Horario de recepción 8:00–18:00','Prohibido fumar','Silencio a partir de las 22:00']
+        de:['Restaurant geöffnet Mi–So 12:30–18:00','Rezeption geöffnet 8:00–18:00','Rauchen verboten','Ab 22:00 Uhr bitte keine Geräusche mehr'],
+        es:['Restaurante abierto de miércoles a domingo, 12:30–18:00','Recepción abierta de 8:00 a 18:00','Prohibido fumar','Silencio a partir de las 22:00']
       };
       var aptDef={
         en:['No smoking inside','Quiet hours from 22:00','Turn off AC when leaving','Bins are outside the building'],
@@ -3225,8 +3286,8 @@
     var lang = document.documentElement.lang || 'en';
     var hotelDefaults = {
       en:['🍽️ Restaurant open Wed–Sun 12:30–18:00','🏨 Reception hours 8:00–18:00','🚭 No smoking inside','🌙 Quiet hours from 22:00'],
-      de:['🍽️ Restaurant geöffnet Mi–So 12:30–18:00','🏨 Rezeptionszeiten 8:00–18:00','🚭 Rauchen verboten','🌙 Ab 22:00 Uhr bitte keine Geräusche mehr'],
-      es:['🍽️ Restaurante abierto mié–dom 12:30–18:00','🏨 Horario de recepción 8:00–18:00','🚭 Prohibido fumar','🌙 Silencio a partir de las 22:00']
+      de:['🍽️ Restaurant geöffnet Mi–So 12:30–18:00','🏨 Rezeption geöffnet 8:00–18:00','🚭 Rauchen verboten','🌙 Ab 22:00 Uhr bitte keine Geräusche mehr'],
+      es:['🍽️ Restaurante abierto de miércoles a domingo, 12:30–18:00','🏨 Recepción abierta de 8:00 a 18:00','🚭 Prohibido fumar','🌙 Silencio a partir de las 22:00']
     };
     var aptDefaults = {
       en:['🚭 No smoking inside','🌙 Quiet hours from 22:00','❄️ Turn off AC when leaving','🗑️ Bins are outside the building'],
@@ -3620,6 +3681,25 @@
     });
     const lang = document.documentElement.lang || 'en';
     renderEntryCard(d, lang);
+  }
+
+  function liveUpdateReservation(){
+    const g=id=>{ const el=document.getElementById(id); return el?el.value.trim():''; };
+    renderReservationCard({ parkingInfo: g('s-parking-info'), breakfastInfo: g('s-breakfast-info') });
+  }
+
+  function renderReservationCard(d){
+    const parking = d.parkingInfo||'';
+    const breakfast = d.breakfastInfo||'';
+    const card = document.getElementById('reservation-info-card');
+    const parkBlock = document.getElementById('d-parking-block');
+    const parkText = document.getElementById('d-parking-text');
+    const bfBlock = document.getElementById('d-breakfast-block');
+    const bfText = document.getElementById('d-breakfast-info-text');
+    if(!card) return;
+    if(parkBlock && parkText){ parkBlock.style.display=parking?'block':'none'; parkText.textContent=parking; }
+    if(bfBlock && bfText){ bfBlock.style.display=breakfast?'block':'none'; bfText.textContent=breakfast; }
+    card.style.display=(parking||breakfast)?'':'none';
   }
 
   function clearLogoUpload(){
