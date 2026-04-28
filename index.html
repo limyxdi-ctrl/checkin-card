@@ -1295,7 +1295,12 @@
       <div class="entry-fields-panel show" id="ep-smartlock">
         <div class="field">
           <label><span data-lang="en" class="active">Instructions</span><span data-lang="de">Anweisungen</span><span data-lang="es">Instrucciones</span></label>
-          <textarea id="s-smartlock-instructions" oninput="liveUpdateEntry()"></textarea>
+          <textarea id="s-smartlock-instructions"
+            data-placeholder-en="e.g. Ring the bell, wait for the door to buzz, then take the elevator to floor 3"
+            data-placeholder-de="z. B. Klingeln, auf Summer warten, dann mit dem Aufzug in den 3. Stock fahren"
+            data-placeholder-es="p. ej. Llame al timbre, espere el zumbido y suba al 3.º piso en ascensor"
+            placeholder="e.g. Ring the bell, wait for the door to buzz, then take the elevator to floor 3"
+            oninput="liveUpdateEntry()"></textarea>
         </div>
         <div class="field" style="margin-top:4px">
           <label><span data-lang="en" class="active">Gate code</span><span data-lang="de">Torcode</span><span data-lang="es">Código del portón</span></label>
@@ -3062,8 +3067,8 @@
         }
       });
     }
-    // Update localized placeholders on all inputs with data-placeholder-{lang}
-    document.querySelectorAll('input[data-placeholder-'+lang+']').forEach(function(el){
+    // Update localized placeholders on all inputs/textareas with data-placeholder-{lang}
+    document.querySelectorAll('input[data-placeholder-'+lang+'], textarea[data-placeholder-'+lang+']').forEach(function(el){
       el.placeholder = el.getAttribute('data-placeholder-'+lang);
     });
   }
