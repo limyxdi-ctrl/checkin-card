@@ -3482,6 +3482,7 @@
       if(url){
         logoImg.src = url;
         logoWrap.style.display = 'block';
+        logoImg.onerror = function(){ logoWrap.style.display = 'none'; };
       } else {
         logoImg.src = '';
         logoWrap.style.display = 'none';
