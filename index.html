@@ -1428,21 +1428,21 @@
     <!-- ── HAUSORDNUNG ── -->
     <div class="setup-section">
       <div class="setup-section-title">
-        📋 <span data-lang="en" class="active">House Rules</span>
-        <span data-lang="de">Hausordnung</span>
-        <span data-lang="es">Normas de la Casa</span>
+        📋 <span data-lang="en" class="active">House Information</span>
+        <span data-lang="de">Informationen zum Haus</span>
+        <span data-lang="es">Información de la Casa</span>
       </div>
       <div class="field">
         <label>
-          <span data-lang="en" class="active">Your house rules</span>
-          <span data-lang="de">Deine Hausregeln</span>
-          <span data-lang="es">Tus normas</span>
+          <span data-lang="en" class="active">Your house information</span>
+          <span data-lang="de">Informationen zum Haus</span>
+          <span data-lang="es">Información de tu alojamiento</span>
         </label>
         <div id="rules-rows" style="display:flex;flex-direction:column;gap:8px">
+          <div class="rule-input-row"><span class="rule-input-emoji">🍽️</span><input class="rule-input-text" type="text" placeholder="Restaurant open Wed–Sun 12:30–18:00" data-emoji="🍽️"></div>
+          <div class="rule-input-row"><span class="rule-input-emoji">🏨</span><input class="rule-input-text" type="text" placeholder="Reception hours 8:00–18:00" data-emoji="🏨"></div>
           <div class="rule-input-row"><span class="rule-input-emoji">🚭</span><input class="rule-input-text" type="text" placeholder="No smoking inside" data-emoji="🚭"></div>
           <div class="rule-input-row"><span class="rule-input-emoji">🌙</span><input class="rule-input-text" type="text" placeholder="Quiet hours from 22:00" data-emoji="🌙"></div>
-          <div class="rule-input-row"><span class="rule-input-emoji">❄️</span><input class="rule-input-text" type="text" placeholder="Turn off AC when leaving" data-emoji="❄️"></div>
-          <div class="rule-input-row"><span class="rule-input-emoji">🗑️</span><input class="rule-input-text" type="text" placeholder="Bins are outside the building" data-emoji="🗑️"></div>
         </div>
         <button type="button" onclick="addRuleRow()" style="margin-top:10px;background:none;border:1px dashed var(--border);border-radius:8px;padding:7px 14px;font-size:0.8rem;color:var(--text2);cursor:pointer;width:100%;font-family:inherit">+ <span data-lang="en" class="active">Add rule</span><span data-lang="de">Regel hinzufügen</span><span data-lang="es">Añadir regla</span></button>
         <div style="font-size:0.74rem;color:var(--text2);margin-top:8px;line-height:1.5">
@@ -1531,15 +1531,27 @@
             <button onclick="clearLogoUpload()" style="font-size:0.73rem;color:#EF4444;background:none;border:1px solid #EF4444;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit">🗑</button>
           </div>
           <div style="text-align:center;font-size:0.73rem;color:var(--text2);margin-bottom:6px">— <span data-lang="en" class="active">or paste URL</span><span data-lang="de">oder URL einfügen</span><span data-lang="es">o pega URL</span> —</div>
-          <input type="url" id="s-logo-url" placeholder="https://yourhotel.com/logo.png">
+          <input type="url" id="s-logo-url"
+            data-placeholder-en="https://yourhotel.com/logo.png"
+            data-placeholder-de="https://ihreshotel.de/logo.png"
+            data-placeholder-es="https://suhotel.com/logo.png"
+            placeholder="https://yourhotel.com/logo.png">
         </div>
 
         <!-- Breakfast -->
         <div class="field">
           <label>🍳 <span data-lang="en" class="active">Breakfast (what guests will see)</span><span data-lang="de">Frühstück (was Gäste sehen)</span><span data-lang="es">Desayuno (lo que verán los huéspedes)</span></label>
           <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center">
-            <input id="s-breakfast-text" placeholder="Continental breakfast, 7:00–10:00">
-            <input id="s-breakfast-price" placeholder="€12" style="width:80px">
+            <input id="s-breakfast-text"
+              data-placeholder-en="Continental breakfast, 7:00–10:00"
+              data-placeholder-de="Kontinentales Frühstück, 7:00–10:00"
+              data-placeholder-es="Desayuno continental, 7:00–10:00"
+              placeholder="Continental breakfast, 7:00–10:00">
+            <input id="s-breakfast-price"
+              data-placeholder-en="€12"
+              data-placeholder-de="12 €"
+              data-placeholder-es="12 €"
+              placeholder="€12" style="width:80px">
           </div>
         </div>
 
@@ -1547,15 +1559,27 @@
         <div class="field">
           <label>🕐 <span data-lang="en" class="active">Late check-out (what guests will see)</span><span data-lang="de">Spätes Auschecken (was Gäste sehen)</span><span data-lang="es">Check-out tardío (lo que verán los huéspedes)</span></label>
           <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center">
-            <input id="s-latecheckout-text" placeholder="Check-out until 14:00">
-            <input id="s-latecheckout-price" placeholder="€25" style="width:80px">
+            <input id="s-latecheckout-text"
+              data-placeholder-en="Check-out until 14:00"
+              data-placeholder-de="Check-out bis 14:00 Uhr"
+              data-placeholder-es="Check-out hasta las 14:00"
+              placeholder="Check-out until 14:00">
+            <input id="s-latecheckout-price"
+              data-placeholder-en="€25"
+              data-placeholder-de="25 €"
+              data-placeholder-es="25 €"
+              placeholder="€25" style="width:80px">
           </div>
         </div>
 
         <!-- Contact Link -->
         <div class="field">
           <label>📞 <span data-lang="en" class="active">Reception contact (phone or WhatsApp)</span><span data-lang="de">Rezeptionskontakt (Telefon oder WhatsApp)</span><span data-lang="es">Contacto recepción (teléfono o WhatsApp)</span></label>
-          <input id="s-contact-link" placeholder="+34 600 000 000 or https://wa.me/34600000000">
+          <input id="s-contact-link"
+            data-placeholder-en="+34 600 000 000 or https://wa.me/34600000000"
+            data-placeholder-de="+49 30 000000 oder https://wa.me/4930000000"
+            data-placeholder-es="+34 600 000 000 o https://wa.me/34600000000"
+            placeholder="+34 600 000 000 or https://wa.me/34600000000">
         </div>
       </div>
     </div>
@@ -1849,9 +1873,9 @@
       <div class="card-header">
         <div class="card-icon icon-red">📋</div>
         <div class="card-title">
-          <span data-lang="en" class="active">House Rules</span>
-          <span data-lang="de">Hausordnung</span>
-          <span data-lang="es">Normas de la Casa</span>
+          <span data-lang="en" class="active">House Information</span>
+          <span data-lang="de">Informationen zum Haus</span>
+          <span data-lang="es">Información de la Casa</span>
           <div id="demo-hint-rules-sub" class="card-subtitle-hint" style="display:none">
             <span data-lang="en" class="active">(Example – text can be adjusted)</span>
             <span data-lang="de">(Beispiel – Text kann angepasst werden)</span>
@@ -1866,10 +1890,10 @@
       </div>
       <div class="card-body">
         <ul class="rules-list" id="d-rules-list">
-          <li class="rule-item"><span class="rule-emoji">🚭</span><span><span data-lang="en" class="active">No smoking inside.</span><span data-lang="de">Rauchen in der Wohnung ist nicht gestattet.</span><span data-lang="es">Prohibido fumar dentro del apartamento.</span></span></li>
-          <li class="rule-item"><span class="rule-emoji">🌙</span><span><span data-lang="en" class="active">Quiet hours from 22:00 – please respect the neighbours.</span><span data-lang="de">Ruhezeiten ab 22:00 Uhr – bitte Nachbarn respektieren.</span><span data-lang="es">Silencio a partir de las 22:00 – por favor respete a los vecinos.</span></span></li>
-          <li class="rule-item"><span class="rule-emoji">❄️</span><span><span data-lang="en" class="active">Turn off the AC when leaving.</span><span data-lang="de">Klimaanlage beim Verlassen ausschalten.</span><span data-lang="es">Apague el aire acondicionado al salir.</span></span></li>
-          <li class="rule-item"><span class="rule-emoji">🗑️</span><span><span data-lang="en" class="active">Put trash bags in the bins outside the building.</span><span data-lang="de">Müll in die Tonnen vor dem Gebäude.</span><span data-lang="es">Deposite la basura en los contenedores fuera del edificio.</span></span></li>
+          <li class="rule-item"><span class="rule-emoji">🍽️</span><span>Restaurant open Wed–Sun 12:30–18:00</span></li>
+          <li class="rule-item"><span class="rule-emoji">🏨</span><span>Reception hours 8:00–18:00</span></li>
+          <li class="rule-item"><span class="rule-emoji">🚭</span><span>No smoking inside.</span></li>
+          <li class="rule-item"><span class="rule-emoji">🌙</span><span>Quiet hours from 22:00.</span></li>
         </ul>
       </div>
     </div>
@@ -2238,7 +2262,7 @@
     pickupLocation:'', pickupAddress:'', pickupInstructions:'',
     wifiName:'Sonnenschein_Guest', wifiPass:'Berlin2024!',
     wa:'+4915123456789', phone:'+4930123456789',
-    rules:'🚭 No smoking inside\n🌙 Quiet hours from 22:00\n❄️ Turn off AC when leaving\n🗑️ Bins are outside the building',
+    rules:'🍽️ Restaurant open Wed–Sun 12:30–18:00\n🏨 Reception hours 8:00–18:00\n🚭 No smoking inside\n🌙 Quiet hours from 22:00',
     helpText:"We're here for you around the clock. Don't hesitate to reach out!"
   };
   const DEMO_NEARBY = [
@@ -3063,19 +3087,40 @@
       htp.placeholder=htTexts[lang]||htTexts.en;
     }
     // Update default house rules when language changes
+    // Replace fields that still contain any known default text across all languages
     var rulesContainer=document.getElementById('rules-rows');
     if(rulesContainer){
-      var defaultRules={
-        en:['Quiet hours from 22:00','Turn off AC when leaving','Bins are outside the building'],
-        de:['Ruhezeiten ab 22:00 Uhr','Klimaanlage beim Verlassen ausschalten','Müll in die Tonnen vor dem Gebäude'],
-        es:['Silencio a partir de las 22:00','Apaga el aire acondicionado al salir','Basura en los contenedores fuera del edificio']
+      var hotelDef={
+        en:['Restaurant open Wed–Sun 12:30–18:00','Reception hours 8:00–18:00','No smoking inside','Quiet hours from 22:00'],
+        de:['Restaurant geöffnet Mi–So 12:30–18:00','Rezeptionszeiten 8:00–18:00','Rauchen verboten','Ab 22:00 Uhr bitte keine Geräusche mehr'],
+        es:['Restaurante abierto mié–dom 12:30–18:00','Horario de recepción 8:00–18:00','Prohibido fumar','Silencio a partir de las 22:00']
       };
-      var allDefaults=[];
-      ['en','de','es'].forEach(function(l){ defaultRules[l].forEach(function(r){ allDefaults.push(r); }); });
+      var aptDef={
+        en:['No smoking inside','Quiet hours from 22:00','Turn off AC when leaving','Bins are outside the building'],
+        de:['Rauchen verboten','Ab 22:00 Uhr Ruhe bitte','Klimaanlage beim Verlassen ausschalten','Müll in die Tonnen vor dem Gebäude'],
+        es:['Prohibido fumar','Silencio a partir de las 22:00','Apaga el aire acondicionado al salir','Basura en los contenedores fuera del edificio']
+      };
+      // Build a flat lookup: text → {type, index}
+      var knownMap={};
+      ['hotel','apt'].forEach(function(t){
+        var def=t==='hotel'?hotelDef:aptDef;
+        ['en','de','es'].forEach(function(l){
+          (def[l]||[]).forEach(function(txt,i){ knownMap[txt.toLowerCase().trim()]={type:t,idx:i}; });
+        });
+      });
+      var propertyType=(document.getElementById('s-property-type')||{}).value||'apartment';
+      var targetDef=(propertyType==='hotel'?hotelDef:aptDef)[lang]||(propertyType==='hotel'?hotelDef:aptDef).en;
       var inputs=rulesContainer.querySelectorAll('.rule-input-text');
-      inputs.forEach(function(input,i){
-        if(i<3 && (input.value===''||allDefaults.indexOf(input.value)>=0)){
-          input.value=(defaultRules[lang]&&defaultRules[lang][i])||'';
+      var hotelEmojis=['🍽️','🏨','🚭','🌙'];
+      var aptEmojis=['🚭','🌙','❄️','🗑️'];
+      var targetEmojis=(propertyType==='hotel'?hotelEmojis:aptEmojis);
+      inputs.forEach(function(input){
+        var val=input.value.trim().toLowerCase();
+        var match=val===''?{idx:Array.from(inputs).indexOf(input)}:knownMap[val];
+        if(match!==undefined && match.idx<targetDef.length){
+          input.value=targetDef[match.idx];
+          var emojiSpan=input.closest('.rule-input-row') && input.closest('.rule-input-row').querySelector('.rule-input-emoji');
+          if(emojiSpan && targetEmojis[match.idx]) emojiSpan.textContent=targetEmojis[match.idx];
         }
       });
     }
@@ -3176,6 +3221,47 @@
     }
     input.value = type;
     toggleHotelFields(type);
+    // Pre-fill rule rows with type-appropriate defaults (only if currently empty or default values)
+    var lang = document.documentElement.lang || 'en';
+    var hotelDefaults = {
+      en:['🍽️ Restaurant open Wed–Sun 12:30–18:00','🏨 Reception hours 8:00–18:00','🚭 No smoking inside','🌙 Quiet hours from 22:00'],
+      de:['🍽️ Restaurant geöffnet Mi–So 12:30–18:00','🏨 Rezeptionszeiten 8:00–18:00','🚭 Rauchen verboten','🌙 Ab 22:00 Uhr bitte keine Geräusche mehr'],
+      es:['🍽️ Restaurante abierto mié–dom 12:30–18:00','🏨 Horario de recepción 8:00–18:00','🚭 Prohibido fumar','🌙 Silencio a partir de las 22:00']
+    };
+    var aptDefaults = {
+      en:['🚭 No smoking inside','🌙 Quiet hours from 22:00','❄️ Turn off AC when leaving','🗑️ Bins are outside the building'],
+      de:['🚭 Rauchen verboten','🌙 Ab 22:00 Uhr Ruhe bitte','❄️ Klimaanlage beim Verlassen ausschalten','🗑️ Müll in die Tonnen vor dem Gebäude'],
+      es:['🚭 Prohibido fumar','🌙 Silencio a partir de las 22:00','❄️ Apaga el aire acondicionado al salir','🗑️ Basura en los contenedores fuera del edificio']
+    };
+    var allKnownDefaults = [];
+    ['en','de','es'].forEach(function(l){
+      (hotelDefaults[l]||[]).forEach(function(r){ allKnownDefaults.push(r.replace(/^[\p{Emoji}\s]+/u,'').trim()); });
+      (aptDefaults[l]||[]).forEach(function(r){ allKnownDefaults.push(r.replace(/^[\p{Emoji}\s]+/u,'').trim()); });
+    });
+    var newDefaults = (type === 'hotel' ? hotelDefaults : aptDefaults)[lang] || [];
+    var otherDefaults = (type === 'hotel' ? aptDefaults : hotelDefaults);
+    var rulesRows = document.getElementById('rules-rows');
+    if(rulesRows){
+      var rows = rulesRows.querySelectorAll('.rule-input-row');
+      // Build flat set of all known default texts (without emoji prefix, lowercase)
+      var knownSet = new Set();
+      ['en','de','es'].forEach(function(l){
+        (hotelDefaults[l]||[]).concat(aptDefaults[l]||[]).forEach(function(r){
+          knownSet.add(r.replace(/^[\p{Emoji}\uFE0F\s]+/u,'').trim().toLowerCase());
+        });
+      });
+      rows.forEach(function(row, i){
+        var txt = row.querySelector('.rule-input-text').value.trim();
+        var isKnown = txt==='' || knownSet.has(txt.toLowerCase());
+        if(isKnown && i < newDefaults.length){
+          var parts = (newDefaults[i]||'').match(/^([\p{Emoji}\uFE0F]+)\s*(.*)/u);
+          if(parts){
+            row.querySelector('.rule-input-emoji').textContent = parts[1];
+            row.querySelector('.rule-input-text').value = parts[2];
+          }
+        }
+      });
+    }
   }
 
   function toggleHotelFields(type){
