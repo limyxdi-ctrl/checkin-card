@@ -1549,31 +1549,6 @@
           <span data-lang="es">Configuración del hotel</span>
         </div>
 
-        <!-- Logo Upload -->
-        <div class="field">
-          <label style="font-weight:700">🖼️ <span data-lang="en" class="active">Hotel Logo (optional)</span><span data-lang="de">Hotel-Logo (optional)</span><span data-lang="es">Logo del hotel (opcional)</span></label>
-          <label for="s-logo-file" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;border:2px dashed var(--accent);border-radius:10px;cursor:pointer;background:#F8FAFF;margin-bottom:8px">
-            <span style="font-size:1.6rem">📁</span>
-            <span style="font-size:0.83rem;font-weight:600;color:var(--accent)">
-              <span data-lang="en" class="active">Click to upload (JPG, PNG — max 2MB)</span>
-              <span data-lang="de">Klicken zum Hochladen (JPG, PNG — max 2MB)</span>
-              <span data-lang="es">Clic para subir (JPG, PNG — máx 2MB)</span>
-            </span>
-          </label>
-          <input type="file" id="s-logo-file" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display:none" onchange="handleLogoUpload(this)">
-          <div id="s-logo-preview-wrap" style="display:none;margin-bottom:8px;padding:10px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;text-align:center">
-            <img id="s-logo-preview" src="" alt="Logo" style="max-height:70px;max-width:180px;object-fit:contain;border-radius:6px;margin-bottom:6px">
-            <div style="font-size:0.75rem;color:#166534;margin-bottom:4px">✅ <span data-lang="en" class="active">Uploaded!</span><span data-lang="de">Hochgeladen!</span><span data-lang="es">¡Subido!</span></div>
-            <button onclick="clearLogoUpload()" style="font-size:0.73rem;color:#EF4444;background:none;border:1px solid #EF4444;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit">🗑</button>
-          </div>
-          <div style="text-align:center;font-size:0.73rem;color:var(--text2);margin-bottom:6px">— <span data-lang="en" class="active">or paste URL</span><span data-lang="de">oder URL einfügen</span><span data-lang="es">o pega URL</span> —</div>
-          <input type="url" id="s-logo-url"
-            data-placeholder-en="https://yourhotel.com/logo.png"
-            data-placeholder-de="https://ihreshotel.de/logo.png"
-            data-placeholder-es="https://suhotel.com/logo.png"
-            placeholder="https://yourhotel.com/logo.png">
-        </div>
-
         <!-- Breakfast -->
         <div class="field">
           <label>🍳 <span data-lang="en" class="active">Breakfast (what guests will see)</span><span data-lang="de">Frühstück (was Gäste sehen)</span><span data-lang="es">Desayuno (lo que verán los huéspedes)</span></label>
@@ -2434,7 +2409,7 @@
         helpText: g('s-helptext'),
         parkingInfo: g('s-parking-info'), breakfastInfo: g('s-breakfast-info'),
         propertyType: (document.getElementById('s-property-type')||{}).value||'apartment',
-        logoUrl: g('s-logo-url-general')||g('s-logo-url'),
+        logoUrl: g('s-logo-url-general'),
         breakfastText: g('s-breakfast-text'), breakfastPrice: g('s-breakfast-price'),
         lateCheckoutText: g('s-latecheckout-text'), lateCheckoutPrice: g('s-latecheckout-price'),
         contactLink: g('s-contact-link'),
@@ -2768,8 +2743,6 @@
     document.getElementById('s-wifi-name').value=d.wifiName;
     // Hotel fields
     selectPropertyType(d.propertyType||'apartment');
-    var luEl=document.getElementById('s-logo-url');
-    if(luEl) luEl.value=d.logoUrl||'';
     var luGenEl=document.getElementById('s-logo-url-general');
     if(luGenEl) luGenEl.value=d.logoUrl||'';
     var btEl=document.getElementById('s-breakfast-text');
@@ -3191,7 +3164,7 @@
       breakfastInfo:g('s-breakfast-info'),
       createdAt:window._existingCreatedAt||localStorage.getItem('cic_created_at')||new Date().toISOString(),
       propertyType:(document.getElementById('s-property-type')||{value:'apartment'}).value,
-      logoUrl:g('s-logo-url-general')||g('s-logo-url'),
+      logoUrl:g('s-logo-url-general'),
       breakfastText:g('s-breakfast-text'),
       breakfastPrice:g('s-breakfast-price'),
       lateCheckoutText:g('s-latecheckout-text'),
@@ -3474,7 +3447,7 @@
   function renderHotelSection(d){
     var isHotel = d.propertyType === 'hotel';
 
-    // Logo
+    // Logo — shown for any property type if URL is present
     var logoWrap = document.getElementById('d-hotel-logo-wrap');
     var logoImg  = document.getElementById('d-hotel-logo');
     if(logoWrap && logoImg){
@@ -3761,35 +3734,7 @@
     document.getElementById('pw-demo').onclick=function(){ modal.remove(); loadDemo(); };
     modal.addEventListener('click',function(e){ if(e.target===modal) modal.remove(); });
   }
-
-
-
-  async function handleLogoUpload(input){
-    const file = input.files[0];
-    if(!file) return;
-    if(file.size > 2097152){ alert('Max 2MB'); input.value=''; return; }
-    const reader = new FileReader();
-    reader.onload = function(e){
-      var p = document.getElementById('s-logo-preview');
-      var w = document.getElementById('s-logo-preview-wrap');
-      if(p) p.src = e.target.result;
-      if(w) w.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-    try {
-      const ext = file.name.split('.').pop();
-      const fileName = 'logo_' + Date.now() + '.' + ext;
-      const res = await fetch(SB_URL + '/storage/v1/object/Logos/' + fileName, {
-        method: 'POST',
-        headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type,'x-upsert':'true'},
-        body: file
-      });
-      if(res.ok){
-        var u = document.getElementById('s-logo-url');
-        if(u) u.value = SB_URL+'/storage/v1/object/public/Logos/'+fileName;
-      } else { alert('Upload failed. Paste a URL instead.'); }
-    } catch(e) { console.error(e); }
-  }
+  
   function liveUpdateEntry(){
     const g=id=>{ const el=document.getElementById(id); return el?el.value.trim():''; };
     const d=Object.assign({}, window._aptData||{}, {
@@ -3828,14 +3773,6 @@
     card.style.display=(parking||breakfast)?'':'none';
   }
 
-  function clearLogoUpload(){
-    var p=document.getElementById('s-logo-preview');
-    var w=document.getElementById('s-logo-preview-wrap');
-    var u=document.getElementById('s-logo-url');
-    var f=document.getElementById('s-logo-file');
-    if(p)p.src=''; if(w)w.style.display='none'; if(u)u.value=''; if(f)f.value='';
-  }
-
   // ── GENERAL LOGO UPLOAD (all property types) ──
   async function handleLogoUploadGeneral(input){
     const file = input.files[0];
@@ -3860,9 +3797,6 @@
       if(res.ok){
         var u = document.getElementById('s-logo-url-general');
         if(u) u.value = SB_URL+'/storage/v1/object/public/Logos/'+fileName;
-        // also sync to hotel logo url if present
-        var uH = document.getElementById('s-logo-url');
-        if(uH && !uH.value) uH.value = SB_URL+'/storage/v1/object/public/Logos/'+fileName;
       } else { alert('Upload failed. Paste a URL instead.'); }
     } catch(e) { console.error(e); }
   }
