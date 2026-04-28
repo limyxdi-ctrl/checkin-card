@@ -1535,7 +1535,31 @@
           <button onclick="clearLogoUploadGeneral()" style="font-size:0.73rem;color:#EF4444;background:none;border:1px solid #EF4444;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit">🗑</button>
         </div>
         <div style="text-align:center;font-size:0.73rem;color:var(--text2);margin-bottom:6px">— <span data-lang="en" class="active">or paste URL</span><span data-lang="de">oder URL einfügen</span><span data-lang="es">o pega URL</span> —</div>
-        <input type="url" id="s-logo-url-general" placeholder="https://yourproperty.com/logo.png">
+        <input type="url" id="s-logo-url-general" placeholder="https://yourproperty.com/logo.png"
+          oninput="(function(v){
+            var pw=document.getElementById('s-logo-preview-wrap-general');
+            var pi=document.getElementById('s-logo-preview-general');
+            if(v){
+              if(pi){ pi.src=v; pi.onerror=function(){if(pw)pw.style.display='none';}; pi.onload=function(){if(pw)pw.style.display='block';}; }
+            } else {
+              if(pw) pw.style.display='none';
+              if(pi) pi.src='';
+            }
+            if(window._aptData){ window._aptData.logoUrl=v; if(typeof renderHotelSection==='function') renderHotelSection(window._aptData); }
+          })(this.value)">
+        <div style="margin-top:8px;padding:10px 12px;background:#FFFBEB;border:1px solid #F59E0B;border-radius:8px;font-size:0.76rem;color:#78350F;line-height:1.6">
+          <strong>
+            <span data-lang="en" class="active">💡 Important: paste a direct image URL, not your website address.</span>
+            <span data-lang="de">💡 Wichtig: Bitte keine Webseiten-Adresse einfügen, sondern die direkte Bild-URL.</span>
+            <span data-lang="es">💡 Importante: pega la URL directa de la imagen, no la dirección de tu web.</span>
+          </strong><br>
+          <span data-lang="en" class="active">Example: <code>https://yourhotel.com/images/logo.png</code><br>
+            To find it: right-click your logo on your website → <em>Copy image address</em>. Or simply upload the file directly above — that always works.</span>
+          <span data-lang="de">Beispiel: <code>https://ihreshotel.de/bilder/logo.png</code><br>
+            So findest du sie: Rechtsklick auf dein Logo auf deiner Webseite → <em>Bildadresse kopieren</em>. Oder lade die Datei einfach direkt oben hoch — das funktioniert immer.</span>
+          <span data-lang="es">Ejemplo: <code>https://tuhotel.com/imagenes/logo.png</code><br>
+            Para encontrarla: haz clic derecho en tu logo en tu web → <em>Copiar dirección de imagen</em>. O simplemente sube el archivo directamente arriba — eso siempre funciona.</span>
+        </div>
       </div>
     </div>
 
@@ -1736,6 +1760,7 @@
         <!-- Hotel logo -->
         <div id="d-hotel-logo-wrap" style="display:none;text-align:center;padding:16px 0 8px">
           <img id="d-hotel-logo" src="" alt="" style="max-height:80px;max-width:200px;object-fit:contain;border-radius:8px">
+          <div id="d-hotel-logo-fallback" style="display:none;font-size:0.8rem;color:var(--accent);padding:4px 0"></div>
         </div>
         <div class="apt-name" id="d-name"></div>
         <div class="apt-meta" id="d-meta" style="display:none"></div>
@@ -2744,7 +2769,16 @@
     // Hotel fields
     selectPropertyType(d.propertyType||'apartment');
     var luGenEl=document.getElementById('s-logo-url-general');
-    if(luGenEl) luGenEl.value=d.logoUrl||'';
+    if(luGenEl){
+      luGenEl.value=d.logoUrl||'';
+      // Restore preview if URL is set
+      if(d.logoUrl){
+        var pw=document.getElementById('s-logo-preview-wrap-general');
+        var pi=document.getElementById('s-logo-preview-general');
+        if(pi) pi.src=d.logoUrl;
+        if(pw) pw.style.display='block';
+      }
+    }
     var btEl=document.getElementById('s-breakfast-text');
     if(btEl) btEl.value=d.breakfastText||'';
     var bpEl=document.getElementById('s-breakfast-price');
@@ -2808,8 +2842,6 @@
 
         <!-- Register nudge -->
         <button onclick="showRegisterModal()" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;padding:12px;background:#1F3A8A;color:#fff;border-radius:10px;font-weight:600;font-size:0.87rem;border:none;cursor:pointer;font-family:inherit;width:100%">${t.register}</button>
-
-        <button onclick="document.getElementById('save-success-modal').remove()" style="width:100%;margin-top:10px;padding:11px;border-radius:10px;border:1px solid var(--border);background:#fff;color:var(--text2);font-family:inherit;font-size:0.87rem;cursor:pointer">${t.done}</button>
       </div>`;
     document.body.appendChild(modal);
   }
@@ -3446,24 +3478,31 @@
   function renderHotelSection(d){
     var isHotel = d.propertyType === 'hotel';
 
-    // Logo — always hidden first, shown only after confirmed load
+    // Logo — show immediately if URL present, hide only on confirmed load error
     var logoWrap = document.getElementById('d-hotel-logo-wrap');
     var logoImg  = document.getElementById('d-hotel-logo');
     if(logoWrap && logoImg){
       const url = (d.logoUrl||'').trim();
-      logoWrap.style.display = 'none';
-      logoImg.onload = logoImg.onerror = null;
-      logoImg.src = '';
       if(url){
-        logoImg.onload  = function(){ logoWrap.style.display = 'block'; };
-        logoImg.onerror = function(){ logoWrap.style.display = 'none'; logoImg.src=''; };
+        logoImg.onload = logoImg.onerror = null;
         logoImg.src = url;
-        // Fallback: if browser served from cache, onload may not fire — check after tick
-        setTimeout(function(){
-          if(logoImg.complete && logoImg.naturalWidth > 0){
-            logoWrap.style.display = 'block';
+        logoWrap.style.display = 'block';
+        var fallback = document.getElementById('d-hotel-logo-fallback');
+        logoImg.onerror = function(){
+          // Image blocked by CORS or broken — hide img, show property name as fallback
+          logoImg.style.display = 'none';
+          if(fallback){
+            fallback.textContent = d.name || '';
+            fallback.style.display = d.name ? 'block' : 'none';
           }
-        }, 50);
+        };
+        logoImg.onload = function(){
+          logoImg.style.display = '';
+          if(fallback) fallback.style.display = 'none';
+        };
+      } else {
+        logoImg.src = '';
+        logoWrap.style.display = 'none';
       }
     }
 
