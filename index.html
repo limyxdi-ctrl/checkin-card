@@ -1735,7 +1735,7 @@
       <div>
         <!-- Hotel logo -->
         <div id="d-hotel-logo-wrap" style="display:none;text-align:center;padding:16px 0 8px">
-          <img id="d-hotel-logo" src="" alt="" style="max-height:80px;max-width:200px;object-fit:contain;border-radius:8px" onerror="this.closest('#d-hotel-logo-wrap').style.display='none'">
+          <img id="d-hotel-logo" src="" alt="" style="max-height:80px;max-width:200px;object-fit:contain;border-radius:8px">
         </div>
         <div class="apt-name" id="d-name"></div>
         <div class="apt-meta" id="d-meta" style="display:none"></div>
@@ -3452,13 +3452,12 @@
     var logoImg  = document.getElementById('d-hotel-logo');
     if(logoWrap && logoImg){
       const url = (d.logoUrl||'').trim();
+      logoWrap.style.display = 'none';
+      logoImg.src = '';
       if(url){
+        logoImg.onload  = function(){ logoWrap.style.display = 'block'; };
+        logoImg.onerror = function(){ logoWrap.style.display = 'none'; logoImg.src=''; };
         logoImg.src = url;
-        logoWrap.style.display = 'block';
-        logoImg.onerror = function(){ logoWrap.style.display = 'none'; };
-      } else {
-        logoImg.src = '';
-        logoWrap.style.display = 'none';
       }
     }
 
