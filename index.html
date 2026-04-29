@@ -1490,9 +1490,21 @@
           placeholder="z. B. Frühstück ist in Ihrer Reservierung enthalten. Serviert im Restaurant Mi–So 7:30–10:00."
           oninput="liveUpdateReservation()"></textarea>
       </div>
+      <div class="field" style="margin-top:4px">
+        <label>🍽️ <span data-lang="en" class="active">Restaurant menu (PDF or URL)</span><span data-lang="de">Restaurantmenü (PDF-Link oder URL)</span><span data-lang="es">Menú del restaurante (PDF o URL)</span></label>
+        <input id="s-menu-url" type="url"
+          data-placeholder-en="e.g. https://yourhotel.com/menu.pdf or https://yourhotel.com/menu"
+          data-placeholder-de="z. B. https://ihreshotel.de/menu.pdf oder https://ihreshotel.de/speisekarte"
+          data-placeholder-es="p. ej. https://suhotel.com/menu.pdf o https://suhotel.com/carta"
+          placeholder="z. B. https://ihreshotel.de/menu.pdf"
+          oninput="liveUpdateReservation()">
+        <div style="font-size:0.73rem;color:var(--text2);margin-top:4px">
+          <span data-lang="en" class="active">💡 A button will appear on the guest card linking directly to your menu.</span>
+          <span data-lang="de">💡 Ein Button erscheint auf der Gästekarte mit direktem Link zum Menü.</span>
+          <span data-lang="es">💡 Aparecerá un botón en la tarjeta del huésped con enlace directo al menú.</span>
+        </div>
+      </div>
     </div>
-
-    <!-- ── HILFETEXT ── -->
     <div class="setup-section">
       <div class="setup-section-title">
         💬 <span data-lang="en" class="active">Need Help? — message to guests</span>
@@ -1956,6 +1968,11 @@
           <div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);font-weight:600;margin-bottom:6px">🍳 <span data-lang="en" class="active">Breakfast</span><span data-lang="de">Frühstück</span><span data-lang="es">Desayuno</span></div>
           <div id="d-breakfast-info-text" style="font-size:0.9rem;color:var(--text);line-height:1.65;white-space:pre-line"></div>
         </div>
+        <div id="d-menu-block" style="display:none">
+          <a id="d-menu-btn" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#1F3A8A;color:#fff;border-radius:10px;font-weight:600;font-size:0.88rem;text-decoration:none">
+            🍽️ <span data-lang="en" class="active">View Restaurant Menu</span><span data-lang="de">Restaurantmenü ansehen</span><span data-lang="es">Ver menú del restaurante</span>
+          </a>
+        </div>
       </div>
     </div>
 
@@ -2158,7 +2175,7 @@
     meethostInstructions:'', meethostContact:'',
     receptionName:'', receptionAddress:'', receptionHours:'',
     pickupLocation:'', pickupAddress:'', pickupInstructions:'',
-    parkingInfo:'', breakfastInfo:'',
+    parkingInfo:'', breakfastInfo:'', menuUrl:'',
     wifiName:'', wifiPass:'',
     wa:'', phone:'',
     propertyType:'apartment',
@@ -2794,7 +2811,7 @@
      's-gatecode-smartlock','s-roomcode-smartlock',
      's-meethost-instructions','s-meethost-contact','s-reception-name','s-reception-address',
      's-reception-hours','s-pickup-location','s-pickup-address','s-pickup-instructions',
-     's-parking-info','s-breakfast-info'].forEach(id=>{
+     's-parking-info','s-breakfast-info','s-menu-url'].forEach(id=>{
        const el=document.getElementById(id);if(el) el.value='';
     });
     document.getElementById('links-section').classList.remove('show');
@@ -2804,7 +2821,7 @@
   // ═══════════════════════════════════════════════════════════
   // REGISTER NUDGE
   // ═══════════════════════════════════════════════════════════
-  function showSaveSuccess(guestLink, editLink){
+  function showSaveSuccess(guestLink, editLink, isPaid){
     const lang=document.documentElement.lang||'en';
     const t={
       en:{ title:'🎉 Your guide is live!', guestLabel:'Guest Link — share this with your guests', expiry:'This link is active for 2 hours. Upgrade to keep it permanent.', editLabel:'✏️ Edit Link (keep this private!)', copy:'Copy', copied:'Copied!', open:'Open Guide', done:'Done', register:'✉️ Register to keep it permanently', editNote:'Save this edit link — you\'ll need it to make changes later.' },
@@ -2825,9 +2842,10 @@
           <input id="suc-guest-input" readonly value="${guestLink}" style="flex:1;padding:10px 12px;border:2px solid #C7D2FE;border-radius:8px;font-size:0.82rem;background:#F0F4FF;color:var(--text);font-family:monospace;min-width:0">
           <button id="suc-copy-guest" onclick="gatedCopy('suc-guest-input','suc-copy-guest','${t.copied}')" style="flex-shrink:0;padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit;white-space:nowrap">${t.copy}</button>
         </div>
-        <div style="margin-top:8px;padding:8px 12px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;font-size:0.78rem;color:#92400E;text-align:center">
-          ⏰ <strong>${t.expiry}</strong>
-        </div>
+        ${isPaid
+          ? `<div style="margin-top:8px;padding:8px 12px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;font-size:0.78rem;color:#166534;text-align:center">✅ <strong>${{en:'Your guide is permanently active.',de:'Dein Guide ist dauerhaft aktiv.',es:'Tu guía está activa de forma permanente.'}[lang]}</strong></div>`
+          : `<div style="margin-top:8px;padding:8px 12px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;font-size:0.78rem;color:#92400E;text-align:center">⏰ <strong>${t.expiry}</strong></div>`
+        }
 
         <!-- Edit link — secondary -->
         <div style="margin:18px 0 4px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#DC2626">${t.editLabel}</div>
@@ -3151,6 +3169,7 @@
     ef('s-pickup-instructions',d.pickupInstructions);
     ef('s-parking-info',d.parkingInfo);
     ef('s-breakfast-info',d.breakfastInfo);
+    ef('s-menu-url',d.menuUrl);
     document.getElementById('setup-overlay').classList.add('show');
   }
 
@@ -3197,6 +3216,7 @@
       helpText:g('s-helptext'),
       parkingInfo:g('s-parking-info'),
       breakfastInfo:g('s-breakfast-info'),
+      menuUrl:g('s-menu-url'),
       createdAt:window._existingCreatedAt||localStorage.getItem('cic_created_at')||new Date().toISOString(),
       isPaid: window._aptData?.isPaid || false,
       propertyType:(document.getElementById('s-property-type')||{value:'apartment'}).value,
@@ -3235,7 +3255,7 @@
       document.getElementById('demo-banner')?.remove();
       // Show soft lock banner
       const slb = document.getElementById('soft-lock-banner');
-      if(slb) slb.style.display = '';
+      if(slb) slb.style.display = d.isPaid ? 'none' : '';
       // Fetch nearby places in background
       if(d.lat&&d.lng){
         nearbyLoading();
@@ -3243,7 +3263,7 @@
         fetchNearbyPlaces(d.lat,d.lng).then(places=>renderNearby(places,lang));
       }
       // Show success modal with links
-      showSaveSuccess(guestLink, editLink);
+      showSaveSuccess(guestLink, editLink, d.isPaid);
       const activeLang=document.querySelector('.lang-btn.active');
       setLang(activeLang?activeLang.textContent.trim().toLowerCase():'en');
     }catch(e){
@@ -3910,21 +3930,25 @@
 
   function liveUpdateReservation(){
     const g=id=>{ const el=document.getElementById(id); return el?el.value.trim():''; };
-    renderReservationCard({ parkingInfo: g('s-parking-info'), breakfastInfo: g('s-breakfast-info') });
+    renderReservationCard({ parkingInfo: g('s-parking-info'), breakfastInfo: g('s-breakfast-info'), menuUrl: g('s-menu-url') });
   }
 
   function renderReservationCard(d){
     const parking = d.parkingInfo||'';
     const breakfast = d.breakfastInfo||'';
+    const menu = (d.menuUrl||'').trim();
     const card = document.getElementById('reservation-info-card');
     const parkBlock = document.getElementById('d-parking-block');
     const parkText = document.getElementById('d-parking-text');
     const bfBlock = document.getElementById('d-breakfast-block');
     const bfText = document.getElementById('d-breakfast-info-text');
+    const menuBlock = document.getElementById('d-menu-block');
+    const menuBtn = document.getElementById('d-menu-btn');
     if(!card) return;
     if(parkBlock && parkText){ parkBlock.style.display=parking?'block':'none'; parkText.textContent=parking; }
     if(bfBlock && bfText){ bfBlock.style.display=breakfast?'block':'none'; bfText.textContent=breakfast; }
-    card.style.display=(parking||breakfast)?'':'none';
+    if(menuBlock && menuBtn){ menuBlock.style.display=menu?'block':'none'; if(menu) menuBtn.href=menu; }
+    card.style.display=(parking||breakfast||menu)?'':'none';
   }
 
   // ── GENERAL LOGO UPLOAD (all property types) ──
