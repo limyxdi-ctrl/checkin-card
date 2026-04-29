@@ -844,6 +844,9 @@
   <input type="hidden" name="form-name" value="email-gate">
   <input type="email" name="email">
   <input type="text" name="language">
+  <input type="text" name="source">
+  <input type="text" name="guide_name">
+  <input type="text" name="submitted_at">
   <input type="text" name="bot-field">
 </form>
 
@@ -2382,13 +2385,7 @@
       localStorage.setItem('cic_host_email', email);
       window._hostEmail = email;
       if(!localStorage.getItem('cic_created_at')) localStorage.setItem('cic_created_at', new Date().toISOString());
-      // Submit to Netlify
-      var params=new URLSearchParams();
-      params.append('form-name','email-gate');
-      params.append('email',email);
-      params.append('language',lang);
-      params.append('bot-field','');
-      fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params.toString()}).catch(function(){});
+      submitNetlifyEmail(email, lang, 'preview');
       modal.remove();
       _showPreviewWithFormData();
     };
@@ -3222,6 +3219,8 @@
       d._isDemo = false;
       window._aptData = d;
       saveData(d);
+      // Track save in Netlify Forms
+      submitNetlifyEmail(localStorage.getItem('cic_host_email')||'', document.documentElement.lang||'en', 'guide-saved');
       applyData(d);
       document.getElementById('setup-overlay').classList.remove('show');
       // Remove demo banner unconditionally
@@ -3723,8 +3722,29 @@
   }
 
 
+  // ── CENTRAL Netlify submission — used by ALL email gates ──────
+  function submitNetlifyEmail(email, lang, source){
+    if(!email || email.indexOf('@')<1) return;
+    var params = new URLSearchParams();
+    params.append('form-name', 'email-gate');
+    params.append('email', email);
+    params.append('language', lang||'en');
+    params.append('source', source||'email-gate');
+    params.append('guide_name', (window._aptData&&window._aptData.name)||'');
+    params.append('submitted_at', new Date().toISOString());
+    params.append('bot-field', '');
+    fetch('/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: params.toString()
+    }).then(function(res){
+      console.log('✅ Netlify ['+source+'] submitted — status:', res.status, '| email:', email);
+    }).catch(function(err){
+      console.error('❌ Netlify submit error:', err);
+    });
+  }
+
   function showEmailGateModal(){
-    // If already entered email this session, skip straight to form
     if(sessionStorage.getItem('cic_email_entered')){
       document.getElementById('hero-section').scrollIntoView({behavior:'smooth'});
       return;
@@ -3732,9 +3752,9 @@
     if(document.getElementById('email-gate-modal')) return;
     const lang=document.documentElement.lang||'en';
     const t={
-      en:{title:'Where should we send your guide link?',body:'Enter your email — we send you the link to your guide after saving. No password, no account.',placeholder:'your@email.com',cta:'Continue — create guide for free',cancel:'Cancel'},
-      de:{title:'Wohin sollen wir deinen Guide-Link schicken?',body:'Gib deine E-Mail ein — wir schicken dir den Link zu deinem Guide nach dem Speichern. Kein Passwort, kein Konto.',placeholder:'deine@email.com',cta:'Weiter — Guide kostenlos erstellen',cancel:'Abbrechen'},
-      es:{title:'Donde enviamos tu enlace de guia?',body:'Introduce tu email — te enviamos el enlace a tu guia despues de guardar. Sin contrasena, sin cuenta.',placeholder:'tu@email.com',cta:'Continuar — crear guia gratis',cancel:'Cancelar'}
+      en:{title:'Where should we send your guide link?',body:'Enter your email — we send you the link after saving. No password, no account.',placeholder:'your@email.com',cta:'Continue — create guide for free',cancel:'Cancel'},
+      de:{title:'Wohin sollen wir deinen Guide-Link schicken?',body:'Gib deine E-Mail ein — wir schicken dir den Link nach dem Speichern. Kein Passwort, kein Konto.',placeholder:'deine@email.com',cta:'Weiter — Guide kostenlos erstellen',cancel:'Abbrechen'},
+      es:{title:'¿Dónde enviamos tu enlace?',body:'Introduce tu email — te enviamos el enlace después de guardar. Sin contraseña, sin cuenta.',placeholder:'tu@email.com',cta:'Continuar — crear guía gratis',cancel:'Cancelar'}
     }[lang]||{};
     const modal=document.createElement('div');
     modal.id='email-gate-modal';
@@ -3750,46 +3770,27 @@
       +'<p style="text-align:center;margin-top:12px;font-size:0.75rem;color:#9CA3AF">No credit card · No password · Free to start</p>';
     modal.appendChild(d);
     document.body.appendChild(modal);
-    document.getElementById('gate-cta-btn').onclick=function(){ submitEmailGate(lang); };
+    document.getElementById('gate-cta-btn').onclick=function(){
+      var emailEl=document.getElementById('gate-email-input');
+      var errEl=document.getElementById('gate-email-err');
+      var email=emailEl?emailEl.value.trim():'';
+      if(!email||email.indexOf('@')<1||email.indexOf('.')<1){
+        if(emailEl) emailEl.style.borderColor='#EF4444';
+        if(errEl) errEl.style.display='block';
+        if(emailEl) emailEl.focus();
+        return;
+      }
+      sessionStorage.setItem('cic_email_entered', email);
+      localStorage.setItem('cic_host_email', email);
+      window._hostEmail = email;
+      if(!localStorage.getItem('cic_created_at')) localStorage.setItem('cic_created_at', new Date().toISOString());
+      submitNetlifyEmail(email, lang, 'create-guide');
+      modal.remove();
+      document.getElementById('hero-section').scrollIntoView({behavior:'smooth'});
+    };
     document.getElementById('gate-cancel-btn').onclick=function(){ modal.remove(); };
     modal.addEventListener('click',function(e){ if(e.target===modal) modal.remove(); });
     setTimeout(function(){ var el=document.getElementById('gate-email-input'); if(el) el.focus(); },100);
-  }
-
-  function submitEmailGate(lang){
-    var emailEl=document.getElementById('gate-email-input');
-    var errEl=document.getElementById('gate-email-err');
-    var email=emailEl?emailEl.value.trim():'';
-    if(!email||email.indexOf('@')<1||email.indexOf('.')<1){
-      if(emailEl) emailEl.style.borderColor='#EF4444';
-      if(errEl) errEl.style.display='block';
-      if(emailEl) emailEl.focus();
-      return;
-    }
-    // Save email to session and localStorage
-    sessionStorage.setItem('cic_email_entered', email);
-    localStorage.setItem('cic_host_email', email);
-    window._hostEmail = email;
-    if(!localStorage.getItem('cic_created_at')) localStorage.setItem('cic_created_at', new Date().toISOString());
-    // Submit to Netlify Forms
-    var params = new URLSearchParams();
-    params.append('form-name', 'email-gate');
-    params.append('email', email);
-    params.append('language', lang);
-    params.append('bot-field', '');
-    fetch('/', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: params.toString()
-    }).then(function(res){
-      console.log('✅ Netlify email-gate submitted, status:', res.status);
-    }).catch(function(err){
-      console.error('❌ Netlify email-gate error:', err);
-    });
-    // Remove modal and scroll to form
-    var modal=document.getElementById('email-gate-modal');
-    if(modal) modal.remove();
-    document.getElementById('hero-section').scrollIntoView({behavior:'smooth'});
   }
 
 
@@ -4004,6 +4005,9 @@
   <input type="hidden" name="form-name" value="email-gate">
   <input type="email" name="email">
   <input type="text" name="language">
+  <input type="text" name="source">
+  <input type="text" name="guide_name">
+  <input type="text" name="submitted_at">
   <input type="text" name="bot-field">
 </form>
 <form name="register" method="POST" data-netlify="true" hidden>
