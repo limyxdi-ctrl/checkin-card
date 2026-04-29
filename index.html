@@ -2839,6 +2839,13 @@
           <input id="suc-edit-input" readonly value="${editLink}" style="flex:1;padding:10px 12px;border:1px solid #FCA5A5;border-radius:8px;font-size:0.78rem;background:#FFF5F5;color:var(--text);font-family:monospace;min-width:0">
           <button id="suc-copy-edit" onclick="gatedCopy('suc-edit-input','suc-copy-edit','${t.copied}')" style="flex-shrink:0;padding:10px 14px;background:#FFF5F5;color:#DC2626;border:1px solid #FCA5A5;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit;white-space:nowrap">${t.copy}</button>
         </div>
+        <div style="margin-top:8px;padding:10px 12px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;font-size:0.76rem;color:#166534;line-height:1.6">
+          ✅ ${{
+            en:'<strong>Good news:</strong> Your guide is also saved in this browser. If you return to this page without the link, your guide will automatically reload.',
+            de:'<strong>Gute Nachricht:</strong> Dein Guide wird auch in diesem Browser gespeichert. Wenn du diese Seite ohne Link öffnest, wird dein Guide automatisch wiederhergestellt.',
+            es:'<strong>Buena noticia:</strong> Tu guía también se guarda en este navegador. Si vuelves a esta página sin el enlace, tu guía se restaurará automáticamente.'
+          }[lang]}
+        </div>
 
         <!-- Register nudge -->
         <button onclick="showRegisterModal()" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;padding:12px;background:#1F3A8A;color:#fff;border-radius:10px;font-weight:600;font-size:0.87rem;border:none;cursor:pointer;font-family:inherit;width:100%">${t.register}</button>
@@ -3194,6 +3201,7 @@
       parkingInfo:g('s-parking-info'),
       breakfastInfo:g('s-breakfast-info'),
       createdAt:window._existingCreatedAt||localStorage.getItem('cic_created_at')||new Date().toISOString(),
+      isPaid: window._aptData?.isPaid || false,
       propertyType:(document.getElementById('s-property-type')||{value:'apartment'}).value,
       logoUrl:g('s-logo-url-general'),
       breakfastText:g('s-breakfast-text'),
@@ -3362,6 +3370,60 @@
     if(checkExpiry()) return;
     const id=qs("id");
     const owner=qs("owner");
+    const activate=qs("activate");
+    const paid=qs("paid");
+
+    // ── Handle return from Stripe payment ──────────────────────
+    if(paid==='1' && id){
+      try{
+        const row=await loadGuide(id);
+        const ownerFromUrl=qs("owner");
+        if(row){
+          const data=Object.assign({},row.data||{},{isPaid:true, paidAt: new Date().toISOString()});
+          const token=ownerFromUrl||row.owner_token;
+          await upsertGuide(id,token,data);
+          window._guideId=id; window._ownerToken=token;
+          window._aptData=data;
+          // Clean URL
+          history.replaceState({},'',(location.pathname+'?id='+encodeURIComponent(id)+'&owner='+encodeURIComponent(token)));
+          applyData(data);
+          // Show success message
+          const lang=localStorage.getItem('preferred-lang')||'en';
+          const msg={en:'🎉 Payment confirmed! Your guide is now permanently active.',de:'🎉 Zahlung bestätigt! Dein Guide ist jetzt dauerhaft aktiv.',es:'🎉 ¡Pago confirmado! Tu guía está ahora activa de forma permanente.'}[lang];
+          const banner=document.createElement('div');
+          banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#166534;color:#fff;text-align:center;padding:14px 16px;font-size:0.9rem;font-weight:600';
+          banner.textContent=msg;
+          document.body.prepend(banner);
+          setTimeout(()=>banner.remove(), 6000);
+          const slb=document.getElementById('soft-lock-banner');
+          if(slb) slb.style.display='none';
+          if(data.lat&&data.lng){
+            nearbyLoading();
+            fetchNearbyPlaces(data.lat,data.lng).then(places=>{ window._loadedNearby=places; renderNearby(places,lang); });
+          }
+          setLang(lang);
+          restoreLinks();
+          renderMyGuides();
+          return;
+        }
+      } catch(e){ console.warn('Payment activation failed:',e); }
+    }
+
+    if(activate && id){
+      // Activate paid status for a guide (called after payment confirmed)
+      try{
+        const row=await loadGuide(id);
+        if(row && row.owner_token===activate){
+          const data=Object.assign({},row.data||{},{isPaid:true});
+          await upsertGuide(id,activate,data);
+          window._guideId=id; window._ownerToken=activate;
+          window._aptData=data;
+          alert('✅ Guide activated as paid!');
+          history.replaceState({},'',(location.pathname+'?id='+encodeURIComponent(id)+'&owner='+encodeURIComponent(activate)));
+          applyData(data);
+        }
+      } catch(e){ console.warn('Activate failed',e); }
+    }
     if(id){
       try{
         const row=await loadGuide(id);
@@ -3371,15 +3433,13 @@
         if(owner){ var cs=document.getElementById('cancel-sub-section'); if(cs) cs.style.display='block'; }
         window._existingCreatedAt=data.createdAt||null;
         applyData(data);
-        // Check 24h expiry
+        // Skip expiry check for paying subscribers
         const createdAt = data.createdAt ? new Date(data.createdAt) : null;
         const hoursSince = createdAt ? (Date.now() - createdAt.getTime()) / 3600000 : 0;
-        if(createdAt && hoursSince > 2){
+        if(!data.isPaid && createdAt && hoursSince > 2){
           if(owner){
-            // Host sees paywall to upgrade
             showExpiredOverlayHost();
           } else {
-            // Guest sees simple "not available" message
             showExpiredOverlay();
           }
           return;
@@ -3401,9 +3461,47 @@
         applyData(DEFAULTS);
       }
     } else {
-      // No ID — show setup overlay so user can create their guide
-      applyData(DEFAULTS);
-      openSetup();
+      // No ID in URL — try to restore last saved guide from registry
+      const registry = loadRegistry();
+      const last = registry[registry.length - 1];
+      if(last && last.id && last.ownerToken){
+        try{
+          const row = await loadGuide(last.id);
+          const data = row?.data || null;
+          if(data){
+            window._guideId = last.id;
+            window._ownerToken = last.ownerToken;
+            window._existingCreatedAt = data.createdAt || null;
+            // Update URL so bookmarking works
+            history.replaceState({}, '', `?id=${encodeURIComponent(last.id)}&owner=${encodeURIComponent(last.ownerToken)}`);
+            applyData(data);
+            // Show edit banner so host knows they're viewing their own guide
+            const slb = document.getElementById('soft-lock-banner');
+            if(slb) slb.style.display = 'none';
+            if(data.lat && data.lng){
+              const lang = localStorage.getItem('preferred-lang') || 'en';
+              nearbyLoading();
+              fetchNearbyPlaces(data.lat, data.lng).then(places => {
+                window._loadedNearby = places;
+                renderNearby(places, lang);
+              });
+            }
+            // Check expiry
+            const createdAt = data.createdAt ? new Date(data.createdAt) : null;
+            const hoursSince = createdAt ? (Date.now() - createdAt.getTime()) / 3600000 : 0;
+            if(!data.isPaid && createdAt && hoursSince > 2){ showExpiredOverlayHost(); return; }          } else {
+            applyData(DEFAULTS);
+            openSetup();
+          }
+        } catch(e){
+          applyData(DEFAULTS);
+          openSetup();
+        }
+      } else {
+        // No saved guide — show setup overlay so user can create their guide
+        applyData(DEFAULTS);
+        openSetup();
+      }
     }
     const savedLang=localStorage.getItem('preferred-lang');
     const bl=(navigator.language||'en').toLowerCase().slice(0,2);
@@ -3738,7 +3836,18 @@
       if(emailEl) emailEl.focus();
       return;
     }
-    window.open((STRIPE_URLS[plan]||STRIPE_URLS.monthly)+'?prefilled_email='+encodeURIComponent(email),'_blank');
+    // Build success_url so Stripe redirects back with ?paid=1&id=...&owner=...
+    var guideId=window._guideId||'';
+    var ownerToken=window._ownerToken||'';
+    var successUrl=location.origin+location.pathname
+      +'?paid=1'
+      +(guideId?'&id='+encodeURIComponent(guideId):'')
+      +(ownerToken?'&owner='+encodeURIComponent(ownerToken):'');
+    var stripeBase=STRIPE_URLS[plan]||STRIPE_URLS.monthly;
+    var stripeUrl=stripeBase
+      +'?prefilled_email='+encodeURIComponent(email)
+      +'&success_url='+encodeURIComponent(successUrl);
+    window.open(stripeUrl,'_blank');
     var m=document.getElementById('stripe-email-modal');
     if(m) m.remove();
   }
