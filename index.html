@@ -2071,6 +2071,27 @@
     </div>
   </div>
 
+  <!-- STICKY CTA — shown for unpaid hosts at bottom of guide -->
+  <div id="sticky-cta-banner" style="display:none;position:sticky;bottom:0;left:0;right:0;z-index:800;background:linear-gradient(135deg,#1F3A8A,#1E40AF);color:#fff;padding:16px 20px;text-align:center;box-shadow:0 -4px 20px rgba(0,0,0,0.15)">
+    <div style="max-width:480px;margin:0 auto">
+      <div style="font-size:0.88rem;font-weight:700;margin-bottom:4px">
+        <span data-lang="en" class="active">⚡ This guide is ready for your guests — activate sharing now.</span>
+        <span data-lang="de">⚡ Dieser Guide ist bereit für deine Gäste — jetzt Teilen freischalten.</span>
+        <span data-lang="es">⚡ Esta guía está lista para tus huéspedes — activa el compartir ahora.</span>
+      </div>
+      <div style="font-size:0.76rem;opacity:0.85;margin-bottom:12px">
+        <span data-lang="en" class="active">Send this link at every booking. Save time. Fewer WhatsApp questions.</span>
+        <span data-lang="de">Bei jeder Buchung mitschicken. Zeit sparen. Weniger WhatsApp-Fragen.</span>
+        <span data-lang="es">Envíalo con cada reserva. Ahorra tiempo. Menos preguntas por WhatsApp.</span>
+      </div>
+      <button onclick="showPaywall()" style="background:#fff;color:#1F3A8A;border:none;border-radius:10px;padding:12px 24px;font-weight:700;font-size:0.9rem;cursor:pointer;font-family:inherit;width:100%;max-width:320px">
+        <span data-lang="en" class="active">🔓 Activate for guests — from €5/month</span>
+        <span data-lang="de">🔓 Für Gäste freischalten — ab 5€/Monat</span>
+        <span data-lang="es">🔓 Activar para huéspedes — desde 5€/mes</span>
+      </button>
+    </div>
+  </div>
+
   <footer>
     <div class="footer-main">
       <span data-lang="en" class="active">Have a great stay! 🌞</span>
@@ -3012,8 +3033,9 @@
 
   
   function applyData(d){
-    document.getElementById('d-name').textContent=d.name;
-    document.title=d.name+' – CheckInCard';
+    const displayName = (d.name||'').trim() || {en:'My Property',de:'Meine Unterkunft',es:'Mi alojamiento'}[document.documentElement.lang||'en'];
+    document.getElementById('d-name').textContent = displayName;
+    document.title = displayName + ' – CheckInCard';
     window._aptData=d;
     document.getElementById('d-checkin').textContent=d.checkin;
     document.getElementById('d-checkout').textContent=d.checkout;
@@ -3100,11 +3122,14 @@
     // Soft-lock banner: show only for unpaid hosts, never for guests or paid
     (function(){
       var slb=document.getElementById('soft-lock-banner');
+      var stickyCta=document.getElementById('sticky-cta-banner');
       if(!slb) return;
       var isOwner=!!(window._ownerToken||qs('owner'));
       var isPaid=!!(d.isPaid);
       var isDemo=!!(d._isDemo);
-      slb.style.display=(isOwner && !isPaid && !isDemo)?'':'none';
+      var showCta = isOwner && !isPaid && !isDemo;
+      slb.style.display=showCta?'':'none';
+      if(stickyCta) stickyCta.style.display=showCta?'':'none';
     })();
     // Nearby: hide for real data until fetch completes; show demo nearby immediately
     const nearbyCard = document.getElementById('nearby-card');
