@@ -1791,26 +1791,26 @@
 
   <div class="cards-wrapper">
 
-  <!-- SOFT LOCK BANNER — shown after first save or in demo, hidden for registered users -->
+  <!-- SOFT LOCK BANNER — shown for unpaid hosts, triggers paywall on share -->
   <div id="soft-lock-banner" style="display:none">
     <div class="soft-lock-inner">
-      <div class="soft-lock-icon">🔒</div>
+      <div class="soft-lock-icon">⚡</div>
       <div class="soft-lock-text">
         <div class="soft-lock-title">
-          <span data-lang="en" class="active">Share this guide with your guests.</span>
-          <span data-lang="de">Teile diesen Guide mit deinen Gästen.</span>
-          <span data-lang="es">Comparte esta guía con tus huéspedes.</span>
+          <span data-lang="en" class="active">Your guide is ready — don't lose your guests.</span>
+          <span data-lang="de">Dein Guide ist bereit — verliere keine Gäste mehr.</span>
+          <span data-lang="es">Tu guía está lista — no pierdas más huéspedes.</span>
         </div>
         <div class="soft-lock-body">
-          <span data-lang="en" class="active">Unlock your shareable link — from €5/month.</span>
-          <span data-lang="de">Schalte deinen teilbaren Link frei — ab 5€/Monat.</span>
-          <span data-lang="es">Desbloquea tu enlace para compartir — desde 5€/mes.</span>
+          <span data-lang="en" class="active">Unlock sharing to send this link to your guests. Every day without it = missed check-ins.</span>
+          <span data-lang="de">Schalte den Link frei und teile ihn mit deinen Gästen. Jeder Tag ohne ihn = verpasste Check-ins.</span>
+          <span data-lang="es">Activa el enlace y compártelo con tus huéspedes. Cada día sin él = check-ins perdidos.</span>
         </div>
       </div>
       <button onclick="showPaywall()" class="soft-lock-cta">
-        <span data-lang="en" class="active">🔓 Unlock link</span>
-        <span data-lang="de">🔓 Link freischalten</span>
-        <span data-lang="es">🔓 Desbloquear enlace</span>
+        <span data-lang="en" class="active">🔓 Share with guests — from €5/mo</span>
+        <span data-lang="de">🔓 Jetzt freischalten — ab 5€/Monat</span>
+        <span data-lang="es">🔓 Activar ahora — desde 5€/mes</span>
       </button>
       <button onclick="document.getElementById('soft-lock-banner').style.display='none'" style="background:none;border:none;cursor:pointer;color:#9CA3AF;font-size:1.1rem;padding:4px 6px;flex-shrink:0;line-height:1" title="Dismiss">✕</button>
     </div>
@@ -2467,8 +2467,7 @@
     } else {
       renderNearby(DEMO_NEARBY, lang);
     }
-    const slb=document.getElementById('soft-lock-banner');
-    if(slb) slb.style.display='';
+    // soft-lock shown only for unpaid owner views
     let banner=document.getElementById('demo-banner');
     if(!banner){
       banner=document.createElement('div');
@@ -3098,6 +3097,15 @@
     const lang=document.documentElement.lang||localStorage.getItem('preferred-lang')||'en';
     renderEntryCard(d,lang);
     renderReservationCard(d);
+    // Soft-lock banner: show only for unpaid hosts, never for guests or paid
+    (function(){
+      var slb=document.getElementById('soft-lock-banner');
+      if(!slb) return;
+      var isOwner=!!(window._ownerToken||qs('owner'));
+      var isPaid=!!(d.isPaid);
+      var isDemo=!!(d._isDemo);
+      slb.style.display=(isOwner && !isPaid && !isDemo)?'':'none';
+    })();
     // Nearby: hide for real data until fetch completes; show demo nearby immediately
     const nearbyCard = document.getElementById('nearby-card');
     if(nearbyCard) nearbyCard.style.display = d._isDemo ? '' : 'none';
@@ -3254,8 +3262,7 @@
       // Remove demo banner if it was shown
       document.getElementById('demo-banner')?.remove();
       // Show soft lock banner
-      const slb = document.getElementById('soft-lock-banner');
-      if(slb) slb.style.display = d.isPaid ? 'none' : '';
+      // soft-lock handled by applyData
       // Fetch nearby places in background
       if(d.lat&&d.lng){
         nearbyLoading();
@@ -3414,8 +3421,7 @@
           banner.textContent=msg;
           document.body.prepend(banner);
           setTimeout(()=>banner.remove(), 6000);
-          const slb=document.getElementById('soft-lock-banner');
-          if(slb) slb.style.display='none';
+          // soft-lock hidden via applyData for paid
           if(data.lat&&data.lng){
             nearbyLoading();
             fetchNearbyPlaces(data.lat,data.lng).then(places=>{ window._loadedNearby=places; renderNearby(places,lang); });
@@ -3508,7 +3514,8 @@
             // Check expiry
             const createdAt = data.createdAt ? new Date(data.createdAt) : null;
             const hoursSince = createdAt ? (Date.now() - createdAt.getTime()) / 3600000 : 0;
-            if(!data.isPaid && createdAt && hoursSince > 2){ showExpiredOverlayHost(); return; }          } else {
+            // Auto-restore: always show guide to host, no expiry block
+          } else {
             applyData(DEFAULTS);
             openSetup();
           }
@@ -3730,12 +3737,12 @@
 
 
   function gatedCopy(inputId, btnId, copiedLabel){
-    // Check if already paid this session
-    if(sessionStorage.getItem('cic_paid')){
+    // Allow if paid
+    if(window._aptData?.isPaid || sessionStorage.getItem('cic_paid')){
       copySuccessLink(inputId, btnId, copiedLabel);
       return;
     }
-    // Show paywall instead
+    // Show paywall — host can view guide freely but needs to pay to share
     var modal = document.getElementById('save-success-modal');
     if(modal) modal.remove();
     showPaywall();
@@ -3877,18 +3884,21 @@
     if(document.getElementById('paywall-modal')) return;
     const lang=document.documentElement.lang||'en';
     const t={
-      en:{title:'Keep your guest page live',body:'Start free. Upgrade only if you want to keep sharing your guest link.',
-        yearly:'⭐ Yearly — €50/year',yearlySub:'2 months free · Most popular',
+      en:{title:'🚀 Your guide is ready — activate sharing',
+        body:'Your guide looks great. Unlock the guest link now so guests can check in smoothly — every day without it means missed opportunities.',
+        yearly:'⭐ Yearly — €50/year',yearlySub:'Most popular · Save 2 months · €4.17/month',
         monthly:'🔵 Monthly — €5/month',monthlySub:'Flexible · Cancel anytime',
-        demo:'Just want to try first? See demo →',trust:'🔒 Secure payment · Stripe · Cancel anytime'},
-      de:{title:'Deine Gästeseite dauerhaft behalten',body:'Kostenlos starten. Upgrade nur wenn du deinen Gäste-Link dauerhaft teilen möchtest.',
-        yearly:'⭐ Jahresplan — 50€/Jahr',yearlySub:'2 Monate gratis · Beliebtester Plan',
+        demo:'Just want to look around first →',trust:'🔒 Stripe · Secure · Cancel anytime'},
+      de:{title:'🚀 Dein Guide ist bereit — Teilen freischalten',
+        body:'Dein Guide sieht super aus. Schalte jetzt den Gäste-Link frei — jeder Tag ohne ihn sind verpasste Check-ins und Fragen per WhatsApp.',
+        yearly:'⭐ Jahresplan — 50€/Jahr',yearlySub:'Beliebtester Plan · 2 Monate gratis · 4,17€/Monat',
         monthly:'🔵 Monatsplan — 5€/Monat',monthlySub:'Flexibel · Jederzeit kündbar',
-        demo:'Erst ausprobieren? Demo ansehen →',trust:'🔒 Sichere Zahlung · Stripe · Jederzeit kündbar'},
-      es:{title:'Mantén tu página de huéspedes activa',body:'Empieza gratis. Actualiza solo si quieres seguir compartiendo tu enlace.',
-        yearly:'⭐ Anual — 50€/año',yearlySub:'2 meses gratis · Más popular',
+        demo:'Erst noch anschauen →',trust:'🔒 Stripe · Sicher · Jederzeit kündbar'},
+      es:{title:'🚀 Tu guía está lista — activa el compartir',
+        body:'Tu guía tiene muy buena pinta. Activa el enlace ahora para que tus huéspedes hagan el check-in sin problemas — cada día sin él son oportunidades perdidas.',
+        yearly:'⭐ Anual — 50€/año',yearlySub:'El más popular · 2 meses gratis · 4,17€/mes',
         monthly:'🔵 Mensual — 5€/mes',monthlySub:'Flexible · Cancela cuando quieras',
-        demo:'¿Solo quieres probar? Ver demo →',trust:'🔒 Pago seguro · Stripe · Cancela cuando quieras'}
+        demo:'Solo quiero echar un vistazo →',trust:'🔒 Stripe · Seguro · Cancela cuando quieras'}
     }[lang]||{};
     const modal=document.createElement('div');
     modal.id='paywall-modal';
