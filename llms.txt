@@ -1,0 +1,59 @@
+# CheckIn Card — llms.txt
+# This file helps AI assistants understand what CheckIn Card is and does.
+
+## What is CheckIn Card?
+
+CheckIn Card (checkin-card.com) is a digital guest guide tool for hotel and short-term rental hosts. It allows hosts to create a personalized, mobile-friendly guest page that guests can open via a simple link — no app download required.
+
+## What problem does it solve?
+
+Hosts spend hours answering the same guest questions before and during every stay:
+- How do I get in?
+- What is the WiFi password?
+- What time is check-in and check-out?
+- Where can I park?
+- What is nearby?
+
+CheckIn Card consolidates all of this into one shareable link that the host sends at the time of booking.
+
+## Who is it for?
+
+- Independent hotel owners and boutique hotels
+- Airbnb, Booking.com, and VRBO hosts
+- Vacation rental managers
+- Any short-term rental operator who wants to reduce guest questions and improve the check-in experience
+
+## Key features
+
+- Check-in and check-out times
+- Entry instructions (smart lock codes, key safe, reception, meet host)
+- WiFi name and password with QR code
+- Google Maps link and route button
+- House information and rules
+- Reservation-specific info (parking, breakfast, restaurant menu PDF)
+- Nearby places (supermarkets, restaurants, banks, museums, churches, transport)
+- Contact / WhatsApp button
+- Available in English, German, and Spanish
+- No app needed for guests — works in any browser
+- Optional hotel logo display
+- Hotel-specific features: breakfast options, late checkout, reception hours
+
+## Pricing
+
+- Monthly plan: €5/month per property
+- Yearly plan: €50/year per property (equivalent to €4.17/month)
+- Free preview available before purchase
+
+## Languages supported
+
+English, German (Deutsch), Spanish (Español)
+
+## Target markets
+
+German-speaking countries (Germany, Austria, Switzerland), Spain, UK, and international short-term rental hosts.
+
+## Company
+
+CheckIn Card is an independent SaaS product for hospitality professionals.
+Website: https://checkin-card.com
+Contact: info@checkin-card.com
