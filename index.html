@@ -1466,11 +1466,12 @@
           <span data-lang="de">Informationen zum Haus</span>
           <span data-lang="es">Información de tu alojamiento</span>
         </label>
+        <div style="font-size:0.73rem;color:var(--text2);margin-bottom:8px"><span data-lang="en" class="active">💡 Leave a line empty to hide it from guests.</span><span data-lang="de">💡 Leere Zeilen werden für Gäste ausgeblendet.</span><span data-lang="es">💡 Las líneas vacías no se muestran a los huéspedes.</span></div>
         <div id="rules-rows" style="display:flex;flex-direction:column;gap:8px">
-          <div class="rule-input-row"><span class="rule-input-emoji">🍽️</span><input class="rule-input-text" type="text" placeholder="Restaurant open Wed–Sun 12:30–18:00" data-emoji="🍽️"></div>
-          <div class="rule-input-row"><span class="rule-input-emoji">🏨</span><input class="rule-input-text" type="text" placeholder="Reception hours 8:00–18:00" data-emoji="🏨"></div>
-          <div class="rule-input-row"><span class="rule-input-emoji">🚭</span><input class="rule-input-text" type="text" placeholder="No smoking inside" data-emoji="🚭"></div>
-          <div class="rule-input-row"><span class="rule-input-emoji">🌙</span><input class="rule-input-text" type="text" placeholder="Quiet hours from 22:00" data-emoji="🌙"></div>
+          <div class="rule-input-row"><span class="rule-input-emoji">🍽️</span><input class="rule-input-text" type="text" placeholder="Restaurant open Wed–Sun 12:30–18:00" data-emoji="🍽️"><button type="button" onclick="this.closest('.rule-input-row').querySelector('.rule-input-text').value=''" style="background:none;border:none;cursor:pointer;color:#9CA3AF;font-size:1rem;padding:0 4px;flex-shrink:0" title="Clear">✕</button></div>
+          <div class="rule-input-row"><span class="rule-input-emoji">🏨</span><input class="rule-input-text" type="text" placeholder="Reception hours 8:00–18:00" data-emoji="🏨"><button type="button" onclick="this.closest('.rule-input-row').querySelector('.rule-input-text').value=''" style="background:none;border:none;cursor:pointer;color:#9CA3AF;font-size:1rem;padding:0 4px;flex-shrink:0" title="Clear">✕</button></div>
+          <div class="rule-input-row"><span class="rule-input-emoji">🚭</span><input class="rule-input-text" type="text" placeholder="No smoking inside" data-emoji="🚭"><button type="button" onclick="this.closest('.rule-input-row').querySelector('.rule-input-text').value=''" style="background:none;border:none;cursor:pointer;color:#9CA3AF;font-size:1rem;padding:0 4px;flex-shrink:0" title="Clear">✕</button></div>
+          <div class="rule-input-row"><span class="rule-input-emoji">🌙</span><input class="rule-input-text" type="text" placeholder="Quiet hours from 22:00" data-emoji="🌙"><button type="button" onclick="this.closest('.rule-input-row').querySelector('.rule-input-text').value=''" style="background:none;border:none;cursor:pointer;color:#9CA3AF;font-size:1rem;padding:0 4px;flex-shrink:0" title="Clear">✕</button></div>
         </div>
         <button type="button" onclick="addRuleRow()" style="margin-top:10px;background:none;border:1px dashed var(--border);border-radius:8px;padding:7px 14px;font-size:0.8rem;color:var(--text2);cursor:pointer;width:100%;font-family:inherit">+ <span data-lang="en" class="active">Add rule</span><span data-lang="de">Regel hinzufügen</span><span data-lang="es">Añadir regla</span></button>
         <div style="font-size:0.74rem;color:var(--text2);margin-top:8px;line-height:1.5">
@@ -1941,7 +1942,7 @@
     </div>
 
     <!-- RULES -->
-    <div class="card">
+    <div class="card" id="rules-card">
       <div class="card-header">
         <div class="card-icon icon-red">📋</div>
         <div class="card-title">
@@ -2794,7 +2795,7 @@
   function makeRuleRow(emoji, text){
     const div=document.createElement('div');
     div.className='rule-input-row';
-    div.innerHTML=`<span class="rule-input-emoji" onclick="pickEmoji(this)" title="Click to change emoji">${emoji||'•'}</span><input class="rule-input-text" type="text" value="${text||''}" placeholder="Your rule...">`;
+    div.innerHTML=`<span class="rule-input-emoji" onclick="pickEmoji(this)" title="Click to change emoji">${emoji||'•'}</span><input class="rule-input-text" type="text" value="${text||''}" placeholder="Your rule..."><button type="button" onclick="this.closest('.rule-input-row').querySelector('.rule-input-text').value=''" style="background:none;border:none;cursor:pointer;color:#9CA3AF;font-size:1rem;padding:0 4px;flex-shrink:0" title="Clear">✕</button>`;
     return div;
   }
 
@@ -3127,19 +3128,22 @@
 
     // House Rules
     const rulesList = document.getElementById('d-rules-list');
+    const rulesCard = document.getElementById('rules-card');
     if(rulesList){
       const rawRules = d.rules||'';
-      if(rawRules.trim()){
-        const lines = rawRules.split('\n').map(l=>l.trim()).filter(Boolean);
+      const lines = rawRules.split('\n').map(l=>l.trim()).filter(Boolean);
+      if(lines.length > 0){
         rulesList.innerHTML = lines.map(line=>{
-          // Extract leading emoji if present
           const emojiMatch = line.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)\s*/u);
           const emoji = emojiMatch ? emojiMatch[0].trim() : '•';
           const text = emojiMatch ? line.slice(emojiMatch[0].length).trim() : line;
           return `<li class="rule-item"><span class="rule-emoji">${emoji}</span><span>${escHtml(text)}</span></li>`;
         }).join('');
+        if(rulesCard) rulesCard.style.display = '';
+      } else {
+        // No rules — hide the entire card
+        if(rulesCard && !d._isDemo) rulesCard.style.display = 'none';
       }
-      // else keep the default hardcoded rules
     }
 
     // Help text
@@ -3168,7 +3172,7 @@
     const nearbyCard = document.getElementById('nearby-card');
     if(nearbyCard) nearbyCard.style.display = d._isDemo ? '' : 'none';
     // Demo hints: only visible during demo preview
-    const showHints = !!d._isDemo;
+    const showHints = d._isDemo === true; // explicit check — never show for real data
     ['demo-hint-entry','demo-hint-rules','demo-hint-entry-sub','demo-hint-rules-sub'].forEach(id=>{
       const el=document.getElementById(id);
       if(el) el.style.display = showHints ? '' : 'none';
@@ -3303,6 +3307,7 @@
       window._ownerToken=ownerToken;
       // Explicitly clear demo flag from live data
       d._isDemo = false;
+      delete d._isDemo; // ensure it's completely removed
       window._aptData = d;
       saveData(d);
       // Track save in Netlify Forms
