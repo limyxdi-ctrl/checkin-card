@@ -2179,6 +2179,18 @@
     if(!res.ok) throw new Error(`${res.status} ${res.statusText}: ${text}`);
     return text?JSON.parse(text):null;
   }
+
+  function parseGuideData(row){
+    // Safely extract and parse guide data from a Supabase row
+    // Handles: null row, JSONB object, JSONB string, empty object
+    if(!row) return null;
+    let d = row.data ?? null;
+    if(typeof d === 'string'){
+      try{ d = JSON.parse(d); } catch(e){ d = null; }
+    }
+    if(!d || typeof d !== 'object' || Object.keys(d).length === 0) return null;
+    return d;
+  }
   async function loadGuide(id){
     const rows=await sbFetch(`${TABLE}?id=eq.${encodeURIComponent(id)}&select=id,owner_token,data`);
     return rows?.[0]??null;
@@ -3451,7 +3463,7 @@
         const row=await loadGuide(id);
         const ownerFromUrl=qs("owner");
         if(row){
-          const data=Object.assign({},row.data||{},{isPaid:true, paidAt: new Date().toISOString()});
+          const data=Object.assign({},parseGuideData(row)||{},{isPaid:true, paidAt: new Date().toISOString()});
           const token=ownerFromUrl||row.owner_token;
           await upsertGuide(id,token,data);
           window._guideId=id; window._ownerToken=token;
@@ -3485,7 +3497,7 @@
       try{
         const row=await loadGuide(id);
         if(row && row.owner_token===activate){
-          const data=Object.assign({},row.data||{},{isPaid:true});
+          const data=Object.assign({},parseGuideData(row)||{},{isPaid:true});
           await upsertGuide(id,activate,data);
           window._guideId=id; window._ownerToken=activate;
           window._aptData=data;
@@ -3498,21 +3510,24 @@
     if(id){
       try{
         const row=await loadGuide(id);
-        const data=row?.data||DEFAULTS;
+        // Supabase JSONB may return data as string or object — parse safely
+        let rawData = row?.data ?? null;
+        if(typeof rawData === 'string'){
+          try{ rawData = JSON.parse(rawData); } catch(e){ rawData = null; }
+        }
+        const data = (rawData && typeof rawData === 'object' && Object.keys(rawData).length > 0)
+          ? rawData
+          : DEFAULTS;
         window._guideId=id;
         window._ownerToken=owner||row?.owner_token||null;
         if(owner){ var cs=document.getElementById('cancel-sub-section'); if(cs) cs.style.display='block'; }
         window._existingCreatedAt=data.createdAt||null;
         applyData(data);
-        // Skip expiry check for paying subscribers
+        // Expiry check — only block GUEST view, never block HOST, never block if no createdAt
         const createdAt = data.createdAt ? new Date(data.createdAt) : null;
         const hoursSince = createdAt ? (Date.now() - createdAt.getTime()) / 3600000 : 0;
-        if(!data.isPaid && createdAt && hoursSince > 2){
-          if(owner){
-            showExpiredOverlayHost();
-          } else {
-            showExpiredOverlay();
-          }
+        if(!data.isPaid && !owner && createdAt && hoursSince > 2){
+          showExpiredOverlay();
           return;
         }
         // Always hide soft lock banner for anyone opening a ?id= link — this is a guest view
@@ -3538,7 +3553,7 @@
       if(last && last.id && last.ownerToken){
         try{
           const row = await loadGuide(last.id);
-          const data = row?.data || null;
+          const data = parseGuideData(row);
           if(data){
             window._guideId = last.id;
             window._ownerToken = last.ownerToken;
