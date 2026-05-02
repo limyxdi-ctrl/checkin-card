@@ -2877,9 +2877,9 @@
   function showSaveSuccess(guestLink, editLink, isPaid){
     const lang=document.documentElement.lang||'en';
     const t={
-      en:{ title:'🎉 Your guide is live!', guestLabel:'Guest Link — share this with your guests', expiry:'This link is active for 2 hours. Upgrade to keep it permanent.', editLabel:'✏️ Edit Link (keep this private!)', copy:'Copy', copied:'Copied!', open:'Open Guide', done:'Done', register:'✉️ Register to keep it permanently', editNote:'Save this edit link — you\'ll need it to make changes later.' },
-      de:{ title:'🎉 Dein Guide ist live!', guestLabel:'Gäste-Link — teile ihn mit deinen Gästen', expiry:'Dieser Link ist 2 Stunden aktiv. Upgrade für dauerhaften Zugang.', editLabel:'✏️ Bearbeitungs-Link (privat halten!)', copy:'Kopieren', copied:'Kopiert!', open:'Guide öffnen', done:'Fertig', register:'✉️ Registrieren um ihn dauerhaft zu sichern', editNote:'Speichere diesen Link — du brauchst ihn um später Änderungen vorzunehmen.' },
-      es:{ title:'🎉 ¡Tu guía está activa!', guestLabel:'Enlace de huéspedes — compártelo con tus huéspedes', expiry:'Este enlace está activo 2 horas. Actualiza para acceso permanente.', editLabel:'✏️ Enlace de edición (¡mantenlo privado!)', copy:'Copiar', copied:'¡Copiado!', open:'Abrir guía', done:'Listo', register:'✉️ Regístrate para conservarlo permanentemente', editNote:'Guarda este enlace — lo necesitarás para hacer cambios más tarde.' }
+      en:{ title:'🎉 Your guide is live!', guestLabel:'Guest Link — share this with your guests', expiry:'', editLabel:'✏️ Edit Link (keep this private!)', copy:'Copy', copied:'Copied!', open:'Open Guide', done:'Done', register:'✉️ Register to keep it permanently', editNote:'Save this edit link — you\'ll need it to make changes later.' },
+      de:{ title:'🎉 Dein Guide ist live!', guestLabel:'Gäste-Link — teile ihn mit deinen Gästen', expiry:'', editLabel:'✏️ Bearbeitungs-Link (privat halten!)', copy:'Kopieren', copied:'Kopiert!', open:'Guide öffnen', done:'Fertig', register:'✉️ Registrieren um ihn dauerhaft zu sichern', editNote:'Speichere diesen Link — du brauchst ihn um später Änderungen vorzunehmen.' },
+      es:{ title:'🎉 ¡Tu guía está activa!', guestLabel:'Enlace de huéspedes — compártelo con tus huéspedes', expiry:'', editLabel:'✏️ Enlace de edición (¡mantenlo privado!)', copy:'Copiar', copied:'¡Copiado!', open:'Abrir guía', done:'Listo', register:'✉️ Regístrate para conservarlo permanentemente', editNote:'Guarda este enlace — lo necesitarás para hacer cambios más tarde.' }
     }[lang]||t?.en;
 
     const modal=document.createElement('div');
@@ -2897,7 +2897,7 @@
         </div>
         ${isPaid
           ? `<div style="margin-top:8px;padding:8px 12px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;font-size:0.78rem;color:#166534;text-align:center">✅ <strong>${{en:'Your guide is permanently active.',de:'Dein Guide ist dauerhaft aktiv.',es:'Tu guía está activa de forma permanente.'}[lang]}</strong></div>`
-          : `<div style="margin-top:8px;padding:8px 12px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;font-size:0.78rem;color:#92400E;text-align:center">⏰ <strong>${t.expiry}</strong></div>`
+          : `<div style="margin-top:8px;padding:8px 12px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;font-size:0.78rem;color:#166534;text-align:center">✅ <strong>${{en:'Your guide is saved and ready.',de:'Dein Guide ist gespeichert und bereit.',es:'Tu guía está guardada y lista.'}[lang]}</strong></div>`
         }
 
         <!-- Edit link — secondary -->
