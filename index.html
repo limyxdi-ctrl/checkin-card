@@ -2528,7 +2528,9 @@
       banner=document.createElement('div');
       banner.id='demo-banner';
       banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:1100;background:#1F3A8A;color:#fff;text-align:center;padding:10px 16px;font-size:0.82rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:12px';
-      banner.innerHTML='<span>👁 Demo preview — this is what your guests will see</span><button onclick="document.getElementById(\'demo-banner\').remove();openSetup();" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:0.8rem;font-family:inherit">⚙️ Setup my guide</button>';
+      banner.innerHTML='<span>👁 Demo preview — this is what your guests will see</span>'
+        +'<button onclick="document.getElementById(\'demo-banner\').remove();openSetupFromPreview();" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:0.8rem;font-family:inherit">⚙️ Setup my guide</button>'
+        +'<button onclick="showPaywall()" style="background:#F59E0B;border:none;color:#fff;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:0.8rem;font-family:inherit;font-weight:700">🔓 Jetzt freischalten</button>';
       document.body.prepend(banner);
     }
   }
@@ -3189,6 +3191,17 @@
   // ═══════════════════════════════════════════════════════════
   // OPEN SETUP
   // ═══════════════════════════════════════════════════════════
+  function openSetupFromPreview(){
+    document.getElementById('demo-banner')?.remove();
+    // Save current preview data to localStorage so openSetup can load it
+    if(window._aptData){
+      const d = Object.assign({}, window._aptData);
+      delete d._isDemo;
+      saveData(d);
+    }
+    openSetup();
+  }
+
   function openSetup(){
     window._pendingGeo = null; // clear any stale geocode from previous address
     const d=loadData()||DEFAULTS;
