@@ -1930,7 +1930,7 @@
         </button>
 
         <!-- QR CODE -->
-        <div class="wifi-qr-wrap">
+        <div class="wifi-qr-wrap" id="wifi-qr-wrap">
           <div class="wifi-qr-canvas" id="wifi-qr-container"></div>
           <div class="wifi-qr-hint">
             <span data-lang="en" class="active">📷 <strong>Scan with your phone camera</strong><br>to connect to Wi-Fi instantly.</span>
@@ -2685,7 +2685,14 @@
   let _qrInstance=null;
   function generateWifiQR(ssid,password){
     const container=document.getElementById('wifi-qr-container');
+    const wrap=document.getElementById('wifi-qr-wrap');
     if(!container) return;
+    if(!ssid || !ssid.trim()){
+      container.innerHTML='';
+      if(wrap) wrap.style.display='none';
+      return;
+    }
+    if(wrap) wrap.style.display='';
     const qrStr=`WIFI:T:WPA;S:${ssid};P:${password};;`;
     container.innerHTML='';
     try{
