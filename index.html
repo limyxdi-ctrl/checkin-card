@@ -945,7 +945,7 @@
 
       <div class="hero-ctas">
         <button class="hero-btn-primary" onclick="showEmailGateModal()">
-          🎉 <span data-lang="en" class="active">Create your free sample card</span><span data-lang="de">Kostenloses Muster für deine Unterkunft erstellen</span><span data-lang="es">Crear tu tarjeta de muestra gratuita</span>
+          🎉 <span data-lang="en" class="active">Test your guide for free</span><span data-lang="de">Guide kostenlos testen</span><span data-lang="es">Probar tu guía gratis</span>
         </button>
       </div>
 
@@ -1018,8 +1018,8 @@
       <div class="product-preview" style="background:#EEF2FF;border-radius:16px;padding:20px 16px;margin:24px 0 8px">
         <div class="preview-label"><span data-lang="en" class="active">👇 This is what your guests will see</span><span data-lang="de">👇 Das sehen deine Gäste</span><span data-lang="es">👇 Esto es lo que verán tus huéspedes</span></div>
         <div class="preview-phone"><div class="preview-screen">
-          <div class="preview-apt-name">Your Guest Link (Example)</div>
-          <div class="preview-apt-meta">Hotel &amp; Apartment · Your property info here</div>
+          <div class="preview-apt-name"><span data-lang="en" class="active">Your Guest Link (Example)</span><span data-lang="de">Dein Gäste-Link (Beispiel)</span><span data-lang="es">Tu enlace de huéspedes (Ejemplo)</span></div>
+          <div class="preview-apt-meta"><span data-lang="en" class="active">Hotel &amp; Apartment · Your property info here</span><span data-lang="de">Hotel &amp; Apartment · Deine Unterkunftsdaten hier</span><span data-lang="es">Hotel &amp; Apartamento · Información de tu alojamiento</span></div>
           <div class="preview-times">
             <div class="preview-checkin"><div class="preview-time-label">CHECK-IN FROM</div><div class="preview-time preview-time-blue">15:00</div><div class="preview-time-sub">earliest</div></div>
             <div class="preview-checkout"><div class="preview-time-label">CHECK-OUT BY</div><div class="preview-time preview-time-amber">11:00</div><div class="preview-time-sub">latest</div></div>
@@ -1083,15 +1083,15 @@
         </ul>
 
         <button onclick="showEmailGateModal()" class="pricing-cta-founding" style="margin-bottom:10px">
-          <span data-lang="en" class="active">Start free — no credit card required</span>
-          <span data-lang="de">Kostenlos starten — keine Kreditkarte nötig</span>
-          <span data-lang="es">Empieza gratis — sin tarjeta de crédito</span>
+          <span data-lang="en" class="active">Test your guide for free first</span>
+          <span data-lang="de">Guide erst kostenlos testen</span>
+          <span data-lang="es">Probar primero gratis</span>
         </button>
         <p style="text-align:center;font-size:0.82rem;color:var(--text2);margin-bottom:6px">
           <a href="#" onclick="showStripeModal('monthly');return false;" style="color:var(--accent);text-decoration:underline">
-            <span data-lang="en" class="active">Or start with €5/month →</span>
-            <span data-lang="de">Oder mit 5€/Monat starten →</span>
-            <span data-lang="es">O empezar con 5€/mes →</span>
+            <span data-lang="en" class="active">Already convinced? Activate subscription for €5/month →</span>
+            <span data-lang="de">Schon überzeugt? Abo für 5€/Monat aktivieren →</span>
+            <span data-lang="es">¿Ya convencido? Activar suscripción por 5€/mes →</span>
           </a>
         </p>
         <p style="text-align:center;font-size:0.78rem;color:var(--text2);margin-bottom:16px">
@@ -1107,10 +1107,10 @@
           <span data-lang="es"> Si no recibes menos preguntas en 30 días, lo configuro contigo personalmente — o te devolvemos el dinero.</span>
         </div>
 
-        <p style="text-align:center;font-size:0.75rem;color:var(--text2);font-style:italic;margin-bottom:10px">
-          <span data-lang="en" class="active">Early supporter offer available for first users on request.</span>
-          <span data-lang="de">Early-Supporter-Angebot für erste Nutzer auf Anfrage verfügbar.</span>
-          <span data-lang="es">Oferta para primeros usuarios disponible bajo petición.</span>
+        <p style="text-align:center;font-size:0.78rem;color:var(--text2);margin-bottom:10px">
+          <span data-lang="en" class="active">€5/month or €50/year · Cancel anytime · No risk — you only pay when you actually use it with guests.</span>
+          <span data-lang="de">5€/Monat oder 50€/Jahr · Jederzeit kündbar · Kein Risiko — du zahlst erst, wenn du den Guide wirklich mit Gästen nutzt.</span>
+          <span data-lang="es">5€/mes o 50€/año · Cancela cuando quieras · Sin riesgo — solo pagas cuando uses la guía con tus huéspedes.</span>
         </p>
 
         <div class="privacy-note">🔒 <span data-lang="en" class="active">We only store your email and property info — never guest or booking data.</span><span data-lang="de">Wir speichern nur deine E-Mail und Unterkunftsdaten — keine Gäste- oder Buchungsdaten.</span><span data-lang="es">Solo guardamos tu email e info de la propiedad — nunca datos de huéspedes.</span></div>
@@ -2549,15 +2549,25 @@
     lat:52.5139, lng:13.4142,
     city:'Berlin', country:'Germany',
     entryMethod:'smartlock',
-    keycode:'4827', entryLocation:'Left of the main entrance door', floor:'3',
-    doorcode:'', smartlockInstructions:'Press the bell and wait for the host to buzz you in. Then take the elevator to floor 3.',
+    keycode:'4827', entryLocation:'', floor:'3',
+    doorcode:'',
+    smartlockInstructions_en:'Press the bell and wait for the host to buzz you in. Then take the elevator to floor 3.',
+    smartlockInstructions_de:'Bitte klingeln und auf den Summer warten. Dann mit dem Aufzug in den 3. Stock fahren.',
+    smartlockInstructions_es:'Llame al timbre y espere el zumbido. Luego suba al 3.º piso en ascensor.',
+    smartlockInstructions:'Press the bell and wait for the host to buzz you in. Then take the elevator to floor 3.',
     smartlockGatecode:'1234', smartlockRoomcode:'5678',
     meethostInstructions:'', meethostContact:'',
     receptionName:'', receptionAddress:'', receptionHours:'',
     pickupLocation:'', pickupAddress:'', pickupInstructions:'',
     wifiName:'Sonnenschein_Guest', wifiPass:'Berlin2024!',
     wa:'+4915123456789', phone:'+4930123456789',
+    rules_en:'🍽️ Restaurant open Wed–Sun 12:30–18:00\n🏨 Reception hours 8:00–18:00\n🚭 No smoking inside\n🌙 Quiet hours from 22:00',
+    rules_de:'🍽️ Restaurant geöffnet Mi–So 12:30–18:00\n🏨 Rezeption geöffnet 8:00–18:00\n🚭 Rauchen verboten\n🌙 Ab 22:00 Uhr bitte keine Geräusche mehr',
+    rules_es:'🍽️ Restaurante abierto de miércoles a domingo, 12:30–18:00\n🏨 Recepción abierta de 8:00 a 18:00\n🚭 Prohibido fumar\n🌙 Silencio a partir de las 22:00',
     rules:'🍽️ Restaurant open Wed–Sun 12:30–18:00\n🏨 Reception hours 8:00–18:00\n🚭 No smoking inside\n🌙 Quiet hours from 22:00',
+    helpText_en:"We're here for you around the clock. Don't hesitate to reach out!",
+    helpText_de:'Wir sind rund um die Uhr für Sie da. Zögern Sie nicht, uns zu kontaktieren!',
+    helpText_es:'Estamos disponibles las 24 horas. No dude en contactarnos.',
     helpText:"We're here for you around the clock. Don't hesitate to reach out!"
   };
   const DEMO_NEARBY = [
@@ -3104,9 +3114,9 @@
     if(document.getElementById('register-modal')) return;
     const lang=document.documentElement.lang||'en';
     const t={
-      en:{ title:'Register for free', body:'Enter your email to keep your guide permanently and get early access pricing.', placeholder:'your@email.com', cta:'✉️ Register free', sending:'Sending...', successTitle:'🎉 You\'re in!', successBody:'We\'ve received your registration. Your guide is now secured and you\'ll be among the first to hear about our launch price.', close:'Close', cancel:'Cancel', error:'Something went wrong. Please try again.' },
-      de:{ title:'Kostenlos registrieren', body:'Gib deine E-Mail ein, um deinen Guide dauerhaft zu sichern und Early-Access-Preise zu erhalten.', placeholder:'deine@email.com', cta:'✉️ Kostenlos registrieren', sending:'Wird gesendet...', successTitle:'🎉 Du bist dabei!', successBody:'Deine Registrierung ist eingegangen. Dein Guide ist gesichert und du bist einer der Ersten beim Launch-Preis.', close:'Schließen', cancel:'Abbrechen', error:'Etwas ist schiefgelaufen. Bitte nochmal versuchen.' },
-      es:{ title:'Regístrate gratis', body:'Introduce tu email para conservar tu guía permanentemente y obtener el precio de acceso anticipado.', placeholder:'tu@email.com', cta:'✉️ Registrarse gratis', sending:'Enviando...', successTitle:'🎉 ¡Ya estás dentro!', successBody:'Hemos recibido tu registro. Tu guía está asegurada y serás de los primeros en conocer nuestro precio de lanzamiento.', close:'Cerrar', cancel:'Cancelar', error:'Algo salió mal. Por favor inténtalo de nuevo.' }
+      en:{ title:'Secure your guide', body:'Enter your email to keep your guide permanently. €5/month or €50/year — cancel anytime.', placeholder:'your@email.com', cta:'✉️ Register free', sending:'Sending...', successTitle:'🎉 You\'re in!', successBody:'Your guide is now secured. Activate sharing for €5/month or €50/year — cancel anytime.', close:'Close', cancel:'Cancel', error:'Something went wrong. Please try again.' },
+      de:{ title:'Guide dauerhaft sichern', body:'Gib deine E-Mail ein, um deinen Guide dauerhaft zu sichern. 5€/Monat oder 50€/Jahr — jederzeit kündbar.', placeholder:'deine@email.com', cta:'✉️ Kostenlos registrieren', sending:'Wird gesendet...', successTitle:'🎉 Du bist dabei!', successBody:'Dein Guide ist gesichert. Teilen freischalten für 5€/Monat oder 50€/Jahr — jederzeit kündbar.', close:'Schließen', cancel:'Abbrechen', error:'Etwas ist schiefgelaufen. Bitte nochmal versuchen.' },
+      es:{ title:'Asegura tu guía', body:'Introduce tu email para conservar tu guía permanentemente. 5€/mes o 50€/año — cancela cuando quieras.', placeholder:'tu@email.com', cta:'✉️ Registrarse gratis', sending:'Enviando...', successTitle:'🎉 ¡Ya estás dentro!', successBody:'Tu guía está asegurada. Activa el compartir por 5€/mes o 50€/año — cancela cuando quieras.', close:'Cerrar', cancel:'Cancelar', error:'Algo salió mal. Por favor inténtalo de nuevo.' }
     }[lang]||{};
 
     const modal=document.createElement('div');
@@ -3234,7 +3244,16 @@
 
   
   function applyData(d){
-    const displayName = (d.name||'').trim() || {en:'My Property',de:'Meine Unterkunft',es:'Mi alojamiento'}[document.documentElement.lang||'en'];
+    const lang=document.documentElement.lang||localStorage.getItem('preferred-lang')||'en';
+    // For demo: use language-specific fields
+    if(d._isDemo){
+      d = Object.assign({}, d, {
+        rules: d['rules_'+lang] || d.rules,
+        helpText: d['helpText_'+lang] || d.helpText,
+        smartlockInstructions: d['smartlockInstructions_'+lang] || d.smartlockInstructions,
+      });
+    }
+    const displayName = (d.name||'').trim() || {en:'My Property',de:'Meine Unterkunft',es:'Mi alojamiento'}[lang];
     document.getElementById('d-name').textContent = displayName;
     document.title = displayName + ' – CheckInCard';
     window._aptData=d;
@@ -3320,7 +3339,6 @@
     }
     generateWifiQR(d.wifiName||'',d.wifiPass||'');
     renderHotelSection(d);
-    const lang=document.documentElement.lang||localStorage.getItem('preferred-lang')||'en';
     renderEntryCard(d,lang);
     renderReservationCard(d);
     // Soft-lock banner: show only for unpaid hosts, never for guests or paid
@@ -3540,6 +3558,10 @@
     document.querySelectorAll('.lang-btn').forEach(btn=>btn.classList.toggle('active',btn.textContent.trim().toLowerCase()===lang));
     document.documentElement.lang=lang;
     localStorage.setItem('preferred-lang',lang);
+    // If viewing demo, re-apply with new language
+    if(window._aptData && window._aptData._isDemo){
+      applyData(window._aptData);
+    }
     // Meta line — use stored data, derive city dynamically (no hardcoded city)
     const d=window._aptData||loadData()||DEFAULTS;
     const city=d.city||d.country||'';
@@ -4078,7 +4100,6 @@
 
 
   const STRIPE_URLS={
-    founding:'https://buy.stripe.com/aFa8wOdtOboI8H34OE0sU00',
     yearly:'https://buy.stripe.com/3cI4gy61m1O8g9v94U0sU02',
     monthly:'https://buy.stripe.com/3cIaEW3Te1O8cXj5SI0sU01'
   };
