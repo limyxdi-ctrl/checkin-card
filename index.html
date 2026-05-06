@@ -2711,30 +2711,33 @@
     }
     // soft-lock shown only for unpaid owner views
     let banner=document.getElementById('demo-banner');
-    if(!banner){
-      banner=document.createElement('div');
+    if(banner) banner.remove(); // always recreate with correct language
+    banner=document.createElement('div');
       banner.id='demo-banner';
       banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:1100;background:#1F3A8A;color:#fff;padding:10px 16px;font-size:0.82rem;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap';
-      const lang=document.documentElement.lang||'en';
-      const t={
-        en:{info:'👁 Preview — this is what your guests see',back:'← Back to setup',unlock:'🔓 Activate now'},
-        de:{info:'👁 Vorschau — das sehen deine Gäste',back:'← Zurück zum Setup',unlock:'🔓 Jetzt freischalten'},
-        es:{info:'👁 Vista previa — esto es lo que ven tus huéspedes',back:'← Volver al setup',unlock:'🔓 Activar ahora'}
-      }[lang]||{};
+      const _bl=document.documentElement.lang||localStorage.getItem('preferred-lang')||'en';
+      const _a=(l)=>_bl===l?'active':'';
       banner.innerHTML=`
-        <span style="flex:1">${t.info}</span>
+        <span style="flex:1">
+          <span data-lang="en" class="${_a('en')}">👁 Preview — this is what your guests see</span>
+          <span data-lang="de" class="${_a('de')}">👁 Vorschau — das sehen deine Gäste</span>
+          <span data-lang="es" class="${_a('es')}">👁 Vista previa — esto es lo que ven tus huéspedes</span>
+        </span>
         <div style="display:flex;gap:8px;flex-shrink:0">
           <button onclick="document.getElementById('demo-banner').remove();openSetupFromPreview();"
             style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.82rem;font-family:inherit;font-weight:700">
-            ${t.back}
+            <span data-lang="en" class="${_a('en')}">← Back to setup</span>
+            <span data-lang="de" class="${_a('de')}">← Zurück zum Setup</span>
+            <span data-lang="es" class="${_a('es')}">← Volver al setup</span>
           </button>
           <button onclick="showPaywall()"
             style="background:#F59E0B;border:none;color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.82rem;font-family:inherit;font-weight:700">
-            ${t.unlock}
+            <span data-lang="en" class="${_a('en')}">🔓 Activate now</span>
+            <span data-lang="de" class="${_a('de')}">🔓 Jetzt freischalten</span>
+            <span data-lang="es" class="${_a('es')}">🔓 Activar ahora</span>
           </button>
         </div>`;
       document.body.prepend(banner);
-    }
   }
 
   // ═══════════════════════════════════════════════════════════
