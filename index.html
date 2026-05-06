@@ -967,7 +967,7 @@
         <span data-lang="es">Desde €5/mes por propiedad · Configúralo en 2 minutos · Sin cuenta</span>
       </p>
       <p style="text-align:center;margin-top:6px">
-        <a href="#" onclick="loadDemo();return false;" style="font-size:0.82rem;color:var(--accent);text-decoration:underline;">
+        <a href="#" onclick="_showDemoDirectly();return false;" style="font-size:0.82rem;color:var(--accent);text-decoration:underline;">
           <span data-lang="en" class="active">See live example →</span>
           <span data-lang="de">Live-Beispiel ansehen →</span>
           <span data-lang="es">Ver ejemplo en vivo →</span>
@@ -2597,6 +2597,42 @@
     { key:'restaurant',    emoji:'🍽️', label:{en:'Restaurant', de:'Restaurant',es:'Restaurante'},    name:'Zur Linde',     dist:210 },
     { key:'parking',       emoji:'🅿️', label:{en:'Parking',    de:'Parkplatz', es:'Aparcamiento'},   name:'Parkhaus Mitte',dist:380 },
   ];
+
+  function _showDemoDirectly(){
+    // Show DEMO_DATA directly without email gate — just for browsing
+    document.getElementById('setup-overlay').classList.remove('show');
+    applyData(DEMO_DATA);
+    const lang = document.documentElement.lang || 'en';
+    renderNearby(DEMO_NEARBY, lang);
+    let banner = document.getElementById('demo-banner');
+    if(banner) banner.remove();
+    banner = document.createElement('div');
+    banner.id = 'demo-banner';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:1100;background:#1F3A8A;color:#fff;padding:10px 16px;font-size:0.82rem;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap';
+    const _bl2=document.documentElement.lang||localStorage.getItem('preferred-lang')||'en';
+    const _a2=(l)=>_bl2===l?'active':'';
+    banner.innerHTML=`
+      <span style="flex:1">
+        <span data-lang="en" class="${_a2('en')}">👁 Live example — this is what your guests would see</span>
+        <span data-lang="de" class="${_a2('de')}">👁 Live-Beispiel — das würden deine Gäste sehen</span>
+        <span data-lang="es" class="${_a2('es')}">👁 Ejemplo en vivo — esto es lo que verían tus huéspedes</span>
+      </span>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <button onclick="document.getElementById('demo-banner').remove();document.getElementById('setup-overlay').classList.add('show');window.scrollTo(0,0);"
+          style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.82rem;font-family:inherit;font-weight:700">
+          <span data-lang="en" class="${_a2('en')}">← Back</span>
+          <span data-lang="de" class="${_a2('de')}">← Zurück</span>
+          <span data-lang="es" class="${_a2('es')}">← Volver</span>
+        </button>
+        <button onclick="showEmailGateModal()"
+          style="background:#F59E0B;border:none;color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.82rem;font-family:inherit;font-weight:700">
+          <span data-lang="en" class="${_a2('en')}">🎉 Create my guide</span>
+          <span data-lang="de" class="${_a2('de')}">🎉 Meinen Guide erstellen</span>
+          <span data-lang="es" class="${_a2('es')}">🎉 Mi guía erstellen</span>
+        </button>
+      </div>`;
+    document.body.prepend(banner);
+  }
 
   function loadDemo() {
     const lang = document.documentElement.lang || 'en';
