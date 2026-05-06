@@ -943,6 +943,12 @@
         <span data-lang="es">Un enlace. Cada respuesta. Menos WhatsApp.</span>
       </p>
 
+      <p style="text-align:center;font-size:0.95rem;font-weight:700;color:var(--accent);margin:0 0 12px">
+        <span data-lang="en" class="active">👇 Set it up in 2 minutes — completely free</span>
+        <span data-lang="de">👇 In 2 Minuten einrichten — komplett kostenlos</span>
+        <span data-lang="es">👇 Configúralo en 2 minutos — completamente gratis</span>
+      </p>
+
       <div class="hero-ctas">
         <button class="hero-btn-primary" onclick="showEmailGateModal()">
           🎉 <span data-lang="en" class="active">Test your guide for free</span><span data-lang="de">Guide kostenlos testen</span><span data-lang="es">Probar tu guía gratis</span>
@@ -1021,19 +1027,27 @@
           <div class="preview-apt-name"><span data-lang="en" class="active">Your Guest Link (Example)</span><span data-lang="de">Dein Gäste-Link (Beispiel)</span><span data-lang="es">Tu enlace de huéspedes (Ejemplo)</span></div>
           <div class="preview-apt-meta"><span data-lang="en" class="active">Hotel &amp; Apartment · Your property info here</span><span data-lang="de">Hotel &amp; Apartment · Deine Unterkunftsdaten hier</span><span data-lang="es">Hotel &amp; Apartamento · Información de tu alojamiento</span></div>
           <div class="preview-times">
-            <div class="preview-checkin"><div class="preview-time-label">CHECK-IN FROM</div><div class="preview-time preview-time-blue">15:00</div><div class="preview-time-sub">earliest</div></div>
-            <div class="preview-checkout"><div class="preview-time-label">CHECK-OUT BY</div><div class="preview-time preview-time-amber">11:00</div><div class="preview-time-sub">latest</div></div>
+            <div class="preview-checkin">
+              <div class="preview-time-label"><span data-lang="en" class="active">CHECK-IN FROM</span><span data-lang="de">ANREISE AB</span><span data-lang="es">ENTRADA DESDE</span></div>
+              <div class="preview-time preview-time-blue">15:00</div>
+              <div class="preview-time-sub"><span data-lang="en" class="active">earliest</span><span data-lang="de">frühestens</span><span data-lang="es">como mínimo</span></div>
+            </div>
+            <div class="preview-checkout">
+              <div class="preview-time-label"><span data-lang="en" class="active">CHECK-OUT BY</span><span data-lang="de">ABREISE BIS</span><span data-lang="es">SALIDA ANTES DE</span></div>
+              <div class="preview-time preview-time-amber">11:00</div>
+              <div class="preview-time-sub"><span data-lang="en" class="active">latest</span><span data-lang="de">spätestens</span><span data-lang="es">como máximo</span></div>
+            </div>
           </div>
           <div class="preview-row">📍 Seestraße 12, 10179 Berlin</div>
-          <div class="preview-maps-btn">🗺 Open in Google Maps</div>
-          <div class="preview-section-title">🔑 Entry Instructions</div>
-          <div class="preview-badge">Key Safe</div>
-          <div class="preview-step">🚶 Go to the main entrance</div>
-          <div class="preview-step">🔑 Open key safe · Code: <strong>4827</strong></div>
-          <div class="preview-step">🚪 Turn key twice — welcome! 🎉</div>
+          <div class="preview-maps-btn">🗺 <span data-lang="en" class="active">Open in Google Maps</span><span data-lang="de">In Google Maps öffnen</span><span data-lang="es">Abrir en Google Maps</span></div>
+          <div class="preview-section-title">🔑 <span data-lang="en" class="active">Entry Instructions</span><span data-lang="de">Einlass-Anleitung</span><span data-lang="es">Instrucciones de entrada</span></div>
+          <div class="preview-badge"><span data-lang="en" class="active">Key Safe</span><span data-lang="de">Schlüsseltresor</span><span data-lang="es">Caja de llaves</span></div>
+          <div class="preview-step">🚶 <span data-lang="en" class="active">Go to the main entrance</span><span data-lang="de">Zum Haupteingang gehen</span><span data-lang="es">Ve a la entrada principal</span></div>
+          <div class="preview-step">🔑 <span data-lang="en" class="active">Open key safe · Code: <strong>4827</strong></span><span data-lang="de">Schlüsseltresor öffnen · Code: <strong>4827</strong></span><span data-lang="es">Abre la caja · Código: <strong>4827</strong></span></div>
+          <div class="preview-step">🚪 <span data-lang="en" class="active">Turn key twice — welcome! 🎉</span><span data-lang="de">Schlüssel zweimal umdrehen — willkommen! 🎉</span><span data-lang="es">Gira la llave dos veces — ¡bienvenido! 🎉</span></div>
           <div class="preview-section-title">📶 Wi-Fi</div>
-          <div class="preview-wifi-row"><div><span class="preview-wifi-label">NETWORK</span><br>Sonnenschein_Guest</div><div class="preview-qr">▦</div></div>
-          <div class="preview-section-title">📍 Nearby</div>
+          <div class="preview-wifi-row"><div><span class="preview-wifi-label"><span data-lang="en" class="active">NETWORK</span><span data-lang="de">NETZWERK</span><span data-lang="es">RED</span></span><br>Sonnenschein_Guest</div><div class="preview-qr">▦</div></div>
+          <div class="preview-section-title">📍 <span data-lang="en" class="active">Nearby</span><span data-lang="de">In der Nähe</span><span data-lang="es">Cerca</span></div>
           <div class="preview-nearby-item">🛒 REWE · ~180m</div>
           <div class="preview-nearby-item">🚇 U Stadtmitte · ~450m</div>
           <div class="preview-nearby-item">🍽 Zur Linde · ~210m</div>
@@ -1111,6 +1125,11 @@
           <span data-lang="en" class="active">€5/month or €50/year · Cancel anytime · No risk — you only pay when you actually use it with guests.</span>
           <span data-lang="de">5€/Monat oder 50€/Jahr · Jederzeit kündbar · Kein Risiko — du zahlst erst, wenn du den Guide wirklich mit Gästen nutzt.</span>
           <span data-lang="es">5€/mes o 50€/año · Cancela cuando quieras · Sin riesgo — solo pagas cuando uses la guía con tus huéspedes.</span>
+        </p>
+        <p style="text-align:center;font-size:0.76rem;color:var(--text2);margin-bottom:10px">
+          <span data-lang="en" class="active">After the test you decide with one click — nothing upgrades automatically.</span>
+          <span data-lang="de">Nach dem Test entscheidest du selbst mit einem Klick — es passiert nichts automatisch.</span>
+          <span data-lang="es">Después de la prueba tú decides con un clic — nada se actualiza automáticamente.</span>
         </p>
 
         <div class="privacy-note">🔒 <span data-lang="en" class="active">We only store your email and property info — never guest or booking data.</span><span data-lang="de">Wir speichern nur deine E-Mail und Unterkunftsdaten — keine Gäste- oder Buchungsdaten.</span><span data-lang="es">Solo guardamos tu email e info de la propiedad — nunca datos de huéspedes.</span></div>
@@ -1225,14 +1244,14 @@
   <div id="setup-step1" style="max-width:420px;margin:0 auto;padding:0 16px;box-sizing:border-box">
     <div style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF);border:2px solid #C7D2FE;border-radius:14px;padding:18px 16px 20px;margin-bottom:16px">
       <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#1F3A8A;font-weight:700;margin-bottom:4px">
-        ⚡ <span data-lang="en" class="active">Step 1 — Start here (30 seconds)</span>
-        <span data-lang="de">Schritt 1 — Hier starten (30 Sekunden)</span>
-        <span data-lang="es">Paso 1 — Empieza aquí (30 segundos)</span>
+        ⚡ <span data-lang="en" class="active">Step 1 — Start here (2 minutes)</span>
+        <span data-lang="de">Schritt 1 — Hier starten (2 Minuten)</span>
+        <span data-lang="es">Paso 1 — Empieza aquí (2 minutos)</span>
       </div>
       <div style="font-size:0.8rem;color:#4B5563;margin-bottom:14px">
-        <span data-lang="en" class="active">3 fields — then see your guest link instantly.</span>
-        <span data-lang="de">3 Felder — dann siehst du deinen Gäste-Link sofort.</span>
-        <span data-lang="es">3 campos — luego ve tu enlace de huéspedes al instante.</span>
+        <span data-lang="en" class="active">Fill in a few fields — then see your guest link instantly.</span>
+        <span data-lang="de">Ein paar Felder ausfüllen — dann siehst du deinen Gäste-Link sofort.</span>
+        <span data-lang="es">Rellena unos campos — luego ve tu enlace de huéspedes al instante.</span>
       </div>
       <!-- Name field inline -->
       <div class="field" style="margin-bottom:10px">
