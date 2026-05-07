@@ -3631,24 +3631,12 @@
     document.querySelectorAll('.lang-btn').forEach(btn=>btn.classList.toggle('active',btn.textContent.trim().toLowerCase()===lang));
     document.documentElement.lang=lang;
     localStorage.setItem('preferred-lang',lang);
-    // If viewing demo, re-apply with new language
-    if(window._aptData && window._aptData._isDemo){
+    // Always re-render dynamic content in new language
+    if(window._aptData){
       applyData(window._aptData);
     }
-    // Meta line — use stored data, derive city dynamically (no hardcoded city)
-    const d=window._aptData||loadData()||DEFAULTS;
-    const city=d.city||d.country||'';
-    const prefix=city?`${escHtml(city)} &nbsp;·&nbsp; `:'';
-    const meta={
-      en:`${prefix}<strong>${d.beds}</strong> bedrooms &nbsp;·&nbsp; Sleeps <strong>${d.sleeps}</strong>`,
-      de:`${prefix}<strong>${d.beds}</strong> Schlafzimmer &nbsp;·&nbsp; <strong>${d.sleeps}</strong> Personen`,
-      es:`${prefix}<strong>${d.beds}</strong> dormitorios &nbsp;·&nbsp; <strong>${d.sleeps}</strong> personas`
-    };
-    document.getElementById('d-meta').innerHTML=meta[lang]||meta.en;
-    if(window._aptData) renderEntryCard(window._aptData,lang);
     // Re-render nearby in new language if places are already loaded
     if(window._loadedNearby) renderNearby(window._loadedNearby,lang);
-  
     // Update helptext placeholder
     var htp=document.getElementById('s-helptext-placeholder');
     if(htp){
