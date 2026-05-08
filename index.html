@@ -1936,7 +1936,7 @@
   </div><!-- /setup-step2 -->
 
 </div><!-- /setup-overlay -->
-<button class="edit-fab" onclick="openSetup()" title="Settings">⚙️</button>
+<button class="edit-fab" onclick="(window._ownerToken||qs('owner'))?openSetup():showEmailGateModal()" title="Settings">⚙️</button>
 
 <!-- ── MAIN GUIDE ── -->
 <div class="page" id="main-page">
@@ -3452,8 +3452,11 @@
   }
 
   function openSetup(){
-    window._pendingGeo = null; // clear any stale geocode from previous address
-    const d=loadData()||DEFAULTS;
+    window._pendingGeo = null;
+    // Use already-loaded Supabase data if available, fallback to localStorage
+    const d = (window._aptData && !window._aptData._isDemo) ? window._aptData : (loadData()||DEFAULTS);
+    // Always allow editing if owner token is present
+    const isOwner = !!(window._ownerToken || qs('owner'));
     ['name','beds','sleeps','checkin','checkout','address','maps'].forEach(k=>{
       const el=document.getElementById('s-'+k);if(el) el.value=d[k]||'';
     });
