@@ -955,6 +955,25 @@
         </button>
       </div>
 
+      <!-- €1 Trial CTA — for people already convinced -->
+      <div style="margin-top:12px;text-align:center">
+        <div style="font-size:0.75rem;color:var(--text2);margin-bottom:8px">
+          <span data-lang="en" class="active">— or, if you're already convinced —</span>
+          <span data-lang="de">— oder, wenn du schon überzeugt bist —</span>
+          <span data-lang="es">— o, si ya estás convencido/a —</span>
+        </div>
+        <button onclick="showStripeModal('trial')" style="width:100%;max-width:360px;padding:16px 20px;background:linear-gradient(135deg,#059669,#10B981);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(16,185,129,0.35)">
+          🎯 <span data-lang="en" class="active">Start for €1 — first month</span>
+          <span data-lang="de">Für €1 starten — erster Monat</span>
+          <span data-lang="es">Empezar por €1 — primer mes</span>
+        </button>
+        <div style="font-size:0.75rem;color:var(--text2);margin-top:6px">
+          <span data-lang="en" class="active">Then €5/month · Cancel anytime · No commitment</span>
+          <span data-lang="de">Danach 5€/Monat · Jederzeit kündbar · Kein Risiko</span>
+          <span data-lang="es">Luego 5€/mes · Cancela cuando quieras · Sin compromiso</span>
+        </div>
+      </div>
+
       <p class="microcopy" style="margin-top:10px;font-size:0.88rem;font-weight:600;color:var(--text)">
         <span data-lang="en" class="active">Creating is free. You only pay when you want to share with guests.</span>
         <span data-lang="de">Guide erstellen ist kostenlos. Du zahlst erst wenn du ihn mit Gästen teilen möchtest.</span>
@@ -1096,18 +1115,23 @@
           <li>✅ <span data-lang="en" class="active">Cancel anytime · No long-term commitment</span><span data-lang="de">Jederzeit kündbar · Keine langfristige Bindung</span><span data-lang="es">Cancela cuando quieras · Sin compromiso</span></li>
         </ul>
 
-        <button onclick="showEmailGateModal()" class="pricing-cta-founding" style="margin-bottom:10px">
-          <span data-lang="en" class="active">Test your guide for free first</span>
-          <span data-lang="de">Guide erst kostenlos testen</span>
-          <span data-lang="es">Probar primero gratis</span>
+        <!-- €1 Trial — main CTA -->
+        <button onclick="showStripeModal('trial')" style="width:100%;padding:16px 20px;background:linear-gradient(135deg,#059669,#10B981);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(16,185,129,0.3);margin-bottom:8px">
+          🎯 <span data-lang="en" class="active">Start for €1 — first month</span>
+          <span data-lang="de">Für €1 starten — erster Monat</span>
+          <span data-lang="es">Empezar por €1 — primer mes</span>
         </button>
-        <p style="text-align:center;font-size:0.82rem;color:var(--text2);margin-bottom:6px">
-          <a href="#" onclick="showStripeModal('monthly');return false;" style="color:var(--accent);text-decoration:underline">
-            <span data-lang="en" class="active">Already convinced? Activate subscription for €5/month →</span>
-            <span data-lang="de">Schon überzeugt? Abo für 5€/Monat aktivieren →</span>
-            <span data-lang="es">¿Ya convencido? Activar suscripción por 5€/mes →</span>
-          </a>
-        </p>
+        <div style="text-align:center;font-size:0.76rem;color:var(--text2);margin-bottom:12px">
+          <span data-lang="en" class="active">Then €5/month · Cancel anytime · No commitment</span>
+          <span data-lang="de">Danach 5€/Monat · Jederzeit kündbar · Kein Risiko</span>
+          <span data-lang="es">Luego 5€/mes · Cancela cuando quieras · Sin compromiso</span>
+        </div>
+
+        <button onclick="showEmailGateModal()" class="pricing-cta-founding" style="margin-bottom:10px;background:#F0F4FF;color:var(--accent);border:2px solid #C7D2FE">
+          <span data-lang="en" class="active">Or test for free first →</span>
+          <span data-lang="de">Oder erst kostenlos testen →</span>
+          <span data-lang="es">O probar primero gratis →</span>
+        </button>
         <p style="text-align:center;font-size:0.78rem;color:var(--text2);margin-bottom:16px">
           <span data-lang="en" class="active">Live in 5 minutes · Cancel anytime · No app for guests · 🔒 Stripe</span>
           <span data-lang="de">In 5 Minuten live · Jederzeit kündbar · Keine App für Gäste · 🔒 Stripe</span>
@@ -4165,7 +4189,8 @@
 
   const STRIPE_URLS={
     yearly:'https://buy.stripe.com/3cI4gy61m1O8g9v94U0sU02',
-    monthly:'https://buy.stripe.com/3cIaEW3Te1O8cXj5SI0sU01'
+    monthly:'https://buy.stripe.com/3cIaEW3Te1O8cXj5SI0sU01',
+    trial:'https://buy.stripe.com/eVq14m1L6fEY0ax5SI0sU05'
   };
 
   function showStripeModal(plan){
@@ -4227,18 +4252,21 @@
     const t={
       en:{title:'🚀 Your guide is ready — activate sharing',
         body:'Your guide looks great. Unlock the guest link now so guests can check in smoothly — every day without it means missed opportunities.',
+        trial:'🎯 Try it for €1 — first month',trialSub:'Then €5/month · Cancel anytime · No commitment',
         yearly:'⭐ Yearly — €50/year',yearlySub:'Most popular · Save 2 months · €4.17/month',
-        monthly:'🔵 Monthly — €5/month',monthlySub:'Flexible · Cancel anytime',
+        monthly:'Monthly — €5/month',monthlySub:'Flexible · Cancel anytime',
         demo:'Just want to look around first →',trust:'🔒 Stripe · Secure · Cancel anytime'},
       de:{title:'🚀 Dein Guide ist bereit — Teilen freischalten',
         body:'Dein Guide sieht super aus. Schalte jetzt den Gäste-Link frei — jeder Tag ohne ihn sind verpasste Check-ins und Fragen per WhatsApp.',
+        trial:'🎯 Für €1 ausprobieren — erster Monat',trialSub:'Danach 5€/Monat · Jederzeit kündbar · Kein Risiko',
         yearly:'⭐ Jahresplan — 50€/Jahr',yearlySub:'Beliebtester Plan · 2 Monate gratis · 4,17€/Monat',
-        monthly:'🔵 Monatsplan — 5€/Monat',monthlySub:'Flexibel · Jederzeit kündbar',
+        monthly:'Monatsplan — 5€/Monat',monthlySub:'Flexibel · Jederzeit kündbar',
         demo:'Erst noch anschauen →',trust:'🔒 Stripe · Sicher · Jederzeit kündbar'},
       es:{title:'🚀 Tu guía está lista — activa el compartir',
         body:'Tu guía tiene muy buena pinta. Activa el enlace ahora para que tus huéspedes hagan el check-in sin problemas — cada día sin él son oportunidades perdidas.',
+        trial:'🎯 Pruébalo por €1 — primer mes',trialSub:'Luego 5€/mes · Cancela cuando quieras · Sin riesgo',
         yearly:'⭐ Anual — 50€/año',yearlySub:'El más popular · 2 meses gratis · 4,17€/mes',
-        monthly:'🔵 Mensual — 5€/mes',monthlySub:'Flexible · Cancela cuando quieras',
+        monthly:'Mensual — 5€/mes',monthlySub:'Flexible · Cancela cuando quieras',
         demo:'Solo quiero echar un vistazo →',trust:'🔒 Stripe · Seguro · Cancela cuando quieras'}
     }[lang]||{};
     const modal=document.createElement('div');
@@ -4248,12 +4276,17 @@
     d.style.cssText='background:#fff;border-radius:16px;padding:28px 24px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25);max-height:90vh;overflow-y:auto';
     d.innerHTML='<div style="font-size:1.2rem;font-weight:700;color:#111827;margin-bottom:6px">'+t.title+'</div>'
       +'<div style="font-size:0.83rem;color:#6B7280;line-height:1.5;margin-bottom:20px">'+t.body+'</div>'
-      +'<button id="pw-yearly" style="width:100%;padding:14px 16px;background:#FFF7ED;border:2px solid #F59E0B;border-radius:12px;cursor:pointer;font-family:inherit;font-size:0.9rem;font-weight:700;color:#B45309;margin-bottom:10px;text-align:left">'+t.yearly+'<br><span style="font-size:0.75rem;font-weight:400;color:#92400E">'+t.yearlySub+'</span></button>'
-      +'<button id="pw-monthly" style="width:100%;padding:14px 16px;background:#EEF2FF;border:2px solid #C7D2FE;border-radius:12px;cursor:pointer;font-family:inherit;font-size:0.9rem;font-weight:700;color:#1F3A8A;margin-bottom:14px;text-align:left">'+t.monthly+'<br><span style="font-size:0.75rem;font-weight:400;color:#4B5563">'+t.monthlySub+'</span></button>'
+      // €1 Trial — featured
+      +'<button id="pw-trial" style="width:100%;padding:16px;background:linear-gradient(135deg,#1F3A8A,#1E40AF);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:inherit;font-size:1rem;font-weight:700;margin-bottom:8px;text-align:left">'+t.trial+'<br><span style="font-size:0.75rem;font-weight:400;opacity:0.85">'+t.trialSub+'</span></button>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">'
+      +'<button id="pw-yearly" style="padding:12px;background:#FFF7ED;border:2px solid #F59E0B;border-radius:10px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:700;color:#B45309;text-align:left">'+t.yearly+'<br><span style="font-size:0.7rem;font-weight:400;color:#92400E">'+t.yearlySub+'</span></button>'
+      +'<button id="pw-monthly" style="padding:12px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600;color:#374151;text-align:left">'+t.monthly+'<br><span style="font-size:0.7rem;font-weight:400;color:#6B7280">'+t.monthlySub+'</span></button>'
+      +'</div>'
       +'<div style="text-align:center;font-size:0.75rem;color:#9CA3AF;margin-bottom:12px">'+t.trust+'</div>'
       +'<button id="pw-demo" style="width:100%;padding:10px;background:#fff;color:#6B7280;border:1px solid #E5E7EB;border-radius:10px;font-size:0.82rem;cursor:pointer;font-family:inherit">'+t.demo+'</button>';
     modal.appendChild(d);
     document.body.appendChild(modal);
+    document.getElementById('pw-trial').onclick=function(){ modal.remove(); showStripeModal('trial'); };
     document.getElementById('pw-yearly').onclick=function(){ modal.remove(); showStripeModal('yearly'); };
     document.getElementById('pw-monthly').onclick=function(){ modal.remove(); showStripeModal('monthly'); };
     document.getElementById('pw-demo').onclick=function(){ modal.remove(); loadDemo(); };
