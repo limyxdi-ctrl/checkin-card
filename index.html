@@ -2371,7 +2371,7 @@
   const SB_URL = "https://qllabgoefzwtwielzror.supabase.co";
   const SB_KEY = "sb_publishable_U7Nt9mSKnN_2OzLjiTIQNw_Rw9Rao1r";
   const TABLE  = "guides";
-  const ownerToken = localStorage.getItem('owner_token');
+  // (owner_token localStorage key removed — owner is always tracked via window._ownerToken)
 
   function qs(name){ return new URLSearchParams(location.search).get(name); }
   function randomId(len=12){
@@ -3016,9 +3016,39 @@
   // GUIDE REGISTRY
   // ═══════════════════════════════════════════════════════════
   const REGISTRY_KEY='cic_guides_registry';
+  // Registry is stored in localStorage AND synced to Supabase guides table (data.registry field)
+  // so that the guide list is available across devices/browsers.
   function loadRegistry(){try{return JSON.parse(localStorage.getItem(REGISTRY_KEY))||[];}catch{return[];}}
   function saveRegistry(r){try{localStorage.setItem(REGISTRY_KEY,JSON.stringify(r));}catch{}}
-  function saveToRegistry(guideId,ownerToken,name,guestLink,editLink){
+
+  // FIX: sync registry to Supabase so it survives browser/device changes
+  async function syncRegistryToSupabase(registry){
+    // We store the registry as a special row with id='__registry__' + email hash
+    const email = localStorage.getItem('cic_host_email')||'';
+    if(!email) return; // can only sync if we have an email
+    const regId = 'reg_' + btoa(email).replace(/[^a-z0-9]/gi,'').slice(0,12).toLowerCase();
+    try{
+      await sbFetch(`guides?on_conflict=id`,{
+        method:'POST',
+        headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},
+        body:JSON.stringify({id:regId, owner_token:regId, data:{_isRegistry:true, email, registry}})
+      }, regId);
+    } catch(e){ console.warn('Registry sync failed:',e); }
+  }
+
+  async function loadRegistryFromSupabase(){
+    const email = localStorage.getItem('cic_host_email')||'';
+    if(!email) return null;
+    const regId = 'reg_' + btoa(email).replace(/[^a-z0-9]/gi,'').slice(0,12).toLowerCase();
+    try{
+      const rows = await sbFetch(`guides?id=eq.${encodeURIComponent(regId)}&select=data`);
+      const data = rows?.[0]?.data;
+      if(data?._isRegistry && Array.isArray(data.registry)) return data.registry;
+    } catch(e){ /* registry not found — normal for new visitors */ }
+    return null;
+  }
+
+  async function saveToRegistry(guideId,ownerToken,name,guestLink,editLink){
     const registry=loadRegistry();
     const existing=registry.findIndex(g=>g.id===guideId);
     const entry={id:guideId,ownerToken,name,guestLink,editLink,savedAt:Date.now()};
@@ -3026,6 +3056,8 @@
     else registry.unshift(entry);
     localStorage.setItem(REGISTRY_KEY,JSON.stringify(registry));
     renderMyGuides();
+    // Sync to Supabase in background
+    syncRegistryToSupabase(registry);
   }
 
   function renderMyGuides(){
@@ -3942,7 +3974,18 @@
     const bl=(navigator.language||'en').toLowerCase().slice(0,2);
     setLang(savedLang||(['en','de','es'].includes(bl)?bl:'en'));
     restoreLinks();
-    renderMyGuides();
+    // FIX: if local registry is empty, try to load from Supabase (cross-device support)
+    const localReg = loadRegistry();
+    if(!localReg.length){
+      loadRegistryFromSupabase().then(remoteReg=>{
+        if(remoteReg && remoteReg.length){
+          localStorage.setItem(REGISTRY_KEY, JSON.stringify(remoteReg));
+          renderMyGuides();
+        }
+      });
+    } else {
+      renderMyGuides();
+    }
   })();
 
   function showRegisterModal(){ showPaywall(); }
@@ -4263,7 +4306,7 @@
     setTimeout(function(){ var el=document.getElementById('stripe-email-input'); if(el) el.focus(); },100);
   }
 
-  function submitStripeEmail(plan,lang){
+  async function submitStripeEmail(plan,lang){
     var emailEl=document.getElementById('stripe-email-input');
     var errEl=document.getElementById('stripe-email-err');
     var email=emailEl?emailEl.value.trim():'';
@@ -4272,6 +4315,13 @@
       if(errEl) errEl.style.display='block';
       if(emailEl) emailEl.focus();
       return;
+    }
+    // FIX: if guide not yet saved, save it now so paid=1 redirect works
+    if(!window._guideId){
+      var btn=document.getElementById('stripe-pay-btn');
+      if(btn){ btn.disabled=true; btn.textContent='Saving...'; }
+      try{ await saveSetup(); } catch(e){ console.warn('Auto-save before Stripe failed:',e); }
+      if(btn){ btn.disabled=false; }
     }
     // Build success_url so Stripe redirects back with ?paid=1&id=...&owner=...
     var guideId=window._guideId||'';
