@@ -3102,7 +3102,9 @@
   }
 
   function newGuide(){
+    // FIX: reset all guide state so old data never bleeds into a new guide
     window._guideId=null; window._ownerToken=null; window._pendingGeo=null;
+    window._aptData=null; window._existingCreatedAt=null;
     const d=DEFAULTS;
     ['name','beds','sleeps','checkin','checkout','address','maps'].forEach(k=>{
       const el=document.getElementById('s-'+k);if(el) el.value=d[k]||'';
@@ -3605,8 +3607,15 @@
       lateCheckoutPrice:g('s-latecheckout-price'),
       contactLink:g('s-contact-link')
     };
-    let guideId=window._guideId||qs("id");
-    let ownerToken=qs("owner")||window._ownerToken;
+    // FIX: window._guideId is the single source of truth for which guide we are editing.
+    // newGuide() sets it to null, so a new random id is generated below — preventing
+    // old URL ?id= parameters from accidentally overwriting a different guide's data.
+    let guideId = window._guideId || null;
+    if(!guideId && qs("id") && window._aptData) {
+      // Guide was loaded from URL on page init — safe to reuse
+      guideId = qs("id");
+    }
+    let ownerToken = window._ownerToken || (guideId ? qs("owner") : null);
     if(!guideId) guideId=randomId(12);
     if(!ownerToken) ownerToken=randomToken(28);
     try{
@@ -3825,6 +3834,7 @@
           : DEFAULTS;
         window._guideId=id;
         window._ownerToken=owner||row?.owner_token||null;
+        window._aptData=data; // FIX: mark that a real guide was loaded from DB via URL
         if(owner){ var cs=document.getElementById('cancel-sub-section'); if(cs) cs.style.display='block'; }
         window._existingCreatedAt=data.createdAt||null;
         applyData(data);
