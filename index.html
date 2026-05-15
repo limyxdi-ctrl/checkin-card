@@ -3538,6 +3538,22 @@
     ef('s-parking-info',d.parkingInfo);
     ef('s-breakfast-info',d.breakfastInfo);
     ef('s-menu-url',d.menuUrl);
+    // FIX: restore logo field and preview so it is not lost on re-save
+    var luGenEl=document.getElementById('s-logo-url-general');
+    if(luGenEl){
+      luGenEl.value=d.logoUrl||'';
+      var pw=document.getElementById('s-logo-preview-wrap-general');
+      var pi=document.getElementById('s-logo-preview-general');
+      if(d.logoUrl){ if(pi) pi.src=d.logoUrl; if(pw) pw.style.display='block'; }
+      else { if(pw) pw.style.display='none'; }
+    }
+    // FIX: restore hotel/extra fields
+    var btEl=document.getElementById('s-breakfast-text'); if(btEl) btEl.value=d.breakfastText||'';
+    var bpEl=document.getElementById('s-breakfast-price'); if(bpEl) bpEl.value=d.breakfastPrice||'';
+    var ltEl=document.getElementById('s-latecheckout-text'); if(ltEl) ltEl.value=d.lateCheckoutText||'';
+    var lpEl=document.getElementById('s-latecheckout-price'); if(lpEl) lpEl.value=d.lateCheckoutPrice||'';
+    var clEl=document.getElementById('s-contact-link'); if(clEl) clEl.value=d.contactLink||'';
+    selectPropertyType(d.propertyType||'apartment');
     // Sync quick fields + update progress bar
     syncFullToQuick();
     updateProgress();
@@ -3598,7 +3614,7 @@
       breakfastInfo:g('s-breakfast-info'),
       menuUrl:g('s-menu-url'),
       createdAt:window._existingCreatedAt||localStorage.getItem('cic_created_at')||new Date().toISOString(),
-      isPaid: window._aptData?.isPaid || false,
+      isPaid: !!(window._aptData?.isPaid), // FIX: preserve paid status — never reset to false
       propertyType:(document.getElementById('s-property-type')||{value:'apartment'}).value,
       logoUrl:g('s-logo-url-general'),
       breakfastText:g('s-breakfast-text'),
@@ -3778,7 +3794,7 @@
         const ownerFromUrl=qs("owner");
         if(row){
           const data=Object.assign({},parseGuideData(row)||{},{isPaid:true, paidAt: new Date().toISOString()});
-          const token=ownerFromUrl||row.owner_token;
+          const token=ownerFromUrl||row.owner_token||qs('owner')||null; // FIX: never lose owner token
           await upsertGuide(id,token,data);
           window._guideId=id; window._ownerToken=token;
           window._aptData=data;
@@ -3872,6 +3888,7 @@
           if(data){
             window._guideId = last.id;
             window._ownerToken = last.ownerToken;
+            window._aptData = data; // FIX: ensure _aptData is set so isPaid is preserved on re-save
             window._existingCreatedAt = data.createdAt || null;
             // Update URL so bookmarking works
             history.replaceState({}, '', `?id=${encodeURIComponent(last.id)}&owner=${encodeURIComponent(last.ownerToken)}`);
