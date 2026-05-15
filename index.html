@@ -4284,46 +4284,69 @@
     if(document.getElementById('paywall-modal')) return;
     const lang=document.documentElement.lang||'en';
     const t={
-      en:{title:'🚀 Your guide is ready — activate sharing',
-        body:'Your guide looks great. Unlock the guest link now so guests can check in smoothly — every day without it means missed opportunities.',
-        trial:'🎯 Try it for €1 — first month',trialSub:'Then €5/month · Cancel anytime · No commitment',
-        yearly:'⭐ Yearly — €50/year',yearlySub:'Most popular · Save 2 months · €4.17/month',
+      en:{
+        badge:'⭐ Most popular',
+        title:'Start for €1 — your first month',
+        body:'Try everything risk-free. Cancel anytime — no commitment.',
+        trial:'🎯 Start now for €1',trialSub:'First month · Then €5/month · Cancel anytime',
+        or:'or choose another plan:',
+        yearly:'Yearly — €50/year',yearlySub:'Save 2 months · €4.17/month',
         monthly:'Monthly — €5/month',monthlySub:'Flexible · Cancel anytime',
-        demo:'Just want to look around first →',trust:'🔒 Stripe · Secure · Cancel anytime'},
-      de:{title:'🚀 Dein Guide ist bereit — Teilen freischalten',
-        body:'Dein Guide sieht super aus. Schalte jetzt den Gäste-Link frei — jeder Tag ohne ihn sind verpasste Check-ins und Fragen per WhatsApp.',
-        trial:'🎯 Für €1 ausprobieren — erster Monat',trialSub:'Danach 5€/Monat · Jederzeit kündbar · Kein Risiko',
-        yearly:'⭐ Jahresplan — 50€/Jahr',yearlySub:'Beliebtester Plan · 2 Monate gratis · 4,17€/Monat',
+        demo:'Just browse first →',trust:'🔒 Stripe · Secure · No hidden fees'},
+      de:{
+        badge:'⭐ Beliebteste Option',
+        title:'Starte für €1 — dein erster Monat',
+        body:'Alles risikofrei ausprobieren. Jederzeit kündbar — kein Risiko.',
+        trial:'🎯 Jetzt für €1 starten',trialSub:'Erster Monat · Danach 5€/Monat · Jederzeit kündbar',
+        or:'oder anderen Plan wählen:',
+        yearly:'Jahresplan — 50€/Jahr',yearlySub:'2 Monate gratis · 4,17€/Monat',
         monthly:'Monatsplan — 5€/Monat',monthlySub:'Flexibel · Jederzeit kündbar',
-        demo:'Erst noch anschauen →',trust:'🔒 Stripe · Sicher · Jederzeit kündbar'},
-      es:{title:'🚀 Tu guía está lista — activa el compartir',
-        body:'Tu guía tiene muy buena pinta. Activa el enlace ahora para que tus huéspedes hagan el check-in sin problemas — cada día sin él son oportunidades perdidas.',
-        trial:'🎯 Pruébalo por €1 — primer mes',trialSub:'Luego 5€/mes · Cancela cuando quieras · Sin riesgo',
-        yearly:'⭐ Anual — 50€/año',yearlySub:'El más popular · 2 meses gratis · 4,17€/mes',
+        demo:'Erst noch anschauen →',trust:'🔒 Stripe · Sicher · Keine versteckten Kosten'},
+      es:{
+        badge:'⭐ La opción más popular',
+        title:'Empieza por €1 — tu primer mes',
+        body:'Pruébalo todo sin riesgo. Cancela cuando quieras.',
+        trial:'🎯 Empezar ahora por €1',trialSub:'Primer mes · Luego 5€/mes · Cancela cuando quieras',
+        or:'o elige otro plan:',
+        yearly:'Anual — 50€/año',yearlySub:'2 meses gratis · 4,17€/mes',
         monthly:'Mensual — 5€/mes',monthlySub:'Flexible · Cancela cuando quieras',
-        demo:'Solo quiero echar un vistazo →',trust:'🔒 Stripe · Seguro · Cancela cuando quieras'}
+        demo:'Solo echar un vistazo →',trust:'🔒 Stripe · Seguro · Sin costes ocultos'}
     }[lang]||{};
     const modal=document.createElement('div');
     modal.id='paywall-modal';
     modal.style.cssText='position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;padding:20px';
     const d=document.createElement('div');
-    d.style.cssText='background:#fff;border-radius:16px;padding:28px 24px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25);max-height:90vh;overflow-y:auto';
-    d.innerHTML='<div style="font-size:1.2rem;font-weight:700;color:#111827;margin-bottom:6px">'+t.title+'</div>'
-      +'<div style="font-size:0.83rem;color:#6B7280;line-height:1.5;margin-bottom:20px">'+t.body+'</div>'
-      // €1 Trial — featured
-      +'<button id="pw-trial" style="width:100%;padding:16px;background:linear-gradient(135deg,#1F3A8A,#1E40AF);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:inherit;font-size:1rem;font-weight:700;margin-bottom:8px;text-align:left">'+t.trial+'<br><span style="font-size:0.75rem;font-weight:400;opacity:0.85">'+t.trialSub+'</span></button>'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">'
-      +'<button id="pw-yearly" style="padding:12px;background:#FFF7ED;border:2px solid #F59E0B;border-radius:10px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:700;color:#B45309;text-align:left">'+t.yearly+'<br><span style="font-size:0.7rem;font-weight:400;color:#92400E">'+t.yearlySub+'</span></button>'
-      +'<button id="pw-monthly" style="padding:12px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600;color:#374151;text-align:left">'+t.monthly+'<br><span style="font-size:0.7rem;font-weight:400;color:#6B7280">'+t.monthlySub+'</span></button>'
+    d.style.cssText='background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25);max-height:90vh;overflow-y:auto';
+    d.innerHTML=
+      // Badge
+      '<div style="display:inline-block;background:#FEF3C7;color:#92400E;font-size:0.72rem;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:14px;letter-spacing:0.03em">'+t.badge+'</div>'
+      // Title
+      +'<div style="font-size:1.3rem;font-weight:700;color:#111827;margin-bottom:8px;letter-spacing:-0.02em">'+t.title+'</div>'
+      +'<div style="font-size:0.85rem;color:#6B7280;line-height:1.5;margin-bottom:20px">'+t.body+'</div>'
+      // €1 Trial — very prominent
+      +'<button id="pw-trial" style="width:100%;padding:20px 18px;background:#1F3A8A;color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;font-size:1.1rem;font-weight:700;margin-bottom:6px;text-align:left;position:relative;box-shadow:0 4px 18px rgba(31,58,138,0.35)">'
+      +'<span style="display:block;font-size:1.15rem;font-weight:800;margin-bottom:4px">'+t.trial+'</span>'
+      +'<span style="font-size:0.78rem;font-weight:400;opacity:0.85">'+t.trialSub+'</span>'
+      +'</button>'
+      // Divider
+      +'<div style="display:flex;align-items:center;gap:10px;margin:16px 0 12px">'
+      +'<div style="flex:1;height:1px;background:#E5E7EB"></div>'
+      +'<span style="font-size:0.72rem;color:#9CA3AF;font-weight:500">'+t.or+'</span>'
+      +'<div style="flex:1;height:1px;background:#E5E7EB"></div>'
       +'</div>'
-      +'<div style="text-align:center;font-size:0.75rem;color:#9CA3AF;margin-bottom:12px">'+t.trust+'</div>'
-      +'<button id="pw-demo" style="width:100%;padding:10px;background:#fff;color:#6B7280;border:1px solid #E5E7EB;border-radius:10px;font-size:0.82rem;cursor:pointer;font-family:inherit">'+t.demo+'</button>';
+      // Yearly + Monthly side by side, smaller
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">'
+      +'<button id="pw-yearly" style="padding:11px 10px;background:#FFFBEB;border:1.5px solid #F59E0B;border-radius:10px;cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:700;color:#B45309;text-align:left">'+t.yearly+'<br><span style="font-size:0.68rem;font-weight:400;color:#92400E">'+t.yearlySub+'</span></button>'
+      +'<button id="pw-monthly" style="padding:11px 10px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:600;color:#374151;text-align:left">'+t.monthly+'<br><span style="font-size:0.68rem;font-weight:400;color:#6B7280">'+t.monthlySub+'</span></button>'
+      +'</div>'
+      +'<div style="text-align:center;font-size:0.72rem;color:#9CA3AF;margin-bottom:12px">'+t.trust+'</div>'
+      +'<button id="pw-demo" style="width:100%;padding:10px;background:#fff;color:#9CA3AF;border:1px solid #E5E7EB;border-radius:10px;font-size:0.8rem;cursor:pointer;font-family:inherit">'+t.demo+'</button>';
     modal.appendChild(d);
     document.body.appendChild(modal);
     document.getElementById('pw-trial').onclick=function(){ modal.remove(); showStripeModal('trial'); };
     document.getElementById('pw-yearly').onclick=function(){ modal.remove(); showStripeModal('yearly'); };
     document.getElementById('pw-monthly').onclick=function(){ modal.remove(); showStripeModal('monthly'); };
-    document.getElementById('pw-demo').onclick=function(){ modal.remove(); loadDemo(); };
+    document.getElementById('pw-demo').onclick=function(){ modal.remove(); };
     modal.addEventListener('click',function(e){ if(e.target===modal) modal.remove(); });
   }
   
