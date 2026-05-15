@@ -3927,6 +3927,12 @@
       }
     } else {
       // No ID in URL — try to restore last saved guide from registry
+      // FIX: ?new=1 in URL skips auto-restore and shows fresh setup
+      if(qs('new')==='1'){
+        applyData(DEFAULTS);
+        openSetup();
+        return;
+      }
       const registry = loadRegistry();
       const last = registry[registry.length - 1];
       if(last && last.id && last.ownerToken){
