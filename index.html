@@ -3050,7 +3050,7 @@
       </div>`).join('');
   }
 
-  function deleteGuide(index){
+  async function deleteGuide(index){
     const registry=loadRegistry();
     const guide=registry[index];
     if(!guide) return;
@@ -3061,6 +3061,13 @@
       es:`¿Eliminar "${guide.name}"?\n\nEl enlace de huéspedes dejará de funcionar. Esto no se puede deshacer.`
     }[lang]||`Delete "${guide.name}"?`;
     if(!confirm(msg)) return;
+    // FIX: also delete from Supabase DB so guest link stops working
+    try{
+      await deleteGuideFromDB(guide.id, guide.ownerToken);
+    } catch(e){
+      console.warn('DB delete failed:', e);
+      // Still remove from local registry even if DB delete fails
+    }
     registry.splice(index,1);
     saveRegistry(registry);
     renderMyGuides();
