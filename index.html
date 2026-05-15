@@ -3119,6 +3119,8 @@
     registry.splice(index,1);
     saveRegistry(registry);
     renderMyGuides();
+    // Sync updated registry to Supabase after delete
+    syncRegistryToSupabase(registry);
   }
 
   function makeRuleRow(emoji, text){
@@ -4333,7 +4335,12 @@
     if(!window._guideId){
       var btn=document.getElementById('stripe-pay-btn');
       if(btn){ btn.disabled=true; btn.textContent='Saving...'; }
-      try{ await saveSetup(); } catch(e){ console.warn('Auto-save before Stripe failed:',e); }
+      try{
+        await saveSetup();
+        // Close success modal that saveSetup opens — we are going to Stripe anyway
+        var sm=document.getElementById('save-success-modal');
+        if(sm) sm.remove();
+      } catch(e){ console.warn('Auto-save before Stripe failed:',e); }
       if(btn){ btn.disabled=false; }
     }
     // Build success_url so Stripe redirects back with ?paid=1&id=...&owner=...
