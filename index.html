@@ -41,8 +41,8 @@
   /* ── TOKENS ── */
   *,*::before,*::after{box-sizing:border-box}
   :root{
-    --bg:       #FAFAFA;
-    --bg2:      #F3F4F6;
+    --bg:       #FFFFFF;
+    --bg2:      #F8F9FB;
     --card:     #FFFFFF;
     --border:   #E5E7EB;
     --border2:  #D1D5DB;
@@ -66,7 +66,7 @@
   body{
     font-family:'Inter',system-ui,-apple-system,sans-serif;
     background:var(--bg);color:var(--text);
-    min-height:100vh;font-size:15px;line-height:1.65;
+    min-height:100vh;font-size:16px;line-height:1.75;
     -webkit-font-smoothing:antialiased;overflow-x:hidden;-moz-osx-font-smoothing:grayscale;
   }
 
@@ -342,7 +342,7 @@
   .new-guide-btn:hover{background:#E0E7FF;border-color:var(--accent)}
 
   /* ── MAIN PAGE ── */
-  .page{max-width:620px;margin:0 auto;padding:0 20px 64px}
+  .page{max-width:620px;margin:0 auto;padding:0 20px 80px}
   .edit-fab{
     position:fixed;bottom:22px;right:22px;z-index:100;
     width:44px;height:44px;border-radius:50%;
@@ -368,8 +368,8 @@
   /* ── CARDS ── */
   .cards-wrapper{
     border-radius:var(--radius);
-    box-shadow:var(--shadow-md);
-    overflow:hidden;border:1px solid var(--border);
+    box-shadow:0 2px 16px rgba(0,0,0,0.05);
+    overflow:hidden;border:1px solid #EBEBEB;
   }
   .cards{display:flex;flex-direction:column}
   .card{
@@ -378,7 +378,7 @@
   }
   .card:last-child{border-bottom:none}
   .card-header{
-    display:flex;align-items:center;gap:12px;padding:20px 22px 0;
+    display:flex;align-items:center;gap:12px;padding:22px 24px 0;
   }
   .card-icon{
     width:36px;height:36px;border-radius:9px;
@@ -391,19 +391,19 @@
   .icon-red   {background:#FEF2F2}
   .icon-purple{background:#F5F3FF}
   .icon-teal  {background:#F0FDFA}
-  .card-title{font-size:0.93rem;font-weight:600;color:var(--text);letter-spacing:-0.01em}
-  .card-body{padding:16px 22px 24px}
+  .card-title{font-size:1rem;font-weight:600;color:var(--text);letter-spacing:-0.01em}
+  .card-body{padding:18px 22px 26px}
 
   /* ── CHECK-IN ── */
   .checkin-hero{margin:14px 0 18px;display:flex;gap:10px}
   .checkin-block{flex:1;border-radius:10px;padding:14px 12px;text-align:center}
   .checkin-in{background:#EEF2FF;border:1px solid #C7D2FE}
   .checkin-out{background:#FFFBEB;border:1px solid #FDE68A}
-  .checkin-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);margin-bottom:6px;font-weight:600}
-  .checkin-time{font-size:1.85rem;font-weight:700;letter-spacing:-0.02em;line-height:1}
+  .checkin-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);margin-bottom:6px;font-weight:600}
+  .checkin-time{font-size:2rem;font-weight:700;letter-spacing:-0.02em;line-height:1}
   .checkin-in .checkin-time{color:var(--accent)}
   .checkin-out .checkin-time{color:var(--accent2)}
-  .checkin-sub{font-size:0.67rem;color:var(--text2);margin-top:5px}
+  .checkin-sub{font-size:0.75rem;color:var(--text2);margin-top:5px}
 
   /* ADDRESS */
   .address-row{
@@ -412,7 +412,7 @@
     border:1px solid var(--border);border-radius:8px;margin-bottom:12px;
   }
   .address-icon{font-size:0.95rem;flex-shrink:0;margin-top:2px}
-  .address-text{font-size:0.87rem;color:var(--text);line-height:1.6;flex:1}
+  .address-text{font-size:0.95rem;color:var(--text);line-height:1.6;flex:1}
 
   /* LARGE BUTTONS */
   .btn-large{
@@ -435,9 +435,9 @@
     background:var(--bg);border:1px solid var(--border);
     border-radius:8px;padding:16px;margin-bottom:12px;
   }
-  .wifi-network-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);font-weight:600;margin-bottom:3px}
-  .wifi-network-name{font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:14px;word-break:break-all}
-  .wifi-pass-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);font-weight:600;margin-bottom:3px}
+  .wifi-network-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);font-weight:600;margin-bottom:3px}
+  .wifi-network-name{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:14px;word-break:break-all}
+  .wifi-pass-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);font-weight:600;margin-bottom:3px}
   .wifi-pass-display{
     font-size:1.15rem;font-weight:700;letter-spacing:0.06em;
     color:var(--accent);font-family:monospace;
@@ -457,7 +457,7 @@
     box-shadow:var(--shadow);border:1px solid var(--border);
   }
   .wifi-qr-canvas canvas,.wifi-qr-canvas img{width:156px!important;height:156px!important;display:block}
-  .wifi-qr-hint{margin-top:12px;font-size:0.79rem;color:var(--text2);text-align:center;line-height:1.55;max-width:210px}
+  .wifi-qr-hint{margin-top:12px;font-size:0.87rem;color:var(--text2);text-align:center;line-height:1.65;max-width:210px}
   .wifi-qr-hint strong{color:var(--text);font-weight:600}
 
   /* RULES */
@@ -465,7 +465,7 @@
   .rule-item{
     display:flex;align-items:center;gap:12px;
     padding:11px 0;border-bottom:1px solid var(--border);
-    font-size:0.87rem;color:var(--text);line-height:1.5;
+    font-size:0.95rem;color:var(--text);line-height:1.6;
   }
   .rule-item:last-child{border-bottom:none;padding-bottom:0}
   .rule-item:first-child{padding-top:0}
@@ -475,20 +475,20 @@
   .nearby-grid{display:flex;flex-direction:column}
   .nearby-item{
     display:flex;align-items:center;gap:12px;
-    padding:11px 0;border-bottom:1px solid var(--border);font-size:0.87rem;
+    padding:11px 0;border-bottom:1px solid var(--border);font-size:0.95rem;
   }
   .nearby-item:last-child{border-bottom:none;padding-bottom:0}
   .nearby-item:first-child{padding-top:0}
   .nearby-emoji{font-size:1.05rem;flex-shrink:0;width:26px;text-align:center}
   .nearby-info{flex:1}
-  .nearby-name{font-weight:600;color:var(--text)}
-  .nearby-dist{font-size:0.76rem;color:var(--text2);margin-top:2px}
+  .nearby-name{font-weight:600;color:var(--text);font-size:0.95rem}
+  .nearby-dist{font-size:0.82rem;color:var(--text2);margin-top:2px}
 
   /* STEPS */
   .steps{list-style:none;display:flex;flex-direction:column}
   .step{
     display:flex;gap:12px;align-items:flex-start;
-    padding:11px 0;border-bottom:1px solid var(--border);font-size:0.87rem;
+    padding:11px 0;border-bottom:1px solid var(--border);font-size:0.95rem;
   }
   .step:last-child{border-bottom:none;padding-bottom:0}
   .step:first-child{padding-top:0}
@@ -503,12 +503,12 @@
     background:var(--bg);border:1px solid var(--border);
     font-size:0.88rem;width:28px;height:28px;border-radius:7px;color:var(--text);
   }
-  .step-text{color:var(--text);line-height:1.6;flex:1}
+  .step-text{color:var(--text);line-height:1.7;flex:1}
   .late-note{
     margin-top:14px;padding:13px 15px;
     background:#FFFBEB;border:1px solid #FDE68A;
-    border-radius:8px;font-size:0.83rem;color:#92400E;
-    display:flex;gap:10px;align-items:flex-start;line-height:1.55;
+    border-radius:8px;font-size:0.92rem;color:#92400E;
+    display:flex;gap:10px;align-items:flex-start;line-height:1.65;
   }
 
   .rule-input-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 10px}
@@ -584,13 +584,13 @@
     background:var(--bg);border:1px solid var(--border);
     border-radius:8px;padding:12px 14px;margin-bottom:10px;
   }
-  .entry-info-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);font-weight:600;margin-bottom:5px}
-  .entry-info-value{font-size:0.92rem;font-weight:600;color:var(--text)}
+  .entry-info-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);font-weight:600;margin-bottom:5px}
+  .entry-info-value{font-size:1rem;font-weight:600;color:var(--text)}
   .entry-info-value.code{font-family:monospace;font-size:1.35rem;letter-spacing:0.15em;color:var(--accent)}
   .entry-note{
     padding:11px 14px;background:#FFFBEB;
     border:1px solid #FDE68A;border-radius:8px;
-    font-size:0.83rem;color:#92400E;margin-top:10px;line-height:1.55;
+    font-size:0.92rem;color:#92400E;margin-top:10px;line-height:1.65;
   }
 
   /* GENERAL BUTTONS */
@@ -608,7 +608,7 @@
   .btn-call{background:#fff;border:1px solid var(--border);color:var(--text);flex:1}
   .btn-call:hover{background:var(--bg2);border-color:var(--border2)}
   .btn-row{display:flex;gap:10px}
-  .help-text{font-size:0.87rem;color:var(--text2);margin-bottom:14px;line-height:1.65}
+  .help-text{font-size:0.95rem;color:var(--text2);margin-bottom:14px;line-height:1.75}
 
   /* FOOTER */
   footer{text-align:center;padding:36px 16px 20px;color:var(--text2);font-size:0.86rem}
@@ -2879,7 +2879,7 @@
       const gate=d.smartlockGatecode||'',room=d.smartlockRoomcode||'',instr=d.smartlockInstructions||'';
       html+=`${instr?`<div class="entry-note" style="margin-bottom:14px">💡 ${escHtml(instr)}</div>`:''}
       <ul class="steps">
-        <li class="step"><div class="step-num step-icon">🚶</div>
+        <li class="step"><div class="step-num step-icon">🚶‍♀️</div>
           <div class="step-text">${{en:'Go to the main entrance of the building.',de:'Gehen Sie zum Haupteingang des Gebäudes.',es:'Diríjase a la entrada principal del edificio.'}[lang]}
           ${gate ? infoRow('🔢',{en:'Gate code',de:'Torcode',es:'Código del portón'}[lang],escHtml(gate),true) : ''}
           </div></li>
