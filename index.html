@@ -3210,49 +3210,263 @@
   // ═══════════════════════════════════════════════════════════
   function showSaveSuccess(guestLink, editLink, isPaid){
     const lang=document.documentElement.lang||'en';
-    const t={
-      en:{ title:'🎉 Your guide is live!', guestLabel:'Guest Link — share this with your guests', expiry:'', editLabel:'✏️ Edit Link (keep this private!)', copy:'Copy', copied:'Copied!', open:'Open Guide', done:'Done', register:'✉️ Register to keep it permanently', editNote:'Save this edit link — you\'ll need it to make changes later.' },
-      de:{ title:'🎉 Dein Guide ist live!', guestLabel:'Gäste-Link — teile ihn mit deinen Gästen', expiry:'', editLabel:'✏️ Bearbeitungs-Link (privat halten!)', copy:'Kopieren', copied:'Kopiert!', open:'Guide öffnen', done:'Fertig', register:'✉️ Registrieren um ihn dauerhaft zu sichern', editNote:'Speichere diesen Link — du brauchst ihn um später Änderungen vorzunehmen.' },
-      es:{ title:'🎉 ¡Tu guía está activa!', guestLabel:'Enlace de huéspedes — compártelo con tus huéspedes', expiry:'', editLabel:'✏️ Enlace de edición (¡mantenlo privado!)', copy:'Copiar', copied:'¡Copiado!', open:'Abrir guía', done:'Listo', register:'✉️ Regístrate para conservarlo permanentemente', editNote:'Guarda este enlace — lo necesitarás para hacer cambios más tarde.' }
-    }[lang]||t?.en;
+    const propName=(window._aptData&&window._aptData.name)||'your property';
 
+    // ── Localised strings ──────────────────────────────────────
+    const T={
+      en:{
+        shareMsg:`Here's your guest guide — it has everything you need for check-in, WiFi, and your stay. Just tap the link, no app needed.`,
+        shareLabel:'Paste this into Airbnb',
+        urlLabel:'Your guide link',
+        copyBoth:'Copy link + message',
+        copyLinkOnly:'Copy link only',
+        copiedFeedback:'Copied — ready to paste into Airbnb',
+        editLabel:'Edit link — keep this private',
+        editNote:'Use this link to update your guide anytime. Don\'t share it with guests.',
+        copy:'Copy', copied:'Copied!',
+        templatesTitle:'Message templates',
+        templatesHint:'Edit and copy — paste directly into Airbnb or email. Fill in the [brackets].',
+        tpl_booking_name:'At booking',
+        tpl_booking_when:'Send immediately after reservation',
+        tpl_day2_name:'Day after — send the guide link',
+        tpl_day2_when:'12–24 hours after booking',
+        tpl_arrival_name:'Arrival reminder',
+        tpl_arrival_when:'5–7 days before check-in',
+        tpl_checkout_name:'Post-checkout thank you',
+        tpl_checkout_when:'Day after checkout',
+        reset:'Reset',
+        copyMsg:'Copy message',
+        register:'✉️ Register to keep it permanently',
+        savedNote:'Your guide is also saved in this browser — it will reload automatically if you return here.',
+        permanentNote:'Your guide is permanently active.',
+        savedReady:'Your guide is saved and ready.',
+      },
+      de:{
+        shareMsg:`Hier ist dein Gäste-Guide — er enthält alles, was du für Check-in, WLAN und deinen Aufenthalt brauchst. Einfach auf den Link tippen, keine App nötig.`,
+        shareLabel:'In Airbnb einfügen',
+        urlLabel:'Dein Guide-Link',
+        copyBoth:'Link + Nachricht kopieren',
+        copyLinkOnly:'Nur Link kopieren',
+        copiedFeedback:'Kopiert — bereit zum Einfügen in Airbnb',
+        editLabel:'Bearbeitungs-Link — privat halten',
+        editNote:'Mit diesem Link kannst du deinen Guide jederzeit aktualisieren. Nicht mit Gästen teilen.',
+        copy:'Kopieren', copied:'Kopiert!',
+        templatesTitle:'Nachrichten-Vorlagen',
+        templatesHint:'Bearbeiten und kopieren — direkt in Airbnb oder E-Mail einfügen. Platzhalter in [Klammern] ausfüllen.',
+        tpl_booking_name:'Bei Buchung',
+        tpl_booking_when:'Direkt nach der Bestätigung senden',
+        tpl_day2_name:'Am nächsten Tag — Guide-Link senden',
+        tpl_day2_when:'12–24 Stunden nach der Buchung',
+        tpl_arrival_name:'Anreise-Erinnerung',
+        tpl_arrival_when:'5–7 Tage vor dem Check-in',
+        tpl_checkout_name:'Dankesnachricht nach dem Auschecken',
+        tpl_checkout_when:'Tag nach dem Auschecken',
+        reset:'Zurücksetzen',
+        copyMsg:'Nachricht kopieren',
+        register:'✉️ Registrieren um ihn dauerhaft zu sichern',
+        savedNote:'Dein Guide wird auch in diesem Browser gespeichert — er wird automatisch neu geladen.',
+        permanentNote:'Dein Guide ist dauerhaft aktiv.',
+        savedReady:'Dein Guide ist gespeichert und bereit.',
+      },
+      es:{
+        shareMsg:`Aquí está tu guía de huéspedes — tiene todo lo que necesitas para el check-in, WiFi y tu estancia. Solo toca el enlace, no necesitas ninguna app.`,
+        shareLabel:'Pega esto en Airbnb',
+        urlLabel:'Tu enlace de guía',
+        copyBoth:'Copiar enlace + mensaje',
+        copyLinkOnly:'Copiar solo enlace',
+        copiedFeedback:'Copiado — listo para pegar en Airbnb',
+        editLabel:'Enlace de edición — mantenlo privado',
+        editNote:'Usa este enlace para actualizar tu guía cuando quieras. No lo compartas con los huéspedes.',
+        copy:'Copiar', copied:'¡Copiado!',
+        templatesTitle:'Plantillas de mensajes',
+        templatesHint:'Edita y copia — pega directamente en Airbnb o email. Rellena los [corchetes].',
+        tpl_booking_name:'Al reservar',
+        tpl_booking_when:'Enviar inmediatamente tras la confirmación',
+        tpl_day2_name:'Al día siguiente — envía el enlace',
+        tpl_day2_when:'12–24 horas después de la reserva',
+        tpl_arrival_name:'Recordatorio de llegada',
+        tpl_arrival_when:'5–7 días antes del check-in',
+        tpl_checkout_name:'Agradecimiento post-checkout',
+        tpl_checkout_when:'El día después del checkout',
+        reset:'Reiniciar',
+        copyMsg:'Copiar mensaje',
+        register:'✉️ Regístrate para conservarlo permanentemente',
+        savedNote:'Tu guía también se guarda en este navegador — se recargará automáticamente.',
+        permanentNote:'Tu guía está activa de forma permanente.',
+        savedReady:'Tu guía está guardada y lista.',
+      }
+    };
+    const s=T[lang]||T.en;
+
+    // ── Template bodies ────────────────────────────────────────
+    const tplDefaults={
+      booking:{
+        en:`Hi [Guest name],\n\nThanks so much for booking — we're really excited to host you at ${propName}!\n\nI'll follow up soon with a link to your guest guide, which has everything you'll need: directions, entry instructions, WiFi, and some local recommendations. You'll also find our key house rules in there so there are no surprises.\n\nIn the meantime, please double-check that your reservation dates, guest count, and any pets are correct in the booking.\n\nLet me know if you have any questions at all — happy to help!\n\nWarm regards,\n[Your name]`,
+        de:`Hallo [Gastname],\n\nvielen Dank für deine Buchung — wir freuen uns sehr darauf, dich in ${propName} willkommen zu heißen!\n\nIch melde mich bald mit einem Link zu deinem Gäste-Guide, der alles enthält, was du brauchst: Anfahrt, Einlass-Anleitung, WLAN und lokale Tipps. Dort findest du auch unsere wichtigsten Hausregeln, damit es keine Überraschungen gibt.\n\nBitte überprüfe noch kurz, ob Datum, Gästeanzahl und eventuelle Haustiere in der Buchung korrekt eingetragen sind.\n\nMelde dich gerne, wenn du Fragen hast — ich helfe dir gern!\n\nHerzliche Grüße,\n[Dein Name]`,
+        es:`Hola [Nombre del huésped],\n\n¡Muchas gracias por reservar! Estamos muy contentos de recibirte en ${propName}.\n\nPronto te enviaré el enlace a tu guía de huéspedes, que tiene todo lo que necesitas: indicaciones, instrucciones de entrada, WiFi y recomendaciones locales. También encontrarás las normas principales de la casa para que no haya sorpresas.\n\nMientras tanto, por favor confirma que las fechas, el número de huéspedes y cualquier mascota estén correctamente indicados en la reserva.\n\n¡No dudes en escribirme si tienes alguna pregunta — con mucho gusto te ayudo!\n\nSaludos,\n[Tu nombre]`
+      },
+      day2:{
+        en:`Hi [Guest name],\n\nHere's your guest guide for ${propName}: ${guestLink}\n\nIt covers everything from directions and entry to WiFi and local tips. Fair warning — once you read the local recommendations, you may want to add a night or two!\n\nSave the link to your phone before you travel, just in case you're somewhere with patchy signal.\n\nWe'll be in touch again closer to your stay. Can't wait to have you!\n\n[Your name]`,
+        de:`Hallo [Gastname],\n\nhier ist dein Gäste-Guide für ${propName}: ${guestLink}\n\nEr enthält alles von der Anfahrt und dem Einlass bis hin zu WLAN und lokalen Tipps. Vorwarnung — sobald du die lokalen Empfehlungen liest, möchtest du vielleicht noch eine Nacht dranhängen!\n\nSpeichere den Link auf deinem Handy, für den Fall schlechter Verbindung.\n\nWir melden uns noch einmal kurz vor deinem Aufenthalt!\n\n[Dein Name]`,
+        es:`Hola [Nombre del huésped],\n\naquí está tu guía de huéspedes para ${propName}: ${guestLink}\n\nCubre todo, desde las indicaciones y la entrada hasta el WiFi y los consejos locales. Aviso: ¡una vez que leas las recomendaciones locales, puede que quieras añadir una noche más!\n\nGuarda el enlace en tu móvil antes de viajar, por si la cobertura es irregular.\n\n¡Nos pondremos en contacto contigo de nuevo antes de tu estancia!\n\n[Tu nombre]`
+      },
+      arrival:{
+        en:`Hi [Guest name],\n\nYour stay at ${propName} is coming up on [check-in date] — exciting!\n\nA few things to have ready:\n• Check-in is from [time]. The property will be ready for you by then.\n• Entry: see your guest guide for full instructions.\n• Parking: [parking details]\n\nYour full guide is here if you need a refresher: ${guestLink}\n\nDon't hesitate to message me if anything comes up — I'm nearby and happy to help.\n\nSee you soon!\n[Your name]`,
+        de:`Hallo [Gastname],\n\ndein Aufenthalt in ${propName} steht am [Anreisedatum] vor der Tür — wie aufregend!\n\nEin paar Dinge zum Vorbereiten:\n• Check-in ab [Uhrzeit]. Die Unterkunft ist bis dahin bereit.\n• Einlass: alle Details findest du in deinem Gäste-Guide.\n• Parken: [Parkdetails]\n\nDeinen Guide findest du hier zur Erinnerung: ${guestLink}\n\nMelde dich jederzeit, wenn du Fragen hast — ich bin in der Nähe!\n\nBis bald!\n[Dein Name]`,
+        es:`Hola [Nombre del huésped],\n\n¡Tu estancia en ${propName} está llegando el [fecha de entrada] — qué emocionante!\n\nAlgunas cosas para tener listas:\n• El check-in es a partir de las [hora]. El alojamiento estará listo para entonces.\n• Entrada: consulta tu guía para las instrucciones completas.\n• Aparcamiento: [detalles de aparcamiento]\n\nAquí tienes tu guía completa por si necesitas repasar: ${guestLink}\n\nNo dudes en escribirme si surge algo — estoy cerca y encantado/a de ayudar.\n\n¡Hasta pronto!\n[Tu nombre]`
+      },
+      checkout:{
+        en:`Hi [Guest name],\n\nThank you so much for staying at ${propName} — it was a pleasure having you, and the place looks wonderful.\n\nWe'd love to have you back any time. If you enjoyed your stay, a review means the world to us: [your listing link]\n\nHope to see you again soon!\n\n[Your name]`,
+        de:`Hallo [Gastname],\n\nvielen herzlichen Dank für deinen Aufenthalt in ${propName} — es war uns eine große Freude, dich zu haben!\n\nWir würden uns sehr freuen, dich wieder zu empfangen. Wenn dir der Aufenthalt gefallen hat, wäre eine Bewertung für uns sehr wertvoll: [dein Listing-Link]\n\nBis zum nächsten Mal!\n\n[Dein Name]`,
+        es:`Hola [Nombre del huésped],\n\n¡Muchas gracias por quedarte en ${propName}! Ha sido un placer tenerte y el alojamiento tiene un aspecto estupendo.\n\nNos encantaría volverte a recibir. Si disfrutaste de tu estancia, una reseña significaría mucho para nosotros: [enlace a tu anuncio]\n\n¡Esperamos verte de nuevo pronto!\n\n[Tu nombre]`
+      }
+    };
+
+    const templates=[
+      {id:'booking', dot:'#1F3A8A', name:s.tpl_booking_name, when:s.tpl_booking_when, body:tplDefaults.booking[lang]||tplDefaults.booking.en},
+      {id:'day2',    dot:'#0F6E56', name:s.tpl_day2_name,    when:s.tpl_day2_when,    body:tplDefaults.day2[lang]||tplDefaults.day2.en},
+      {id:'arrival', dot:'#854F0B', name:s.tpl_arrival_name, when:s.tpl_arrival_when, body:tplDefaults.arrival[lang]||tplDefaults.arrival.en},
+      {id:'checkout',dot:'#3B6D11', name:s.tpl_checkout_name,when:s.tpl_checkout_when,body:tplDefaults.checkout[lang]||tplDefaults.checkout.en},
+    ];
+
+    // ── Build modal HTML ───────────────────────────────────────
     const modal=document.createElement('div');
     modal.id='save-success-modal';
     modal.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;justify-content:center;padding:0';
+
+    const tplCards=templates.map(tpl=>`
+      <div style="border:1px solid #E5E7EB;border-radius:12px;overflow:hidden;margin-bottom:8px">
+        <div onclick="ssmToggleTpl('${tpl.id}')" style="display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;user-select:none">
+          <div style="width:8px;height:8px;border-radius:50%;background:${tpl.dot};flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:0.87rem;font-weight:600;color:#111827">${tpl.name}</div>
+            <div style="font-size:0.72rem;color:#6B7280;margin-top:1px">${tpl.when}</div>
+          </div>
+          <div id="ssmchev-${tpl.id}" style="font-size:0.8rem;color:#9CA3AF;transition:transform 0.2s">▼</div>
+        </div>
+        <div id="ssmbody-${tpl.id}" style="display:none;border-top:1px solid #E5E7EB;padding:12px">
+          <textarea id="ssmta-${tpl.id}" style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:10px 12px;font-size:0.82rem;font-family:inherit;color:#111827;background:#F9FAFB;line-height:1.65;resize:vertical;min-height:160px;outline:none;box-sizing:border-box" spellcheck="true">${tpl.body.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+            <button onclick="ssmResetTpl('${tpl.id}')" style="padding:7px 12px;border-radius:7px;border:1px solid #E5E7EB;background:transparent;color:#6B7280;font-size:0.78rem;cursor:pointer;font-family:inherit">↺ ${s.reset}</button>
+            <button id="ssmcopy-${tpl.id}" onclick="ssmCopyTpl('${tpl.id}',this)" style="padding:7px 14px;border-radius:7px;border:none;background:#1F3A8A;color:#fff;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit">📋 ${s.copyMsg}</button>
+          </div>
+        </div>
+      </div>`).join('');
+
     modal.innerHTML=`
-      <div style="background:#fff;border-radius:20px 20px 0 0;padding:28px 24px 40px;max-width:520px;width:100%;box-shadow:0 -8px 40px rgba(0,0,0,0.18);animation:slideUp 0.3s ease;max-height:90vh;overflow-y:auto">
-        <div style="font-size:1.3rem;font-weight:700;color:#111827;margin-bottom:6px;letter-spacing:-0.02em">${t.title}</div>
+      <div style="background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 44px;max-width:520px;width:100%;box-shadow:0 -8px 40px rgba(0,0,0,0.18);animation:slideUp 0.3s ease;max-height:92vh;overflow-y:auto">
 
-        <!-- Guest link — primary -->
-        <div style="margin:18px 0 6px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent)">${t.guestLabel}</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input id="suc-guest-input" readonly value="${guestLink}" style="flex:1;padding:10px 12px;border:2px solid #C7D2FE;border-radius:8px;font-size:0.82rem;background:#F0F4FF;color:var(--text);font-family:monospace;min-width:0">
-          <button id="suc-copy-guest" onclick="gatedCopy('suc-guest-input','suc-copy-guest','${t.copied}')" style="flex-shrink:0;padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit;white-space:nowrap">${t.copy}</button>
-        </div>
-        ${isPaid
-          ? `<div style="margin-top:8px;padding:8px 12px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;font-size:0.78rem;color:#166534;text-align:center">✅ <strong>${{en:'Your guide is permanently active.',de:'Dein Guide ist dauerhaft aktiv.',es:'Tu guía está activa de forma permanente.'}[lang]}</strong></div>`
-          : `<div style="margin-top:8px;padding:8px 12px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;font-size:0.78rem;color:#166534;text-align:center">✅ <strong>${{en:'Your guide is saved and ready.',de:'Dein Guide ist gespeichert und bereit.',es:'Tu guía está guardada y lista.'}[lang]}</strong></div>`
-        }
+        <!-- ── SHARE CARD ── -->
+        <div style="background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:16px;margin-bottom:20px">
 
-        <!-- Edit link — secondary -->
-        <div style="margin:18px 0 4px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#DC2626">${t.editLabel}</div>
-        <div style="font-size:0.73rem;color:var(--text2);margin-bottom:6px">${t.editNote}</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input id="suc-edit-input" readonly value="${editLink}" style="flex:1;padding:10px 12px;border:1px solid #FCA5A5;border-radius:8px;font-size:0.78rem;background:#FFF5F5;color:var(--text);font-family:monospace;min-width:0">
-          <button id="suc-copy-edit" onclick="gatedCopy('suc-edit-input','suc-copy-edit','${t.copied}')" style="flex-shrink:0;padding:10px 14px;background:#FFF5F5;color:#DC2626;border:1px solid #FCA5A5;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit;white-space:nowrap">${t.copy}</button>
+          <!-- Milestone headline -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <span style="font-size:1.4rem;line-height:1">🎉</span>
+            <div>
+              <div style="font-size:1rem;font-weight:700;color:#111827;letter-spacing:-0.02em">Your guide is live</div>
+              <div style="font-size:0.8rem;color:#6B7280;margin-top:1px">Share this link — guests get everything instantly.</div>
+            </div>
+          </div>
+
+          <!-- URL row -->
+          <div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#6B7280;margin-bottom:5px">${s.urlLabel}</div>
+          <div style="display:flex;align-items:center;gap:7px;background:#F8F9FB;border:1px solid #E5E7EB;border-radius:8px;padding:8px 10px;margin-bottom:14px">
+            <input id="suc-guest-input" readonly value="${guestLink}" style="flex:1;background:transparent;border:none;font-size:0.76rem;color:#6B7280;font-family:monospace;min-width:0;outline:none">
+            <button id="suc-copy-link-only" onclick="ssmCopyLinkOnly(this)" style="flex-shrink:0;padding:5px 10px;border-radius:6px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:0.72rem;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap">${s.copyLinkOnly}</button>
+          </div>
+
+          <!-- Airbnb message preview -->
+          <div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#6B7280;margin-bottom:6px">💬 ${s.shareLabel}</div>
+          <div style="border:1px solid #E5E7EB;border-radius:8px;padding:10px 12px;background:#F8F9FB;margin-bottom:12px">
+            <p id="suc-share-msg" style="font-size:0.85rem;color:#111827;line-height:1.65;margin:0">${s.shareMsg}</p>
+            <p style="font-size:0.75rem;color:#6B7280;font-family:monospace;margin:6px 0 0">${guestLink}</p>
+          </div>
+
+          <!-- Primary CTA -->
+          <button id="suc-copy-both" onclick="ssmCopyBoth(this)" style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:13px;border-radius:10px;border:none;background:#1F3A8A;color:#fff;font-size:0.93rem;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:6px;transition:background 0.15s">📋 ${s.copyBoth}</button>
+          <div id="suc-copy-feedback" style="display:none;text-align:center;font-size:0.78rem;color:#166534;padding:4px 0">✅ ${s.copiedFeedback}</div>
         </div>
-        <div style="margin-top:8px;padding:10px 12px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;font-size:0.76rem;color:#166534;line-height:1.6">
-          ✅ ${{
-            en:'<strong>Good news:</strong> Your guide is also saved in this browser. If you return to this page without the link, your guide will automatically reload.',
-            de:'<strong>Gute Nachricht:</strong> Dein Guide wird auch in diesem Browser gespeichert. Wenn du diese Seite ohne Link öffnest, wird dein Guide automatisch wiederhergestellt.',
-            es:'<strong>Buena noticia:</strong> Tu guía también se guarda en este navegador. Si vuelves a esta página sin el enlace, tu guía se restaurará automáticamente.'
-          }[lang]}
-        </div>
+
+        <!-- ── EDIT LINK (collapsed, secondary) ── -->
+        <details style="margin-bottom:20px">
+          <summary style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#DC2626;cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;padding:4px 0">
+            <span>⚠️ ${s.editLabel}</span>
+          </summary>
+          <div style="margin-top:10px">
+            <p style="font-size:0.75rem;color:#6B7280;margin:0 0 7px;line-height:1.55">${s.editNote}</p>
+            <div style="display:flex;gap:7px;align-items:center">
+              <input id="suc-edit-input" readonly value="${editLink}" style="flex:1;padding:9px 11px;border:1px solid #FCA5A5;border-radius:8px;font-size:0.75rem;background:#FFF5F5;color:#111827;font-family:monospace;min-width:0;outline:none">
+              <button onclick="gatedCopy('suc-edit-input','suc-edit-copy-btn','${s.copied}')" id="suc-edit-copy-btn" style="flex-shrink:0;padding:9px 13px;background:#FFF5F5;color:#DC2626;border:1px solid #FCA5A5;border-radius:8px;font-weight:600;font-size:0.8rem;cursor:pointer;font-family:inherit;white-space:nowrap">${s.copy}</button>
+            </div>
+            <p style="font-size:0.72rem;color:#6B7280;margin:7px 0 0;line-height:1.5">💡 ${s.savedNote}</p>
+          </div>
+        </details>
+
+        <!-- ── MESSAGE TEMPLATES ── -->
+        <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#374151;margin-bottom:6px">📩 ${s.templatesTitle}</div>
+        <p style="font-size:0.78rem;color:#6B7280;margin:0 0 12px;line-height:1.55">${s.templatesHint}</p>
+        ${tplCards}
 
         <!-- Register nudge -->
-        <button onclick="showRegisterModal()" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;padding:12px;background:#1F3A8A;color:#fff;border-radius:10px;font-weight:600;font-size:0.87rem;border:none;cursor:pointer;font-family:inherit;width:100%">${t.register}</button>
+        <button onclick="showRegisterModal()" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;padding:12px;background:#1F3A8A;color:#fff;border-radius:10px;font-weight:600;font-size:0.87rem;border:none;cursor:pointer;font-family:inherit;width:100%">${s.register}</button>
       </div>`;
+
     document.body.appendChild(modal);
+    modal.addEventListener('click',function(e){ if(e.target===modal) modal.remove(); });
+
+    // Store template defaults for reset
+    window._ssmTplDefaults = {};
+    templates.forEach(tpl=>{ window._ssmTplDefaults[tpl.id] = tpl.body; });
+
+    // Open first template by default
+    ssmToggleTpl('booking');
+  }
+
+  // ── Save-success modal helpers ────────────────────────────────
+  function ssmToggleTpl(id){
+    var body=document.getElementById('ssmbody-'+id);
+    var chev=document.getElementById('ssmchev-'+id);
+    if(!body) return;
+    var open=body.style.display!=='none';
+    body.style.display=open?'none':'block';
+    if(chev) chev.style.transform=open?'':'rotate(180deg)';
+  }
+  function ssmResetTpl(id){
+    var ta=document.getElementById('ssmta-'+id);
+    if(ta && window._ssmTplDefaults && window._ssmTplDefaults[id]) ta.value=window._ssmTplDefaults[id];
+  }
+  function ssmCopyTpl(id,btn){
+    var ta=document.getElementById('ssmta-'+id);
+    if(!ta) return;
+    navigator.clipboard.writeText(ta.value).then(function(){
+      var orig=btn.innerHTML;
+      btn.innerHTML='✅ Copied!';
+      btn.style.background='#166534';
+      setTimeout(function(){ btn.innerHTML=orig; btn.style.background='#1F3A8A'; },2000);
+    });
+  }
+  function ssmCopyBoth(btn){
+    var msg=document.getElementById('suc-share-msg');
+    var url=document.getElementById('suc-guest-input');
+    if(!msg||!url) return;
+    var text=msg.textContent.trim()+'\n'+url.value.trim();
+    navigator.clipboard.writeText(text).then(function(){
+      var orig=btn.innerHTML;
+      btn.innerHTML='✅ Copied!';
+      btn.style.background='#166534';
+      var fb=document.getElementById('suc-copy-feedback');
+      if(fb) fb.style.display='block';
+      setTimeout(function(){ btn.innerHTML=orig; btn.style.background='#1F3A8A'; if(fb) fb.style.display='none'; },3000);
+    });
+  }
+  function ssmCopyLinkOnly(btn){
+    var url=document.getElementById('suc-guest-input');
+    if(!url) return;
+    navigator.clipboard.writeText(url.value).then(function(){
+      var orig=btn.innerHTML;
+      btn.innerHTML='✅';
+      setTimeout(function(){ btn.innerHTML=orig; },2000);
+    });
   }
 
   function copySuccessLink(inputId, btnId, copiedLabel){
