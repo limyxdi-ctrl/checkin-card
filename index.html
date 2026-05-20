@@ -70,6 +70,29 @@
     -webkit-font-smoothing:antialiased;overflow-x:hidden;-moz-osx-font-smoothing:grayscale;
   }
 
+  /* ── DEMO / PREVIEW MODE ── */
+  /* When body has .demo-mode: disable all interactive links/buttons in the guide,
+     prevent text selection (so the guide link cannot be copied) */
+  body.demo-mode .btn-large,
+  body.demo-mode .btn-large-wifi,
+  body.demo-mode a.btn-large {
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: default;
+  }
+  body.demo-mode .cards-wrapper,
+  body.demo-mode .card-body,
+  body.demo-mode header {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  body.demo-mode .wifi-pass-display,
+  body.demo-mode .wifi-network-name,
+  body.demo-mode #d-address {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
   /* ── EXPIRED SCREEN ── */
   #expired-screen{display:none;position:fixed;inset:0;z-index:9999;background:#fff;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px}
   #expired-screen.show{display:flex}
@@ -2658,11 +2681,11 @@
         <span data-lang="es" class="${_a2('es')}">👁 Ejemplo en vivo — esto es lo que verían tus huéspedes</span>
       </span>
       <div style="display:flex;gap:8px;flex-shrink:0">
-        <button onclick="document.getElementById('demo-banner').remove();document.getElementById('setup-overlay').classList.add('show');window.scrollTo(0,0);"
+        <button onclick="document.getElementById('demo-banner').remove();openSetupFromPreview();"
           style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.82rem;font-family:inherit;font-weight:700">
-          <span data-lang="en" class="${_a2('en')}">← Back</span>
-          <span data-lang="de" class="${_a2('de')}">← Zurück</span>
-          <span data-lang="es" class="${_a2('es')}">← Volver</span>
+          <span data-lang="en" class="${_a2('en')}">← Back to setup</span>
+          <span data-lang="de" class="${_a2('de')}">← Zurück zum Setup</span>
+          <span data-lang="es" class="${_a2('es')}">← Volver al setup</span>
         </button>
         <button onclick="showEmailGateModal()"
           style="background:#F59E0B;border:none;color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.82rem;font-family:inherit;font-weight:700">
@@ -2671,16 +2694,12 @@
           <span data-lang="es" class="${_a2('es')}">🎉 Mi guía erstellen</span>
         </button>
       </div>`;
+    document.body.classList.add('demo-mode');
     document.body.prepend(banner);
   }
 
   function loadDemo() {
-    const lang = document.documentElement.lang || 'en';
-    // If no email yet, show email gate first — preview loads after email is confirmed
-    if(!sessionStorage.getItem('cic_email_entered') && !localStorage.getItem('cic_host_email')){
-      showEmailGateAndThenPreview();
-      return;
-    }
+    // Go straight to preview — no email gate needed
     _showPreviewWithFormData();
   }
 
@@ -2813,7 +2832,8 @@
             <span data-lang="es" class="${_a('es')}">🔓 Activar ahora</span>
           </button>
         </div>`;
-      document.body.prepend(banner);
+      document.body.classList.add('demo-mode');
+    document.body.prepend(banner);
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -3738,6 +3758,7 @@
   // OPEN SETUP
   // ═══════════════════════════════════════════════════════════
   function openSetupFromPreview(){
+    document.body.classList.remove('demo-mode');
     document.getElementById('demo-banner')?.remove();
     // Save current preview data to localStorage so openSetup can load it
     if(window._aptData){
@@ -3918,6 +3939,7 @@
       submitNetlifyEmail(localStorage.getItem('cic_host_email')||'', document.documentElement.lang||'en', 'guide-saved');
       applyData(d);
       document.getElementById('setup-overlay').classList.remove('show');
+      document.body.classList.remove('demo-mode');
       // Remove demo banner unconditionally
       const existingBanner = document.getElementById('demo-banner');
       if(existingBanner) existingBanner.remove();
