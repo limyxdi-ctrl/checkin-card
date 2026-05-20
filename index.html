@@ -1150,7 +1150,7 @@
           <span data-lang="es">Luego 5€/mes · Cancela cuando quieras · Sin compromiso</span>
         </div>
 
-        <button onclick="showEmailGateModal()" class="pricing-cta-founding" style="margin-bottom:10px;background:#F0F4FF;color:var(--accent);border:2px solid #C7D2FE">
+        <button onclick="_showPreviewWithFormData()" class="pricing-cta-founding" style="margin-bottom:10px;background:#F0F4FF;color:var(--accent);border:2px solid #C7D2FE">
           <span data-lang="en" class="active">Or test for free first →</span>
           <span data-lang="de">Oder erst kostenlos testen →</span>
           <span data-lang="es">O probar primero gratis →</span>
@@ -1701,6 +1701,26 @@
           <span data-lang="de">Emoji anklicken zum Ändern. Leere Zeilen werden nicht angezeigt.</span>
           <span data-lang="es">Haz clic en el emoji para cambiarlo. Las líneas vacías no se muestran.</span>
         </div>
+
+        <!-- ── HOUSE MANUAL LINK ── -->
+        <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
+          <label style="display:block;font-size:0.8rem;color:var(--label);margin-bottom:5px;font-weight:500">
+            📄 <span data-lang="en" class="active">House Manual / Rules PDF (optional)</span>
+            <span data-lang="de">Hausordnung / PDF-Dokument (optional)</span>
+            <span data-lang="es">Manual de la casa / PDF (opcional)</span>
+          </label>
+          <input id="s-house-manual-url" type="url"
+            data-placeholder-en="https://drive.google.com/... or any PDF link"
+            data-placeholder-de="https://drive.google.com/... oder beliebiger PDF-Link"
+            data-placeholder-es="https://drive.google.com/... o cualquier enlace PDF"
+            placeholder="https://drive.google.com/... or any PDF link"
+            style="width:100%;padding:10px 13px;border:1px solid #D1D5DB;border-radius:8px;font-size:0.88rem;font-family:inherit;background:#F9FAFB;color:#111827;outline:none;box-sizing:border-box">
+          <div style="font-size:0.73rem;color:var(--text2);margin-top:5px;line-height:1.5">
+            <span data-lang="en" class="active">💡 Paste a Google Drive, Dropbox, or direct PDF link. Guests see a download button — no account needed.</span>
+            <span data-lang="de">💡 Google Drive, Dropbox oder direkten PDF-Link einfügen. Gäste sehen einen Download-Button — kein Konto nötig.</span>
+            <span data-lang="es">💡 Pega un enlace de Google Drive, Dropbox o PDF directo. Los huéspedes verán un botón de descarga — sin cuenta necesaria.</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2199,6 +2219,30 @@
           <li class="rule-item"><span class="rule-emoji">🚭</span><span>No smoking inside.</span></li>
           <li class="rule-item"><span class="rule-emoji">🌙</span><span>Quiet hours from 22:00.</span></li>
         </ul>
+      </div>
+    </div>
+
+    <!-- HOUSE MANUAL — hidden if no URL set -->
+    <div class="card" id="house-manual-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon icon-purple">📄</div>
+        <div class="card-title">
+          <span data-lang="en" class="active">House Manual</span>
+          <span data-lang="de">Hausordnung</span>
+          <span data-lang="es">Manual de la Casa</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p style="font-size:0.88rem;color:var(--text2);margin-bottom:14px;line-height:1.6">
+          <span data-lang="en" class="active">Download our full house manual for all the details about your stay.</span>
+          <span data-lang="de">Lade unsere vollständige Hausordnung für alle Details zu deinem Aufenthalt herunter.</span>
+          <span data-lang="es">Descarga el manual completo de la casa para todos los detalles de tu estancia.</span>
+        </p>
+        <a id="d-house-manual-btn" href="#" target="_blank" class="btn-large btn-large-maps" style="text-decoration:none">
+          📄 <span data-lang="en" class="active">Download House Manual</span>
+          <span data-lang="de">Hausordnung herunterladen</span>
+          <span data-lang="es">Descargar manual de la casa</span>
+        </a>
       </div>
     </div>
 
@@ -3215,6 +3259,7 @@
     if(lpEl) lpEl.value=d.lateCheckoutPrice||'';
     var clEl=document.getElementById('s-contact-link');
     if(clEl) clEl.value=d.contactLink||'';
+    var hmEl2=document.getElementById('s-house-manual-url'); if(hmEl2) hmEl2.value='';
     document.getElementById('s-wifi-pass').value=d.wifiPass;
     document.getElementById('s-wa').value=d.wa||'';
     document.getElementById('s-phone').value=d.phone||'';
@@ -3733,6 +3778,19 @@
       helpEl.innerHTML = `<span class="active">${escHtml(d.helpText)}</span>`;
     }
     generateWifiQR(d.wifiName||'',d.wifiPass||'');
+    // House manual card
+    (function(){
+      var card = document.getElementById('house-manual-card');
+      var btn  = document.getElementById('d-house-manual-btn');
+      if(!card || !btn) return;
+      var url = (d.houseManualUrl||'').trim();
+      if(url){
+        btn.href = url;
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    })();
     renderHotelSection(d);
     renderEntryCard(d,lang);
     renderReservationCard(d);
@@ -3856,6 +3914,7 @@
     var ltEl=document.getElementById('s-latecheckout-text'); if(ltEl) ltEl.value=d.lateCheckoutText||'';
     var lpEl=document.getElementById('s-latecheckout-price'); if(lpEl) lpEl.value=d.lateCheckoutPrice||'';
     var clEl=document.getElementById('s-contact-link'); if(clEl) clEl.value=d.contactLink||'';
+    var hmEl=document.getElementById('s-house-manual-url'); if(hmEl) hmEl.value=d.houseManualUrl||'';
     selectPropertyType(d.propertyType||'apartment');
     // Sync quick fields + update progress bar
     syncFullToQuick();
@@ -3924,7 +3983,8 @@
       breakfastPrice:g('s-breakfast-price'),
       lateCheckoutText:g('s-latecheckout-text'),
       lateCheckoutPrice:g('s-latecheckout-price'),
-      contactLink:g('s-contact-link')
+      contactLink:g('s-contact-link'),
+      houseManualUrl:g('s-house-manual-url')
     };
     // FIX: window._guideId is the single source of truth for which guide we are editing.
     // newGuide() sets it to null, so a new random id is generated below — preventing
