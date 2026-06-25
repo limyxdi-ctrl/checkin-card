@@ -11,8 +11,16 @@ jobs:
     steps:
       - name: Ping Supabase
         run: |
-          curl -s \
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "https://qllabgoefzwtwielzror.supabase.co/rest/v1/guides?limit=1" \
-            && echo "Supabase pinged successfully"
+            -H "Content-Type: application/json" \
+            "https://qllabgoefzwtwielzror.supabase.co/rest/v1/guides?select=id&limit=1")
+          echo "HTTP Status: $response"
+          if [ "$response" = "200" ]; then
+            echo "Supabase is alive and responding"
+          else
+            echo "Warning: Unexpected response code $response"
+            exit 1
+          fi
