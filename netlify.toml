@@ -1,9 +1,2 @@
 [build]
   functions = "netlify/functions"
-
-[[plugins]]
-  package = "@netlify/plugin-cron"
-
-[[crons]]
-  schedule = "@daily"
-  function = "ping-supabase"
